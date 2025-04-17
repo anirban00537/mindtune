@@ -1,4 +1,4 @@
-import { StyleSheet, View, ViewStyle } from "react-native";
+import { StyleSheet, ViewStyle } from "react-native";
 import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
 import Colors from "@/constants/Colors";
@@ -11,13 +11,13 @@ interface CardBaseProps {
 
 export function CardBase({ children, style, gradient = true }: CardBaseProps) {
   return (
-    <BlurView intensity={10} tint="dark" style={[styles.card, style]}>
+    <BlurView intensity={15} tint="dark" style={[styles.card, style]}>
       {gradient ? (
         <LinearGradient
           colors={Colors.gradients.card}
           style={styles.gradient}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 1 }}
+          start={{ x: 0.2, y: 0 }}
+          end={{ x: 0.8, y: 1 }}
         >
           {children}
         </LinearGradient>
@@ -30,10 +30,9 @@ export function CardBase({ children, style, gradient = true }: CardBaseProps) {
 
 const styles = StyleSheet.create({
   card: {
-    borderRadius: 20,
+    borderRadius: 16,
     overflow: "hidden",
-    borderWidth: 1,
-    borderColor: "rgba(255, 255, 255, 0.1)",
+    backgroundColor: "rgba(0, 0, 0, 0.2)",
   },
   gradient: {
     flex: 1,

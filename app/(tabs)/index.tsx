@@ -116,17 +116,15 @@ export default function HomeScreen() {
           </ScrollView>
         </View>
 
-        {/* Featured Session */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Featured Session</Text>
-          <View style={{ marginTop: 16 }}>
-            <FeaturedCard
-              title="Deep Relaxation"
-              description="Unwind and find inner peace"
-              meta={{ duration: "20 min", difficulty: "Beginner" }}
-              actionText="▶"
-            />
-          </View>
+        {/* Premium Card - Compact */}
+        <View style={[styles.section, styles.premiumSection]}>
+          <FeaturedCard
+            title="Unlock Premium"
+            description="Access all meditations and exclusive content"
+            actionText="Upgrade Now"
+            style={styles.premiumCard}
+            isPremium={true}
+          />
         </View>
 
         {/* Recommended Playlists */}
@@ -151,16 +149,6 @@ export default function HomeScreen() {
               />
             ))}
           </ScrollView>
-        </View>
-
-        {/* Premium Card */}
-        <View style={styles.section}>
-          <FeaturedCard
-            title="Unlock Premium"
-            description="Access all meditations, sleep stories, and exclusive content"
-            actionText="Upgrade Now"
-            style={styles.premiumCard}
-          />
         </View>
       </ScrollView>
     </View>
@@ -216,11 +204,14 @@ const styles = StyleSheet.create({
   },
   playlistCard: {
     width: CARD_WIDTH,
-    marginLeft: 20,
     marginBottom: 4,
+    marginRight: 16,
+  },
+  premiumSection: {
+    marginTop: 32,
+    marginBottom: 32,
   },
   premiumCard: {
-    marginTop: 20,
-    marginBottom: 20,
+    marginHorizontal: 4,
   },
 });
