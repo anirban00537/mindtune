@@ -11,19 +11,6 @@ import { LinearGradient } from "expo-linear-gradient";
 import { BlurView } from "expo-blur";
 import { useRouter } from "expo-router";
 
-const categories = [
-  { name: "Self-Love", icon: "💖" },
-  { name: "Success", icon: "⭐" },
-  { name: "Confidence", icon: "💪" },
-  { name: "Healing", icon: "🌿" },
-  { name: "Abundance", icon: "✨" },
-  { name: "Gratitude", icon: "🙏" },
-  { name: "Peace", icon: "🕊️" },
-  { name: "Growth", icon: "🌱" },
-];
-
-// Remove categories array
-
 const playlists = [
   {
     id: "1",
@@ -68,7 +55,7 @@ export default function HomeScreen() {
 
   return (
     <LinearGradient
-      colors={["#000000", "#010001", "#0d000d"]}
+      colors={["#001233", "#001845", "#002171"]}
       style={styles.gradient}
       start={{ x: 0, y: 0 }}
       end={{ x: 0, y: 1 }}
@@ -134,16 +121,14 @@ export default function HomeScreen() {
         <View style={styles.sectionHeader}>
           <Text style={styles.sectionTitle}>Go Premium</Text>
         </View>
-        <BlurView
-          intensity={30}
-          tint="light"
-          style={styles.premiumCard}
-        >
+        <BlurView intensity={30} tint="light" style={styles.premiumCard}>
           <Text style={styles.premiumTitle}>Unlock Premium Features</Text>
-          <Text style={styles.premiumText}>Access all affirmations, remove ads, and get exclusive content</Text>
+          <Text style={styles.premiumText}>
+            Access all affirmations, remove ads, and get exclusive content
+          </Text>
           <TouchableOpacity style={styles.premiumButton}>
             <LinearGradient
-              colors={["#9c27b0", "#673ab7"]}
+              colors={["#0d47a1", "#002171"]}
               style={styles.premiumButtonGradient}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 1 }}
@@ -181,7 +166,7 @@ export default function HomeScreen() {
               </Text>
               <TouchableOpacity style={styles.playButton}>
                 <LinearGradient
-                  colors={["#9c27b0", "#673ab7"]}
+                  colors={["#0d47a1", "#002171"]}
                   style={styles.playButtonGradient}
                   start={{ x: 0, y: 0 }}
                   end={{ x: 1, y: 1 }}
@@ -192,10 +177,6 @@ export default function HomeScreen() {
             </BlurView>
           ))}
         </ScrollView>
-
-
-
-
       </ScrollView>
     </LinearGradient>
   );
@@ -268,12 +249,12 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 16,
     elevation: 15,
-    backdropFilter: 'blur(12px)',
+    backdropFilter: "blur(12px)",
   },
   searchText: {
     color: "rgba(255, 255, 255, 0.9)",
     fontSize: 17,
-    fontWeight: '500',
+    fontWeight: "500",
     letterSpacing: 0.3,
   },
   recentSessionsScroll: {
@@ -380,7 +361,6 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
 
-
   playlistRow: {
     marginBottom: 25,
   },
@@ -388,25 +368,25 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     padding: 20,
     marginBottom: 25,
-    overflow: 'hidden',
+    overflow: "hidden",
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.1)',
+    borderColor: "rgba(255, 255, 255, 0.1)",
   },
   premiumTitle: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 20,
-    fontWeight: '700',
+    fontWeight: "700",
     marginBottom: 8,
   },
   premiumText: {
-    color: 'rgba(255, 255, 255, 0.8)',
+    color: "rgba(255, 255, 255, 0.8)",
     fontSize: 14,
     marginBottom: 16,
   },
   premiumButton: {
     borderRadius: 24,
-    overflow: 'hidden',
-    shadowColor: '#9c27b0',
+    overflow: "hidden",
+    shadowColor: "#4caf50",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.5,
     shadowRadius: 8,
@@ -415,20 +395,20 @@ const styles = StyleSheet.create({
   premiumButtonGradient: {
     paddingVertical: 14,
     paddingHorizontal: 32,
-    alignItems: 'center',
-    justifyContent: 'center',
-    shadowColor: '#9c27b0',
+    alignItems: "center",
+    justifyContent: "center",
+    shadowColor: "#4caf50",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.8,
     shadowRadius: 12,
     elevation: 15,
   },
   premiumButtonText: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 18,
-    fontWeight: '700',
+    fontWeight: "700",
     letterSpacing: 1,
-    textShadowColor: 'rgba(255, 255, 255, 0.3)',
+    textShadowColor: "rgba(255, 255, 255, 0.3)",
     textShadowOffset: { width: 0, height: 1 },
     textShadowRadius: 2,
   },
