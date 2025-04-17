@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
+import Colors from "@/constants/Colors";
 
 const categories = [
   { id: "1", name: "Self Love", emoji: "💝" },
@@ -22,7 +23,7 @@ const categories = [
 export default function ExploreScreen() {
   return (
     <LinearGradient
-      colors={["#001233", "#001845", "#002171"]}
+      colors={Colors.gradients.background}
       style={styles.gradient}
       start={{ x: 0, y: 0 }}
       end={{ x: 0, y: 1 }}
@@ -54,7 +55,7 @@ export default function ExploreScreen() {
                   <Text style={styles.categoryEmoji}>{category.emoji}</Text>
                   <Text style={styles.categoryName}>{category.name}</Text>
                   <LinearGradient
-                    colors={["#0d47a1", "#002171"]}
+                    colors={Colors.gradients.button}
                     style={styles.categoryGlow}
                     start={{ x: 0, y: 0 }}
                     end={{ x: 1, y: 1 }}
@@ -69,7 +70,7 @@ export default function ExploreScreen() {
           <Text style={styles.sectionTitle}>Trending Now</Text>
           <BlurView intensity={20} tint="light" style={styles.trendingCard}>
             <LinearGradient
-              colors={["rgba(13, 71, 161, 0.2)", "rgba(0, 33, 113, 0.3)"]}
+              colors={Colors.gradients.card}
               style={styles.trendingGradient}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 1 }}
@@ -79,7 +80,10 @@ export default function ExploreScreen() {
                 Start your day with positive energy
               </Text>
               <TouchableOpacity
-                style={[styles.trendingButton, { backgroundColor: "#0d47a1" }]}
+                style={[
+                  styles.trendingButton,
+                  { backgroundColor: Colors.light.primary },
+                ]}
               >
                 <Text style={styles.trendingButtonText}>Get Started</Text>
               </TouchableOpacity>

@@ -10,6 +10,7 @@ import {
 import { LinearGradient } from "expo-linear-gradient";
 import { BlurView } from "expo-blur";
 import { useRouter } from "expo-router";
+import Colors from "@/constants/Colors";
 
 const playlists = [
   {
@@ -55,7 +56,7 @@ export default function HomeScreen() {
 
   return (
     <LinearGradient
-      colors={["#001233", "#001845", "#002171"]}
+      colors={Colors.gradients.background}
       style={styles.gradient}
       start={{ x: 0, y: 0 }}
       end={{ x: 0, y: 1 }}
@@ -128,7 +129,7 @@ export default function HomeScreen() {
           </Text>
           <TouchableOpacity style={styles.premiumButton}>
             <LinearGradient
-              colors={["#0d47a1", "#002171"]}
+              colors={Colors.gradients.button}
               style={styles.premiumButtonGradient}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 1 }}
@@ -166,7 +167,7 @@ export default function HomeScreen() {
               </Text>
               <TouchableOpacity style={styles.playButton}>
                 <LinearGradient
-                  colors={["#0d47a1", "#002171"]}
+                  colors={Colors.gradients.button}
                   style={styles.playButtonGradient}
                   start={{ x: 0, y: 0 }}
                   end={{ x: 1, y: 1 }}

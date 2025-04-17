@@ -1,12 +1,13 @@
 import { BlurView } from "expo-blur";
 import { StyleSheet } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
+import Colors from "@/constants/Colors";
 
 export default function TabBarBackground() {
   return (
-    <BlurView intensity={30} tint="dark" style={StyleSheet.absoluteFill}>
+    <BlurView intensity={20} tint="dark" style={StyleSheet.absoluteFill}>
       <LinearGradient
-        colors={["rgba(13, 71, 161, 0.15)", "rgba(0, 33, 113, 0.25)"]}
+        colors={Colors.gradients.tabBar}
         style={StyleSheet.absoluteFill}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
