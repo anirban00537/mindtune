@@ -113,7 +113,7 @@ export default function HomeScreen() {
           <View style={styles.recentSessionsContainer}>
             {recentSessions.map((session) => (
               <BlurView
-                intensity={20}
+                intensity={30}
                 tint="light"
                 style={styles.recentSessionCard}
                 key={session.id}
@@ -129,6 +129,29 @@ export default function HomeScreen() {
             ))}
           </View>
         </ScrollView>
+
+        {/* Premium Purchase Card */}
+        <View style={styles.sectionHeader}>
+          <Text style={styles.sectionTitle}>Go Premium</Text>
+        </View>
+        <BlurView
+          intensity={30}
+          tint="light"
+          style={styles.premiumCard}
+        >
+          <Text style={styles.premiumTitle}>Unlock Premium Features</Text>
+          <Text style={styles.premiumText}>Access all affirmations, remove ads, and get exclusive content</Text>
+          <TouchableOpacity style={styles.premiumButton}>
+            <LinearGradient
+              colors={["#9c27b0", "#673ab7"]}
+              style={styles.premiumButtonGradient}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+            >
+              <Text style={styles.premiumButtonText}>Upgrade Now</Text>
+            </LinearGradient>
+          </TouchableOpacity>
+        </BlurView>
 
         {/* Featured Playlists */}
         <View style={styles.sectionHeader}>
@@ -158,7 +181,7 @@ export default function HomeScreen() {
               </Text>
               <TouchableOpacity style={styles.playButton}>
                 <LinearGradient
-                  colors={["#ffffff", "#f5f5f5"]}
+                  colors={["#9c27b0", "#673ab7"]}
                   style={styles.playButtonGradient}
                   start={{ x: 0, y: 0 }}
                   end={{ x: 1, y: 1 }}
@@ -178,11 +201,12 @@ export default function HomeScreen() {
   );
 }
 
-const CARD_WIDTH = Dimensions.get("window").width * 0.38;
-const ARTIST_SIZE = Dimensions.get("window").width * 0.2;
+const CARD_WIDTH = Dimensions.get("window").width * 0.8;
 const SCREEN_WIDTH = Dimensions.get("window").width;
-// Remove RECENT_SESSION_ITEM_WIDTH calculation
-const RECENT_SESSION_CARD_WIDTH = SCREEN_WIDTH * 0.3; // Define a width for recent session cards
+const RECENT_SESSION_CARD_WIDTH = SCREEN_WIDTH * 0.32;
+const ARTIST_SIZE = SCREEN_WIDTH * 0.2;
+const CARD_PADDING = 16;
+const CARD_HEIGHT = CARD_WIDTH * 0.4;
 
 const styles = StyleSheet.create({
   gradient: {
@@ -197,48 +221,60 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: 25,
+    marginBottom: 30,
+    paddingHorizontal: 8,
   },
   greeting: {
     color: "#fff",
-    fontSize: 24,
-    fontWeight: "300",
+    fontSize: 26,
+    fontWeight: "400",
+    letterSpacing: 0.5,
+    opacity: 0.9,
   },
   username: {
     color: "#fff",
-    fontSize: 32,
-    fontWeight: "bold",
-    marginTop: 4,
+    fontSize: 34,
+    fontWeight: "700",
+    marginTop: 6,
+    letterSpacing: 0.25,
   },
   profileButton: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
+    width: 54,
+    height: 54,
+    borderRadius: 27,
     overflow: "hidden",
-    backgroundColor: "rgba(255, 255, 255, 0.1)",
+    backgroundColor: "rgba(255, 255, 255, 0.15)",
     borderWidth: 1,
-    borderColor: "rgba(255, 255, 255, 0.2)",
+    borderColor: "rgba(255, 255, 255, 0.25)",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 10,
   },
   profileImage: {
     width: "100%",
     height: "100%",
   },
   searchContainer: {
-    backgroundColor: "rgba(255, 255, 255, 0.1)",
-    borderRadius: 25,
-    padding: 15,
-    marginBottom: 25,
+    backgroundColor: "rgba(255, 255, 255, 0.08)",
+    borderRadius: 28,
+    padding: 12,
+    marginBottom: 28,
     borderWidth: 1,
-    borderColor: "rgba(255, 255, 255, 0.2)",
+    borderColor: "rgba(255, 255, 255, 0.25)",
     shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.2,
-    shadowRadius: 10,
-    elevation: 10,
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.3,
+    shadowRadius: 16,
+    elevation: 15,
+    backdropFilter: 'blur(12px)',
   },
   searchText: {
-    color: "rgba(255, 255, 255, 0.8)",
-    fontSize: 16,
+    color: "rgba(255, 255, 255, 0.9)",
+    fontSize: 17,
+    fontWeight: '500',
+    letterSpacing: 0.3,
   },
   recentSessionsScroll: {
     marginBottom: 30,
@@ -252,16 +288,17 @@ const styles = StyleSheet.create({
   recentSessionCard: {
     width: RECENT_SESSION_CARD_WIDTH,
     marginRight: 15,
-    borderRadius: 20,
+    borderRadius: 12,
     overflow: "hidden",
     alignItems: "flex-start",
     padding: 0,
-    backgroundColor: "rgba(255, 255, 255, 0.1)",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.3,
-    shadowRadius: 12,
-    elevation: 15,
+    backgroundColor: "transparent",
+    borderWidth: 0,
+    shadowColor: "transparent",
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0,
+    shadowRadius: 0,
+    elevation: 0,
   },
   recentSessionImage: {
     width: "100%",
@@ -275,6 +312,7 @@ const styles = StyleSheet.create({
     padding: 12,
     width: "100%",
     backgroundColor: "rgba(0, 0, 0, 0.5)",
+    minHeight: 50,
   },
   sectionHeader: {
     flexDirection: "row",
@@ -296,7 +334,6 @@ const styles = StyleSheet.create({
     marginBottom: 25,
   },
   categoryCard: {
-    backgroundColor: "rgba(255, 255, 255, 0.08)",
     borderRadius: 24,
     width: CARD_WIDTH,
     height: CARD_WIDTH + 70,
@@ -347,56 +384,110 @@ const styles = StyleSheet.create({
   playlistRow: {
     marginBottom: 25,
   },
-  card: {
-    backgroundColor: "rgba(255, 255, 255, 0.08)",
+  premiumCard: {
+    borderRadius: 16,
+    padding: 20,
+    marginBottom: 25,
+    overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.1)',
+  },
+  premiumTitle: {
+    color: '#fff',
+    fontSize: 20,
+    fontWeight: '700',
+    marginBottom: 8,
+  },
+  premiumText: {
+    color: 'rgba(255, 255, 255, 0.8)',
+    fontSize: 14,
+    marginBottom: 16,
+  },
+  premiumButton: {
     borderRadius: 24,
+    overflow: 'hidden',
+    shadowColor: '#9c27b0',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.5,
+    shadowRadius: 8,
+    elevation: 10,
+  },
+  premiumButtonGradient: {
+    paddingVertical: 14,
+    paddingHorizontal: 32,
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#9c27b0',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.8,
+    shadowRadius: 12,
+    elevation: 15,
+  },
+  premiumButtonText: {
+    color: '#fff',
+    fontSize: 18,
+    fontWeight: '700',
+    letterSpacing: 1,
+    textShadowColor: 'rgba(255, 255, 255, 0.3)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 2,
+  },
+  card: {
+    backgroundColor: "transparent",
+    borderRadius: 16,
     width: CARD_WIDTH,
-    height: CARD_WIDTH + 70,
-    marginRight: 15,
+    height: CARD_HEIGHT + 60,
+    marginRight: CARD_PADDING,
     overflow: "hidden",
+    borderWidth: 1,
+    borderColor: "rgba(255, 255, 255, 0.1)",
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.3,
     shadowRadius: 12,
     elevation: 15,
-    borderWidth: 1,
-    borderColor: "rgba(255, 255, 255, 0.1)",
   },
   cardImage: {
     width: "100%",
-    height: CARD_WIDTH,
-    borderTopLeftRadius: 24,
-    borderTopRightRadius: 24,
+    height: CARD_HEIGHT,
+    borderRadius: 16,
   },
   cardTitle: {
     color: "#fff",
-    fontSize: 16,
-    fontWeight: "600",
-    padding: 15,
+    fontSize: 18,
+    fontWeight: "700",
+    padding: 16,
     paddingBottom: 8,
+    letterSpacing: 0.5,
+    minHeight: 60,
+    backgroundColor: "rgba(0, 0, 0, 0.3)",
+    borderBottomLeftRadius: 16,
+    borderBottomRightRadius: 16,
   },
   playButton: {
     position: "absolute",
-    bottom: 12,
-    right: 12,
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: "rgba(255, 255, 255, 0.15)",
+    bottom: 24,
+    right: 24,
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: "rgba(255, 255, 255, 0.2)",
     alignItems: "center",
     justifyContent: "center",
     borderWidth: 1,
-    borderColor: "rgba(255, 255, 255, 0.2)",
+    borderColor: "rgba(255, 255, 255, 0.3)",
   },
   playButtonText: {
     color: "#fff",
-    fontSize: 16,
+    fontSize: 20,
+    fontWeight: "bold",
   },
   playButtonGradient: {
     width: "100%",
     height: "100%",
-    borderRadius: 20,
+    borderRadius: 24,
     alignItems: "center",
     justifyContent: "center",
+    opacity: 0.9,
   },
 });
