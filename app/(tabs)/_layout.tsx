@@ -1,5 +1,5 @@
 import { Tabs } from "expo-router";
-import { Platform } from "react-native";
+import { Platform, StyleSheet } from "react-native";
 import { IconSymbol } from "@/components/ui/IconSymbol";
 import Colors from "@/constants/Colors";
 import { useColorScheme } from "@/hooks/useColorScheme";
@@ -13,10 +13,16 @@ export default function TabLayout() {
       screenOptions={{
         tabBarActiveTintColor: Colors[colorScheme].tint,
         headerShown: false,
-        tabBarStyle: Platform.select({
-          ios: { position: "absolute" },
-          default: {},
-        }),
+        tabBarStyle: {
+          ...Platform.select({
+            ios: { position: "absolute" },
+            default: {},
+          }),
+          backgroundColor: "transparent",
+          borderTopWidth: 0,
+          elevation: 0,
+          height: Platform.OS === "ios" ? 85 : 65,
+        },
         tabBarBackground: () => <TabBarBackground />,
       }}
     >

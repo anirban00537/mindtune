@@ -5,7 +5,7 @@ import Colors from "@/constants/Colors";
 
 export default function TabBarBackground() {
   return (
-    <BlurView intensity={20} tint="dark" style={StyleSheet.absoluteFill}>
+    <BlurView intensity={40} tint="dark" style={StyleSheet.absoluteFill}>
       <LinearGradient
         colors={Colors.gradients.tabBar}
         style={StyleSheet.absoluteFill}

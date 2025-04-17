@@ -3,16 +3,16 @@ import {
   View,
   Text,
   ScrollView,
-  Image,
   TouchableOpacity,
   Dimensions,
-  Platform,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-import { BlurView } from "expo-blur";
 import { useRouter } from "expo-router";
 import Colors from "@/constants/Colors";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import ExploreBar from "@/components/ui/ExploreBar";
+import { SessionCard } from "@/components/ui/cards/SessionCard";
+import { FeaturedCard } from "@/components/ui/cards/FeaturedCard";
 
 const playlists = [
   {
@@ -41,11 +41,31 @@ const playlists = [
   },
 ];
 
-const quickActions = [
-  { id: "1", title: "Daily\nAffirmation", icon: "☀️" },
-  { id: "2", title: "Sleep\nWell", icon: "🌙" },
-  { id: "3", title: "Quick\nBoost", icon: "⚡" },
-  { id: "4", title: "Focus\nMode", icon: "🎯" },
+const recentSessions = [
+  {
+    id: "1",
+    title: "Deep Sleep",
+    description: "Fall asleep faster",
+    duration: "15 min",
+    image:
+      "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
+  },
+  {
+    id: "2",
+    title: "Anxiety Relief",
+    description: "Calm your mind",
+    duration: "8 min",
+    image:
+      "https://images.unsplash.com/photo-1515894203077-2cd25148ae14?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
+  },
+  {
+    id: "3",
+    title: "Focus Mode",
+    description: "Enhance concentration",
+    duration: "10 min",
+    image:
+      "https://images.unsplash.com/photo-1508672019048-805c876b67e2?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
+  },
 ];
 
 export default function HomeScreen() {
@@ -53,168 +73,101 @@ export default function HomeScreen() {
   const insets = useSafeAreaInsets();
 
   return (
-    <ScrollView
-      style={[styles.container, { paddingTop: insets.top }]}
-      showsVerticalScrollIndicator={false}
-      contentContainerStyle={styles.contentContainer}
-    >
-      {/* Header Section */}
-      <View style={styles.header}>
-        <View>
-          <Text style={styles.welcomeText}>Welcome back,</Text>
-          <Text style={styles.userName}>Anirban</Text>
-        </View>
-        <TouchableOpacity style={styles.profileButton}>
-          <BlurView
-            intensity={30}
-            tint="light"
-            style={styles.profileButtonBlur}
-          >
-            <Image
-              source={{ uri: "https://randomuser.me/api/portraits/men/1.jpg" }}
-              style={styles.profileImage}
-            />
-          </BlurView>
-        </TouchableOpacity>
-      </View>
+    <View style={styles.container}>
+      <LinearGradient
+        colors={Colors.gradients.background}
+        style={StyleSheet.absoluteFill}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 0, y: 1 }}
+      />
 
-      {/* Quick Actions */}
-      <View style={styles.quickActionsContainer}>
-        {quickActions.map((action) => (
-          <TouchableOpacity key={action.id} style={styles.quickActionButton}>
-            <BlurView
-              intensity={20}
-              tint="light"
-              style={styles.quickActionBlur}
-            >
-              <Text style={styles.quickActionIcon}>{action.icon}</Text>
-              <Text style={styles.quickActionTitle}>{action.title}</Text>
-            </BlurView>
-          </TouchableOpacity>
-        ))}
-      </View>
+      <ScrollView
+        style={styles.scrollView}
+        contentContainerStyle={[
+          styles.contentContainer,
+          { paddingBottom: insets.bottom + 20 },
+        ]}
+        showsVerticalScrollIndicator={false}
+      >
+        <View style={{ height: insets.top }} />
+        <ExploreBar />
 
-      {/* Featured Session */}
-      <View style={styles.featuredContainer}>
-        <Text style={styles.sectionTitle}>Featured Session</Text>
-        <TouchableOpacity>
-          <BlurView intensity={20} tint="light" style={styles.featuredCard}>
-            <LinearGradient
-              colors={Colors.gradients.card}
-              style={styles.featuredGradient}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 1 }}
-            >
-              <View style={styles.featuredContent}>
-                <View>
-                  <Text style={styles.featuredTitle}>Deep Relaxation</Text>
-                  <Text style={styles.featuredDescription}>
-                    Unwind and find inner peace
-                  </Text>
-                  <View style={styles.featuredMeta}>
-                    <Text style={styles.duration}>20 min</Text>
-                    <Text style={styles.difficulty}>Beginner</Text>
-                  </View>
-                </View>
-                <TouchableOpacity style={styles.playButton}>
-                  <LinearGradient
-                    colors={Colors.gradients.button}
-                    style={styles.playButtonGradient}
-                    start={{ x: 0, y: 0 }}
-                    end={{ x: 1, y: 1 }}
-                  >
-                    <Text style={styles.playButtonText}>▶</Text>
-                  </LinearGradient>
-                </TouchableOpacity>
-              </View>
-            </LinearGradient>
-          </BlurView>
-        </TouchableOpacity>
-      </View>
-
-      {/* Recommended Playlists */}
-      <View style={styles.playlistsContainer}>
-        <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}>Recommended</Text>
-          <TouchableOpacity>
-            <Text style={styles.seeAllButton}>See all</Text>
-          </TouchableOpacity>
-        </View>
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.playlistsScroll}
-        >
-          {playlists.map((playlist) => (
-            <TouchableOpacity key={playlist.id} style={styles.playlistCard}>
-              <BlurView intensity={20} tint="light" style={styles.playlistBlur}>
-                <Image
-                  source={{ uri: playlist.image }}
-                  style={styles.playlistImage}
-                />
-                <View style={styles.playlistContent}>
-                  <View>
-                    <Text style={styles.playlistTitle}>{playlist.title}</Text>
-                    <Text style={styles.playlistDescription}>
-                      {playlist.description}
-                    </Text>
-                    <Text style={styles.playlistDuration}>
-                      {playlist.duration}
-                    </Text>
-                  </View>
-                  <TouchableOpacity style={styles.miniPlayButton}>
-                    <LinearGradient
-                      colors={Colors.gradients.button}
-                      style={styles.miniPlayGradient}
-                      start={{ x: 0, y: 0 }}
-                      end={{ x: 1, y: 1 }}
-                    >
-                      <Text style={styles.miniPlayText}>▶</Text>
-                    </LinearGradient>
-                  </TouchableOpacity>
-                </View>
-              </BlurView>
+        {/* Recent Sessions */}
+        <View style={styles.section}>
+          <View style={styles.sectionHeader}>
+            <Text style={styles.sectionTitle}>Recent Sessions</Text>
+            <TouchableOpacity>
+              <Text style={styles.seeAllButton}>See all</Text>
             </TouchableOpacity>
-          ))}
-        </ScrollView>
-      </View>
-
-      {/* Premium Card */}
-      <View style={styles.premiumContainer}>
-        <BlurView intensity={20} tint="light" style={styles.premiumCard}>
-          <LinearGradient
-            colors={Colors.gradients.card}
-            style={styles.premiumGradient}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
+          </View>
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.horizontalScroll}
           >
-            <View style={styles.premiumContent}>
-              <View>
-                <Text style={styles.premiumTitle}>Unlock Premium</Text>
-                <Text style={styles.premiumDescription}>
-                  Access all meditations, sleep stories, and exclusive content
-                </Text>
-              </View>
-              <TouchableOpacity style={styles.premiumButton}>
-                <LinearGradient
-                  colors={Colors.gradients.button}
-                  style={styles.premiumButtonGradient}
-                  start={{ x: 0, y: 0 }}
-                  end={{ x: 1, y: 1 }}
-                >
-                  <Text style={styles.premiumButtonText}>Upgrade Now</Text>
-                </LinearGradient>
-              </TouchableOpacity>
-            </View>
-          </LinearGradient>
-        </BlurView>
-      </View>
-    </ScrollView>
+            {recentSessions.map((session) => (
+              <SessionCard
+                key={session.id}
+                {...session}
+                style={styles.recentCard}
+                imageHeight={CARD_WIDTH * 0.4}
+              />
+            ))}
+          </ScrollView>
+        </View>
+
+        {/* Featured Session */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Featured Session</Text>
+          <View style={{ marginTop: 16 }}>
+            <FeaturedCard
+              title="Deep Relaxation"
+              description="Unwind and find inner peace"
+              meta={{ duration: "20 min", difficulty: "Beginner" }}
+              actionText="▶"
+            />
+          </View>
+        </View>
+
+        {/* Recommended Playlists */}
+        <View style={styles.section}>
+          <View style={styles.sectionHeader}>
+            <Text style={styles.sectionTitle}>Recommended</Text>
+            <TouchableOpacity>
+              <Text style={styles.seeAllButton}>See all</Text>
+            </TouchableOpacity>
+          </View>
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.horizontalScroll}
+          >
+            {playlists.map((playlist) => (
+              <SessionCard
+                key={playlist.id}
+                {...playlist}
+                style={styles.playlistCard}
+                imageHeight={CARD_WIDTH * 0.6}
+              />
+            ))}
+          </ScrollView>
+        </View>
+
+        {/* Premium Card */}
+        <View style={styles.section}>
+          <FeaturedCard
+            title="Unlock Premium"
+            description="Access all meditations, sleep stories, and exclusive content"
+            actionText="Upgrade Now"
+            style={styles.premiumCard}
+          />
+        </View>
+      </ScrollView>
+    </View>
   );
 }
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
-const CARD_PADDING = 20;
 const CARD_WIDTH = SCREEN_WIDTH * 0.7;
 
 const styles = StyleSheet.create({
@@ -222,256 +175,52 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: Colors.light.background,
   },
+  scrollView: {
+    flex: 1,
+  },
   contentContainer: {
-    paddingBottom: 40,
+    flexGrow: 1,
+    paddingTop: 16,
   },
-  header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingHorizontal: 20,
-    paddingVertical: 20,
-  },
-  welcomeText: {
-    fontSize: 16,
-    color: Colors.light.text,
-    opacity: 0.7,
-    fontWeight: "500",
-  },
-  userName: {
-    fontSize: 28,
-    color: Colors.light.text,
-    fontWeight: "700",
-    marginTop: 4,
-  },
-  profileButton: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    overflow: "hidden",
-  },
-  profileButtonBlur: {
-    flex: 1,
-    padding: 2,
-    borderRadius: 24,
-    borderWidth: 1,
-    borderColor: "rgba(255, 255, 255, 0.2)",
-  },
-  profileImage: {
-    width: "100%",
-    height: "100%",
-    borderRadius: 22,
-  },
-  quickActionsContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    paddingHorizontal: 20,
-    marginTop: 20,
-  },
-  quickActionButton: {
-    width: (SCREEN_WIDTH - 60) / 4,
-    height: (SCREEN_WIDTH - 60) / 4,
-    borderRadius: 20,
-    overflow: "hidden",
-  },
-  quickActionBlur: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    padding: 10,
-    borderWidth: 1,
-    borderColor: "rgba(255, 255, 255, 0.1)",
-  },
-  quickActionIcon: {
-    fontSize: 24,
-    marginBottom: 8,
-  },
-  quickActionTitle: {
-    fontSize: 12,
-    color: Colors.light.text,
-    textAlign: "center",
-    fontWeight: "600",
-  },
-  featuredContainer: {
-    paddingHorizontal: 20,
+  section: {
     marginTop: 40,
-  },
-  sectionTitle: {
-    fontSize: 22,
-    color: Colors.light.text,
-    fontWeight: "700",
-    marginBottom: 16,
-  },
-  featuredCard: {
-    borderRadius: 24,
-    overflow: "hidden",
-    borderWidth: 1,
-    borderColor: "rgba(255, 255, 255, 0.1)",
-  },
-  featuredGradient: {
-    padding: 20,
-  },
-  featuredContent: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
-  featuredTitle: {
-    fontSize: 24,
-    color: Colors.light.text,
-    fontWeight: "700",
-    marginBottom: 8,
-  },
-  featuredDescription: {
-    fontSize: 16,
-    color: Colors.light.text,
-    opacity: 0.7,
-    marginBottom: 16,
-  },
-  featuredMeta: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  duration: {
-    fontSize: 14,
-    color: Colors.light.text,
-    opacity: 0.6,
-    marginRight: 12,
-  },
-  difficulty: {
-    fontSize: 14,
-    color: Colors.light.text,
-    opacity: 0.6,
-  },
-  playButton: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    overflow: "hidden",
-  },
-  playButtonGradient: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  playButtonText: {
-    color: Colors.light.text,
-    fontSize: 24,
-  },
-  playlistsContainer: {
-    marginTop: 40,
+    paddingHorizontal: 20,
   },
   sectionHeader: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    paddingHorizontal: 20,
-    marginBottom: 16,
+    marginBottom: 24,
+  },
+  sectionTitle: {
+    fontSize: 24,
+    color: Colors.light.text,
+    fontWeight: "700",
+    letterSpacing: 0.5,
   },
   seeAllButton: {
     fontSize: 16,
     color: Colors.light.primary,
     fontWeight: "600",
+    paddingVertical: 8,
+    paddingHorizontal: 4,
   },
-  playlistsScroll: {
-    paddingHorizontal: 20,
+  horizontalScroll: {
+    paddingRight: 20,
+    paddingBottom: 8,
+  },
+  recentCard: {
+    width: CARD_WIDTH * 0.8,
+    marginLeft: 3,
+    marginBottom: 4,
   },
   playlistCard: {
     width: CARD_WIDTH,
-    marginRight: 16,
-    borderRadius: 20,
-    overflow: "hidden",
-  },
-  playlistBlur: {
-    borderWidth: 1,
-    borderColor: "rgba(255, 255, 255, 0.1)",
-  },
-  playlistImage: {
-    width: "100%",
-    height: CARD_WIDTH * 0.6,
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-  },
-  playlistContent: {
-    padding: 16,
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
-  playlistTitle: {
-    fontSize: 18,
-    color: Colors.light.text,
-    fontWeight: "600",
+    marginLeft: 20,
     marginBottom: 4,
   },
-  playlistDescription: {
-    fontSize: 14,
-    color: Colors.light.text,
-    opacity: 0.7,
-    marginBottom: 8,
-  },
-  playlistDuration: {
-    fontSize: 12,
-    color: Colors.light.text,
-    opacity: 0.5,
-  },
-  miniPlayButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    overflow: "hidden",
-  },
-  miniPlayGradient: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  miniPlayText: {
-    color: Colors.light.text,
-    fontSize: 18,
-  },
-  premiumContainer: {
-    marginTop: 40,
-    paddingHorizontal: 20,
-  },
   premiumCard: {
-    borderRadius: 24,
-    overflow: "hidden",
-    borderWidth: 1,
-    borderColor: "rgba(255, 255, 255, 0.1)",
-  },
-  premiumGradient: {
-    padding: 24,
-  },
-  premiumContent: {
-    alignItems: "flex-start",
-  },
-  premiumTitle: {
-    fontSize: 24,
-    color: Colors.light.text,
-    fontWeight: "700",
-    marginBottom: 8,
-  },
-  premiumDescription: {
-    fontSize: 16,
-    color: Colors.light.text,
-    opacity: 0.7,
-    marginBottom: 24,
-    lineHeight: 22,
-  },
-  premiumButton: {
-    borderRadius: 30,
-    overflow: "hidden",
-    alignSelf: "stretch",
-  },
-  premiumButtonGradient: {
-    paddingVertical: 16,
-    alignItems: "center",
-  },
-  premiumButtonText: {
-    color: Colors.light.text,
-    fontSize: 16,
-    fontWeight: "600",
-    letterSpacing: 0.5,
+    marginTop: 20,
+    marginBottom: 20,
   },
 });

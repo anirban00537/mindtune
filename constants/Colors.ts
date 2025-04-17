@@ -5,40 +5,36 @@
 
 const Colors = {
   light: {
-    primary: "#87CEEB", // Light sky blue
-    primaryDark: "#4682B4", // Steel blue
-    primaryLight: "#B0E2FF", // Lighter sky blue
-    accent: "#00BFFF", // Deep sky blue
-    text: "#ffffff",
-    background: "#000019", // Keep very dark background
-    card: "#000033",
-    border: "rgba(255, 255, 255, 0.1)",
-    tint: "#87CEEB",
-    tabIconDefault: "#4682B4",
-    tabIconSelected: "#87CEEB",
-  },
-  dark: {
-    primary: "#87CEEB",
+    primary: "#7C3AED",
     primaryDark: "#4682B4",
     primaryLight: "#B0E2FF",
     accent: "#00BFFF",
     text: "#ffffff",
-    background: "#000019",
-    card: "#000033",
-    border: "rgba(255, 255, 255, 0.15)",
-    tint: "#87CEEB",
-    tabIconDefault: "#4682B4",
-    tabIconSelected: "#87CEEB",
+    background: "#070a14",
+    card: "#050812",
+    border: "rgba(255, 255, 255, 0.1)",
+    tint: "#7C3AED",
+    tabIconDefault: "#ccc",
+    tabIconSelected: "#7C3AED",
+  },
+  dark: {
+    primary: "#7C3AED",
+    primaryDark: "#4682B4",
+    primaryLight: "#B0E2FF",
+    accent: "#00BFFF",
+    text: "#ffffff",
+    background: "#070a14",
+    card: "#050812",
+    border: "rgba(255, 255, 255, 0.1)",
+    tint: "#7C3AED",
+    tabIconDefault: "#ccc",
+    tabIconSelected: "#7C3AED",
   },
   gradients: {
-    background: ["#000019", "#000026", "#000033"] as const,
-    button: ["#87CEEB", "#00BFFF"] as const,
-    card: ["rgba(135, 206, 235, 0.4)", "rgba(0, 191, 255, 0.3)"] as const,
-    tabBar: [
-      "rgba(135, 206, 235, 0.8)",
-      "rgba(70, 130, 180, 0.9)",
-      "rgba(0, 191, 255, 0.2)",
-    ] as const,
+    background: ["#070a14", "#080c1a", "#091021"] as const,
+    button: ["#7C3AED", "#6366F1"] as const,
+    card: ["rgba(124, 58, 237, 0.08)", "rgba(99, 102, 241, 0.04)"] as const,
+    tabBar: ["#050812", "#060a16", "#070c1a"] as const,
   },
 };
 
