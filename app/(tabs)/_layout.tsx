@@ -1,33 +1,9 @@
 import { Tabs } from "expo-router";
-import { Platform, StyleSheet, View } from "react-native";
+import { Platform, StyleSheet } from "react-native";
 import { IconSymbol } from "@/components/ui/IconSymbol";
 import Colors from "@/constants/Colors";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import TabBarBackground from "@/components/ui/TabBarBackground";
-import { LinearGradient } from "expo-linear-gradient";
-import { BlurView } from "expo-blur";
-
-function CreateButton({ color }: { color: string }) {
-  return (
-    <View style={styles.createButton}>
-      <BlurView intensity={20} tint="dark" style={StyleSheet.absoluteFill} />
-      <LinearGradient
-        colors={Colors.gradients.glow}
-        style={styles.createGlow}
-        start={{ x: 0.5, y: 0.5 }}
-        end={{ x: 1.5, y: 1.5 }}
-      />
-      <LinearGradient
-        colors={Colors.gradients.primary}
-        style={styles.createGradient}
-        start={{ x: 0.1, y: 0 }}
-        end={{ x: 0.9, y: 1 }}
-      >
-        <IconSymbol size={28} name="plus.circle.fill" color="#ffffff" />
-      </LinearGradient>
-    </View>
-  );
-}
 
 export default function TabLayout() {
   const colorScheme = useColorScheme() ?? "light";
@@ -73,13 +49,6 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="create"
-        options={{
-          title: "Create",
-          tabBarIcon: ({ color }) => <CreateButton color={color} />,
-        }}
-      />
-      <Tabs.Screen
         name="settings"
         options={{
           title: "Settings",
@@ -91,28 +60,3 @@ export default function TabLayout() {
     </Tabs>
   );
 }
-
-const styles = StyleSheet.create({
-  createButton: {
-    width: 44,
-    height: 44,
-    justifyContent: "center",
-    alignItems: "center",
-    marginTop: -10,
-    borderRadius: 22,
-    overflow: "hidden",
-  },
-  createGlow: {
-    position: "absolute",
-    width: "150%",
-    height: "150%",
-    opacity: 0.5,
-    transform: [{ scale: 1.2 }],
-  },
-  createGradient: {
-    width: "100%",
-    height: "100%",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-});

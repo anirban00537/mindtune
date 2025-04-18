@@ -6,6 +6,7 @@ import {
   Image,
   Platform,
   Animated,
+  Text,
 } from "react-native";
 import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
@@ -13,34 +14,23 @@ import Colors from "@/constants/Colors";
 import { Ionicons } from "@expo/vector-icons";
 import { useState, useRef } from "react";
 import { IconSymbol } from "./IconSymbol";
+import { useRouter } from "expo-router";
 
 export default function Header() {
   const [isFocused, setIsFocused] = useState(false);
   const animatedScale = useRef(new Animated.Value(1)).current;
+  const router = useRouter();
 
-  const handleSearchFocus = () => {
-    setIsFocused(true);
-    Animated.spring(animatedScale, {
-      toValue: 0.98,
-      useNativeDriver: true,
-    }).start();
-  };
-
-  const handleSearchBlur = () => {
-    setIsFocused(false);
-    Animated.spring(animatedScale, {
-      toValue: 1,
-      useNativeDriver: true,
-    }).start();
+  const handleSearchPress = () => {
+    router.push("/search");
   };
 
   return (
     <View style={styles.container}>
-      <Animated.View
-        style={[
-          styles.searchContainer,
-          { transform: [{ scale: animatedScale }] },
-        ]}
+      <TouchableOpacity
+        style={[styles.searchContainer]}
+        onPress={handleSearchPress}
+        activeOpacity={0.8}
       >
         <BlurView intensity={8} tint="dark" style={StyleSheet.absoluteFill}>
           <LinearGradient
@@ -53,15 +43,11 @@ export default function Header() {
         <IconSymbol
           name="magnifyingglass"
           size={20}
-          color={isFocused ? Colors.light.primary : Colors.light.textSecondary}
+          color={Colors.light.textSecondary}
         />
-        <TextInput
-          placeholder="Search sessions..."
-          placeholderTextColor={Colors.light.textSecondary}
-          style={[styles.searchInput, isFocused && styles.searchInputFocused]}
-          onFocus={handleSearchFocus}
-          onBlur={handleSearchBlur}
-        />
+        <View style={styles.searchInput}>
+          <Text style={styles.searchPlaceholder}>Search sessions...</Text>
+        </View>
         <TouchableOpacity style={styles.timerButton}>
           <Ionicons
             name="timer-outline"
@@ -69,7 +55,7 @@ export default function Header() {
             color={Colors.light.textSecondary}
           />
         </TouchableOpacity>
-      </Animated.View>
+      </TouchableOpacity>
     </View>
   );
 }
@@ -81,25 +67,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     gap: 12,
     marginTop: 16,
-  },
-  logoContainer: {
-    width: 44,
-    height: 44,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  logo: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-  },
-  logoGlow: {
-    position: "absolute",
-    width: "150%",
-    height: "150%",
-    borderRadius: 33,
-    opacity: 0.6,
-    transform: [{ scale: 1.2 }],
   },
   searchContainer: {
     flex: 1,
@@ -115,17 +82,12 @@ const styles = StyleSheet.create({
   },
   searchInput: {
     flex: 1,
-    color: Colors.light.text,
-    fontSize: 16,
     height: "100%",
-    ...Platform.select({
-      ios: {
-        paddingTop: 2,
-      },
-    }),
+    justifyContent: "center",
   },
-  searchInputFocused: {
-    color: Colors.light.text,
+  searchPlaceholder: {
+    color: Colors.light.textSecondary,
+    fontSize: 16,
   },
   timerButton: {
     width: 32,
