@@ -10,8 +10,9 @@ import {
 import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
 import Colors from "@/constants/Colors";
-import { IconSymbol } from "./IconSymbol";
+import { Ionicons } from "@expo/vector-icons";
 import { useState, useRef } from "react";
+import { IconSymbol } from "./IconSymbol";
 
 export default function Header() {
   const [isFocused, setIsFocused] = useState(false);
@@ -62,8 +63,8 @@ export default function Header() {
           onBlur={handleSearchBlur}
         />
         <TouchableOpacity style={styles.timerButton}>
-          <IconSymbol
-            name="timer"
+          <Ionicons
+            name="timer-outline"
             size={22}
             color={Colors.light.textSecondary}
           />

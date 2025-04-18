@@ -26,7 +26,7 @@ interface PlaylistCardProps {
 export function PlaylistCard({
   title,
   image,
-  author = "by Innertune",
+  author = "by Mindtune",
   duration,
   style,
   onPress,

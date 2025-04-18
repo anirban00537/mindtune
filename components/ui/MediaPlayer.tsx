@@ -40,7 +40,7 @@ export default function MediaPlayer() {
             Awaken Your Money Power
           </Text>
           <Text style={styles.author} numberOfLines={1}>
-            by Innertune
+            by MindTune
           </Text>
         </View>
 
