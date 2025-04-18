@@ -12,26 +12,28 @@ import Colors from "@/constants/Colors";
 import { CardBase } from "./CardBase";
 import { useRef, useCallback } from "react";
 import { LinearGradient } from "expo-linear-gradient";
+import { useRouter } from "expo-router";
 
 interface PlaylistCardProps {
+  id: string;
   title: string;
   image: string;
   author?: string;
   duration?: string;
   style?: ViewStyle;
-  onPress?: () => void;
   onOptionsPress?: () => void;
 }
 
 export function PlaylistCard({
+  id,
   title,
   image,
   author = "by Mindtune",
   duration,
   style,
-  onPress,
   onOptionsPress,
 }: PlaylistCardProps) {
+  const router = useRouter();
   const scale = useRef(new Animated.Value(1)).current;
 
   const handlePressIn = useCallback(() => {
@@ -48,11 +50,15 @@ export function PlaylistCard({
     }).start();
   }, []);
 
+  const handlePress = () => {
+    router.push(`/playlist/${id}`);
+  };
+
   return (
     <Animated.View style={{ transform: [{ scale }] }}>
       <TouchableOpacity
         style={[styles.container, style]}
-        onPress={onPress}
+        onPress={handlePress}
         onPressIn={handlePressIn}
         onPressOut={handlePressOut}
         activeOpacity={1}
@@ -77,7 +83,7 @@ export function PlaylistCard({
             </View>
             <TouchableOpacity
               style={styles.playButton}
-              onPress={onPress}
+              onPress={handlePress}
               hitSlop={8}
             >
               <LinearGradient
