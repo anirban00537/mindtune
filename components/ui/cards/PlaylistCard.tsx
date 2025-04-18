@@ -5,12 +5,12 @@ import {
   Image,
   TouchableOpacity,
   ViewStyle,
+  Animated,
 } from "react-native";
-import { BlurView } from "expo-blur";
-import { LinearGradient } from "expo-linear-gradient";
 import { IconSymbol } from "../IconSymbol";
 import Colors from "@/constants/Colors";
 import { CardBase } from "./CardBase";
+import { useRef, useCallback } from "react";
 
 interface PlaylistCardProps {
   title: string;
@@ -31,36 +31,64 @@ export function PlaylistCard({
   onPress,
   onOptionsPress,
 }: PlaylistCardProps) {
+  const scale = useRef(new Animated.Value(1)).current;
+
+  const handlePressIn = useCallback(() => {
+    Animated.spring(scale, {
+      toValue: 0.95,
+      useNativeDriver: true,
+    }).start();
+  }, []);
+
+  const handlePressOut = useCallback(() => {
+    Animated.spring(scale, {
+      toValue: 1,
+      useNativeDriver: true,
+    }).start();
+  }, []);
+
   return (
-    <TouchableOpacity
-      style={[styles.container, style]}
-      onPress={onPress}
-      activeOpacity={0.9}
-    >
-      <CardBase>
-        <View style={styles.content}>
-          <Image source={{ uri: image }} style={styles.image} />
-          <View style={styles.textContent}>
-            <Text numberOfLines={1} style={styles.title}>
-              {title}
-            </Text>
-            <Text style={styles.author}>{author}</Text>
-            {duration && <Text style={styles.duration}>◷ {duration}</Text>}
-          </View>
-          <TouchableOpacity
-            style={styles.optionsButton}
-            onPress={onOptionsPress}
-            hitSlop={8}
-          >
-            <IconSymbol
-              name="ellipsis"
-              size={20}
-              color="rgba(255, 255, 255, 0.6)"
+    <Animated.View style={{ transform: [{ scale }] }}>
+      <TouchableOpacity
+        style={[styles.container, style]}
+        onPress={onPress}
+        onPressIn={handlePressIn}
+        onPressOut={handlePressOut}
+        activeOpacity={1}
+      >
+        <CardBase intensity={20}>
+          <View style={styles.content}>
+            <Image
+              source={{ uri: image }}
+              style={styles.image}
+              resizeMode="cover"
             />
-          </TouchableOpacity>
-        </View>
-      </CardBase>
-    </TouchableOpacity>
+            <View style={styles.textContent}>
+              <Text numberOfLines={1} style={styles.title}>
+                {title}
+              </Text>
+              <Text style={styles.author}>{author}</Text>
+              {duration && (
+                <View style={styles.durationContainer}>
+                  <Text style={styles.duration}>◷ {duration}</Text>
+                </View>
+              )}
+            </View>
+            <TouchableOpacity
+              style={styles.optionsButton}
+              onPress={onOptionsPress}
+              hitSlop={8}
+            >
+              <IconSymbol
+                name="ellipsis"
+                size={20}
+                color="rgba(255, 255, 255, 0.6)"
+              />
+            </TouchableOpacity>
+          </View>
+        </CardBase>
+      </TouchableOpacity>
+    </Animated.View>
   );
 }
 
@@ -73,6 +101,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     padding: 12,
+    gap: 12,
   },
   image: {
     width: 56,
@@ -81,25 +110,27 @@ const styles = StyleSheet.create({
   },
   textContent: {
     flex: 1,
-    marginHorizontal: 12,
+    gap: 2,
   },
   title: {
     fontSize: 16,
     fontWeight: "600",
     color: Colors.light.text,
-    marginBottom: 4,
     letterSpacing: 0.2,
   },
   author: {
     fontSize: 14,
     color: Colors.light.text,
     opacity: 0.6,
-    marginBottom: 2,
+  },
+  durationContainer: {
+    marginTop: 2,
   },
   duration: {
     fontSize: 13,
     color: Colors.light.text,
     opacity: 0.5,
+    letterSpacing: 0.1,
   },
   optionsButton: {
     width: 32,
@@ -107,5 +138,6 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     alignItems: "center",
     justifyContent: "center",
+    backgroundColor: Colors.light.pill,
   },
 });

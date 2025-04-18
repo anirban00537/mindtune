@@ -6,11 +6,13 @@ import {
   TouchableOpacity,
   ViewStyle,
   Platform,
+  Animated,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { BlurView } from "expo-blur";
 import Colors from "@/constants/Colors";
 import { CardBase } from "./CardBase";
+import { useRef, useCallback } from "react";
 
 interface SearchResultCardProps {
   title: string;
@@ -29,48 +31,88 @@ export function SearchResultCard({
   style,
   onPress,
 }: SearchResultCardProps) {
+  const scale = useRef(new Animated.Value(1)).current;
+  const playScale = useRef(new Animated.Value(1)).current;
+
+  const handlePressIn = useCallback(() => {
+    Animated.spring(scale, {
+      toValue: 0.98,
+      useNativeDriver: true,
+    }).start();
+  }, []);
+
+  const handlePressOut = useCallback(() => {
+    Animated.spring(scale, {
+      toValue: 1,
+      useNativeDriver: true,
+    }).start();
+  }, []);
+
+  const handlePlayPress = useCallback(() => {
+    Animated.sequence([
+      Animated.timing(playScale, {
+        toValue: 0.8,
+        duration: 100,
+        useNativeDriver: true,
+      }),
+      Animated.spring(playScale, {
+        toValue: 1,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  }, []);
+
   return (
-    <TouchableOpacity
-      style={[styles.container, style]}
-      onPress={onPress}
-      activeOpacity={0.9}
-    >
-      <CardBase gradient={false}>
-        <View style={styles.contentContainer}>
-          <Image
-            source={{ uri: image }}
-            style={styles.image}
-            resizeMode="cover"
-          />
-          <View style={styles.textContainer}>
-            <Text numberOfLines={1} style={styles.title}>
-              {title}
-            </Text>
-            <Text numberOfLines={2} style={styles.description}>
-              {description}
-            </Text>
-            <View style={styles.durationContainer}>
-              <Text style={styles.duration}>◷ {duration}</Text>
-            </View>
-          </View>
-          <TouchableOpacity style={styles.playButton}>
-            <BlurView
-              intensity={20}
-              tint="dark"
-              style={StyleSheet.absoluteFill}
+    <Animated.View style={{ transform: [{ scale }] }}>
+      <TouchableOpacity
+        style={[styles.container, style]}
+        onPress={onPress}
+        onPressIn={handlePressIn}
+        onPressOut={handlePressOut}
+        activeOpacity={1}
+      >
+        <CardBase gradient={false} intensity={20}>
+          <View style={styles.contentContainer}>
+            <Image
+              source={{ uri: image }}
+              style={styles.image}
+              resizeMode="cover"
             />
-            <LinearGradient
-              colors={Colors.gradients.button}
-              style={styles.playGradient}
-              start={{ x: 0.2, y: 0 }}
-              end={{ x: 0.8, y: 1 }}
-            >
-              <Text style={styles.playText}>▶</Text>
-            </LinearGradient>
-          </TouchableOpacity>
-        </View>
-      </CardBase>
-    </TouchableOpacity>
+            <View style={styles.textContainer}>
+              <Text numberOfLines={1} style={styles.title}>
+                {title}
+              </Text>
+              <Text numberOfLines={2} style={styles.description}>
+                {description}
+              </Text>
+              <View style={styles.durationContainer}>
+                <Text style={styles.duration}>◷ {duration}</Text>
+              </View>
+            </View>
+            <Animated.View style={{ transform: [{ scale: playScale }] }}>
+              <TouchableOpacity
+                style={styles.playButton}
+                onPress={handlePlayPress}
+              >
+                <BlurView
+                  intensity={20}
+                  tint="dark"
+                  style={StyleSheet.absoluteFill}
+                />
+                <LinearGradient
+                  colors={Colors.gradients.button}
+                  style={styles.playGradient}
+                  start={{ x: 0.2, y: 0 }}
+                  end={{ x: 0.8, y: 1 }}
+                >
+                  <Text style={styles.playText}>▶</Text>
+                </LinearGradient>
+              </TouchableOpacity>
+            </Animated.View>
+          </View>
+        </CardBase>
+      </TouchableOpacity>
+    </Animated.View>
   );
 }
 
@@ -79,14 +121,17 @@ const styles = StyleSheet.create({
     width: "100%",
     height: 100,
     marginBottom: 12,
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.2,
-    shadowRadius: 3.84,
-    elevation: 5,
+    ...Platform.select({
+      ios: {
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.15,
+        shadowRadius: 3.84,
+      },
+      android: {
+        elevation: 3,
+      },
+    }),
   },
   contentContainer: {
     flex: 1,

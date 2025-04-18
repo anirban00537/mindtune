@@ -35,19 +35,6 @@ export default function Header() {
 
   return (
     <View style={styles.container}>
-      <View style={styles.logoContainer}>
-        <LinearGradient
-          colors={[Colors.light.glow, "rgba(124, 58, 237, 0)"]}
-          style={styles.logoGlow}
-          start={{ x: 0.5, y: 0.5 }}
-          end={{ x: 1.5, y: 1.5 }}
-        />
-        <Image
-          source={require("@/assets/images/splash-icon.png")}
-          style={styles.logo}
-        />
-      </View>
-
       <Animated.View
         style={[
           styles.searchContainer,
@@ -92,6 +79,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingHorizontal: 16,
     gap: 12,
+    marginTop: 16,
   },
   logoContainer: {
     width: 44,
