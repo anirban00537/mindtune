@@ -54,6 +54,7 @@ const Colors = {
     primary: ["#7C3AED", "#6366F1"] as const,
     accent: ["#FFC107", "#FF9800"] as const,
     glow: ["rgba(124, 58, 237, 0.2)", "rgba(124, 58, 237, 0)"] as const,
+    glass: ["rgba(255, 255, 255, 0.1)", "rgba(255, 255, 255, 0.05)"] as const,
     overlay: ["rgba(0,0,0,0)", "rgba(0,0,0,0.7)"] as const,
     card: ["rgba(124, 58, 237, 0.08)", "rgba(99, 102, 241, 0.04)"] as const,
     tabBar: ["#050812", "#060a16", "#070c1a"] as const,

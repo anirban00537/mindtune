@@ -17,13 +17,13 @@ export function CardBase({
   intensity = 15,
 }: CardBaseProps) {
   return (
-    <BlurView intensity={intensity} tint="dark" style={[styles.card, style]}>
+    <BlurView intensity={25} tint="dark" style={[styles.card, style]}>
       {gradient ? (
         <LinearGradient
-          colors={Colors.gradients.card}
+          colors={Colors.gradients.pillActive}
           style={styles.gradient}
-          start={{ x: 0.2, y: 0 }}
-          end={{ x: 0.8, y: 1 }}
+          start={{ x: 0.1, y: 0 }}
+          end={{ x: 0.9, y: 1 }}
         >
           {children}
         </LinearGradient>
@@ -36,7 +36,7 @@ export function CardBase({
 
 const styles = StyleSheet.create({
   card: {
-    borderRadius: 16,
+    borderRadius: 20,
     overflow: "hidden",
     backgroundColor: "rgba(0, 0, 0, 0.2)",
     borderWidth: 1,

@@ -7,10 +7,11 @@ import {
   ViewStyle,
   Animated,
 } from "react-native";
-import { IconSymbol } from "../IconSymbol";
+import { Ionicons } from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
 import { CardBase } from "./CardBase";
 import { useRef, useCallback } from "react";
+import { LinearGradient } from "expo-linear-gradient";
 
 interface PlaylistCardProps {
   title: string;
@@ -75,15 +76,22 @@ export function PlaylistCard({
               )}
             </View>
             <TouchableOpacity
-              style={styles.optionsButton}
-              onPress={onOptionsPress}
+              style={styles.playButton}
+              onPress={onPress}
               hitSlop={8}
             >
-              <IconSymbol
-                name="ellipsis"
-                size={20}
-                color="rgba(255, 255, 255, 0.6)"
-              />
+              <LinearGradient
+                colors={Colors.gradients.button}
+                style={styles.playGradient}
+                start={{ x: 0.2, y: 0 }}
+                end={{ x: 0.8, y: 1 }}
+              >
+                <Ionicons
+                  name="play"
+                  size={20}
+                  color="rgba(255, 255, 255, 0.6)"
+                />
+              </LinearGradient>
             </TouchableOpacity>
           </View>
         </CardBase>
@@ -132,12 +140,16 @@ const styles = StyleSheet.create({
     opacity: 0.5,
     letterSpacing: 0.1,
   },
-  optionsButton: {
+  playButton: {
     width: 32,
     height: 32,
     borderRadius: 16,
+    overflow: "hidden",
+  },
+  playGradient: {
+    width: "100%",
+    height: "100%",
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: Colors.light.pill,
   },
 });

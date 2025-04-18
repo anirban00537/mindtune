@@ -7,7 +7,7 @@ import {
 } from "react-native";
 import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
-import { IconSymbol } from "./IconSymbol";
+import { Ionicons } from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -16,9 +16,9 @@ export default function MediaPlayer() {
 
   return (
     <View style={[styles.container, { paddingBottom: insets.bottom }]}>
-      <BlurView intensity={40} tint="dark" style={StyleSheet.absoluteFill}>
+      <BlurView intensity={60} tint="dark" style={StyleSheet.absoluteFill}>
         <LinearGradient
-          colors={Colors.gradients.tabBar}
+          colors={['rgba(255, 255, 255, 0.15)', 'rgba(255, 255, 255, 0.05)']}
           style={StyleSheet.absoluteFill}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
@@ -56,7 +56,7 @@ export default function MediaPlayer() {
             start={{ x: 0.2, y: 0 }}
             end={{ x: 0.8, y: 1 }}
           >
-            <IconSymbol name="play.fill" size={24} color={Colors.light.text} />
+            <Ionicons name="play" size={24} color="#FFFFFF" />
           </LinearGradient>
         </TouchableOpacity>
       </View>
@@ -70,14 +70,18 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
-    backgroundColor: Colors.light.card,
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    borderTopWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.2)',
+    borderTopLeftRadius: 16,
+    borderTopRightRadius: 16,
     overflow: "hidden",
     ...Platform.select({
       ios: {
         shadowColor: "#000",
         shadowOffset: { width: 0, height: -2 },
-        shadowOpacity: 0.25,
-        shadowRadius: 3.84,
+        shadowOpacity: 0.15,
+        shadowRadius: 8,
       },
       android: {
         elevation: 5,

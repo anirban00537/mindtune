@@ -15,7 +15,6 @@ import ContributionBanner from "@/components/ui/ContributionBanner";
 import MediaPlayer from "@/components/ui/MediaPlayer";
 import { IconSymbol } from "@/components/ui/IconSymbol";
 import { PlaylistCard } from "@/components/ui/cards/PlaylistCard";
-import { FeaturedCard } from "@/components/ui/cards/FeaturedCard";
 import { LastSessionCard } from "@/components/ui/cards/LastSessionCard";
 
 interface LastSession {
@@ -148,16 +147,7 @@ export default function HomeScreen() {
           <ContributionBanner />
         </View>
 
-        {/* Just for You */}
-        <View style={[styles.section, styles.sectionSpacing]}>
-          <Text style={styles.sectionTitle}>Just for You</Text>
-          <FeaturedCard
-            title={justForYou.title}
-            description={justForYou.description}
-            meta={{ duration: justForYou.duration }}
-            style={styles.featuredCard}
-          />
-        </View>
+      
 
         {/* Categories */}
         {categories.map((category) => (

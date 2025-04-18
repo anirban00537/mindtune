@@ -1,7 +1,7 @@
 import { StyleSheet, View, Text, TouchableOpacity } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { BlurView } from "expo-blur";
-import { IconSymbol } from "./IconSymbol";
+import { Ionicons } from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
 
 export default function ContributionBanner() {
@@ -9,19 +9,19 @@ export default function ContributionBanner() {
     <TouchableOpacity activeOpacity={0.9}>
       <BlurView intensity={15} tint="dark" style={styles.container}>
         <LinearGradient
-          colors={["rgba(255, 193, 7, 0.2)", "rgba(255, 152, 0, 0.1)"]}
+          colors={Colors.gradients.pillActive}
           style={StyleSheet.absoluteFill}
           start={{ x: 0.1, y: 0 }}
           end={{ x: 0.9, y: 1 }}
         />
         <View style={styles.iconContainer}>
           <LinearGradient
-            colors={["#FFC107", "#FF9800"]}
+            colors={Colors.gradients.primary}
             style={styles.iconBackground}
             start={{ x: 0.1, y: 0 }}
             end={{ x: 0.9, y: 1 }}
           >
-            <IconSymbol name="star.fill" size={20} color="#ffffff" />
+            <Ionicons name="star" size={20} color={Colors.light.text} />
           </LinearGradient>
         </View>
         <View style={styles.content}>
@@ -30,10 +30,10 @@ export default function ContributionBanner() {
             Unlock all features, no commitment
           </Text>
         </View>
-        <IconSymbol
-          name="chevron.right"
+        <Ionicons
+          name="chevron-forward"
           size={20}
-          color="rgba(255, 193, 7, 0.8)"
+          color={Colors.light.primaryLight}
         />
       </BlurView>
     </TouchableOpacity>
@@ -47,7 +47,7 @@ const styles = StyleSheet.create({
     padding: 16,
     borderRadius: 20,
     borderWidth: 1,
-    borderColor: "rgba(255, 193, 7, 0.2)",
+    borderColor: Colors.light.cardBorder,
     overflow: "hidden",
     gap: 12,
   },

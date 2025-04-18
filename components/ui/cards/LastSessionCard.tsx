@@ -10,6 +10,7 @@ import {
 import { CardBase } from "./CardBase";
 import Colors from "@/constants/Colors";
 import { useRef, useCallback } from "react";
+import { LinearGradient } from "expo-linear-gradient";
 
 interface LastSessionCardProps {
   id: string;
@@ -51,14 +52,24 @@ export function LastSessionCard({
         onPressOut={handlePressOut}
         activeOpacity={1}
       >
-        <CardBase intensity={20}>
+        <CardBase intensity={30}>
           <View style={styles.card}>
-            <Image
-              source={{ uri: image }}
+            <LinearGradient
+              colors={Colors.gradients.glass}
+              style={StyleSheet.absoluteFill}
+              start={{ x: 0.2, y: 0 }}
+              end={{ x: 0.8, y: 1 }}
+            />
+            <Image 
+              source={{ uri: image }} 
               style={styles.image}
-              resizeMode="cover"
+              resizeMode="cover" 
             />
             <View style={styles.content}>
+              <LinearGradient
+                colors={["rgba(0, 0, 0, 0)", "rgba(0, 0, 0, 0.7)"]}
+                style={StyleSheet.absoluteFill}
+              />
               <Text numberOfLines={1} style={styles.title}>
                 {title}
               </Text>
