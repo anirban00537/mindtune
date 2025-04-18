@@ -6,7 +6,6 @@ import {
   TouchableOpacity,
   Dimensions,
   ViewStyle,
-  Image,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import Colors from "@/constants/Colors";
@@ -17,7 +16,7 @@ import MediaPlayer from "@/components/ui/MediaPlayer";
 import { IconSymbol } from "@/components/ui/IconSymbol";
 import { PlaylistCard } from "@/components/ui/cards/PlaylistCard";
 import { FeaturedCard } from "@/components/ui/cards/FeaturedCard";
-import { CardBase } from "@/components/ui/cards/CardBase";
+import { LastSessionCard } from "@/components/ui/cards/LastSessionCard";
 
 interface LastSession {
   id: string;
@@ -111,25 +110,6 @@ export default function HomeScreen() {
   const insets = useSafeAreaInsets();
   const { width } = Dimensions.get("window");
 
-  const renderLastSessionCard = ({ id, title, image }: LastSession) => (
-    <TouchableOpacity
-      key={id}
-      style={styles.lastSessionCard}
-      activeOpacity={0.9}
-    >
-      <CardBase>
-        <View style={styles.sessionCard}>
-          <Image source={{ uri: image }} style={styles.sessionImage} />
-          <View style={styles.sessionContent}>
-            <Text numberOfLines={1} style={styles.sessionTitle}>
-              {title}
-            </Text>
-          </View>
-        </View>
-      </CardBase>
-    </TouchableOpacity>
-  );
-
   return (
     <View style={styles.container}>
       <LinearGradient
@@ -157,7 +137,9 @@ export default function HomeScreen() {
             showsHorizontalScrollIndicator={false}
             contentContainerStyle={styles.horizontalScroll}
           >
-            {lastSessions.map(renderLastSessionCard)}
+            {lastSessions.map((session) => (
+              <LastSessionCard key={session.id} {...session} />
+            ))}
           </ScrollView>
         </View>
 
@@ -225,35 +207,6 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     paddingBottom: 120,
   },
-  lastSessionCard: {
-    width: 140,
-    marginRight: 12,
-  },
-  sessionCard: {
-    borderRadius: 16,
-    overflow: "hidden",
-  },
-  sessionImage: {
-    width: "100%",
-    aspectRatio: 1,
-    borderRadius: 16,
-  },
-  sessionContent: {
-    position: "absolute",
-    bottom: 0,
-    left: 0,
-    right: 0,
-    padding: 12,
-    backgroundColor: "rgba(0, 0, 0, 0.4)",
-    borderBottomLeftRadius: 16,
-    borderBottomRightRadius: 16,
-  },
-  sessionTitle: {
-    fontSize: 14,
-    fontWeight: "600",
-    color: Colors.light.text,
-    letterSpacing: 0.2,
-  },
   section: {
     marginTop: 24,
     marginBottom: 16,
@@ -275,15 +228,6 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     letterSpacing: 0.3,
   },
-  gridContainer: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    marginHorizontal: -4,
-  },
-  gridCard: {
-    width: "33.33%",
-    marginBottom: 8,
-  } as ViewStyle,
   horizontalScroll: {
     paddingRight: 16,
   },
