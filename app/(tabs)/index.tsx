@@ -10,7 +10,6 @@ import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import Colors from "@/constants/Colors";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import ExploreBar from "@/components/ui/ExploreBar";
 import { SessionCard } from "@/components/ui/cards/SessionCard";
 import { FeaturedCard } from "@/components/ui/cards/FeaturedCard";
 
@@ -85,13 +84,10 @@ export default function HomeScreen() {
         style={styles.scrollView}
         contentContainerStyle={[
           styles.contentContainer,
-          { paddingBottom: insets.bottom + 20 },
+          { paddingBottom: insets.bottom + 20, paddingTop: insets.top + 16 },
         ]}
         showsVerticalScrollIndicator={false}
       >
-        <View style={{ height: insets.top }} />
-        <ExploreBar />
-
         {/* Recent Sessions */}
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
@@ -168,7 +164,6 @@ const styles = StyleSheet.create({
   },
   contentContainer: {
     flexGrow: 1,
-    paddingTop: 16,
   },
   section: {
     marginTop: 40,

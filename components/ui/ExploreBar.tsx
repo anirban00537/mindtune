@@ -11,50 +11,87 @@ import { useRouter } from "expo-router";
 import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
 import Colors from "@/constants/Colors";
-import { useState, useRef } from "react";
+import { useState, useRef, useCallback } from "react";
 
-export default function ExploreBar() {
+interface ExploreBarProps {
+  onChangeText?: (text: string) => void;
+}
+
+export default function ExploreBar({ onChangeText }: ExploreBarProps) {
   const router = useRouter();
   const [isFocused, setIsFocused] = useState(false);
   const animatedScale = useRef(new Animated.Value(1)).current;
+  const inputRef = useRef<TextInput>(null);
 
-  const handlePressIn = () => {
+  const handlePressIn = useCallback(() => {
     Animated.spring(animatedScale, {
       toValue: 0.98,
       useNativeDriver: true,
     }).start();
-  };
+  }, []);
 
-  const handlePressOut = () => {
+  const handlePressOut = useCallback(() => {
     Animated.spring(animatedScale, {
       toValue: 1,
       useNativeDriver: true,
     }).start();
-  };
+  }, []);
+
+  const handleFocus = useCallback(() => {
+    setIsFocused(true);
+    handlePressOut();
+  }, [handlePressOut]);
 
   const SearchContent = () => (
     <View style={styles.searchInner}>
       <IconSymbol
         name="magnifyingglass"
-        size={24}
-        color="rgba(255, 255, 255, 0.8)"
+        size={22}
+        color={isFocused ? Colors.light.primary : "rgba(255, 255, 255, 0.8)"}
       />
       <TextInput
+        ref={inputRef}
         style={[styles.input, isFocused && styles.inputFocused]}
-        placeholder="Find your perfect meditation..."
+        placeholder="Search meditations..."
         placeholderTextColor="rgba(255, 255, 255, 0.6)"
-        onFocus={() => {
-          setIsFocused(true);
-          router.push("/explore");
-        }}
+        onFocus={handleFocus}
         onBlur={() => setIsFocused(false)}
+        onChangeText={onChangeText}
+        returnKeyType="search"
+        autoCapitalize="none"
+        autoCorrect={false}
       />
+      {isFocused && (
+        <Pressable
+          onPress={() => {
+            if (inputRef.current) {
+              inputRef.current.clear();
+              if (onChangeText) onChangeText("");
+            }
+          }}
+          hitSlop={8}
+        >
+          <IconSymbol
+            name="xmark.circle.fill"
+            size={20}
+            color="rgba(255, 255, 255, 0.4)"
+          />
+        </Pressable>
+      )}
     </View>
   );
 
   return (
     <View style={styles.wrapper}>
-      <Pressable onPressIn={handlePressIn} onPressOut={handlePressOut}>
+      <Pressable
+        onPressIn={!isFocused ? handlePressIn : undefined}
+        onPressOut={!isFocused ? handlePressOut : undefined}
+        onPress={() => {
+          if (!isFocused) {
+            inputRef.current?.focus();
+          }
+        }}
+      >
         <Animated.View
           style={[
             styles.animatedContainer,
@@ -78,7 +115,6 @@ export default function ExploreBar() {
 
 const styles = StyleSheet.create({
   wrapper: {
-    padding: 16,
     shadowColor: "#000",
     shadowOffset: {
       width: 0,
@@ -89,25 +125,25 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   animatedContainer: {
-    borderRadius: 20,
+    borderRadius: 16,
     overflow: "hidden",
   },
   searchContainer: {
     borderWidth: 1,
     borderColor: "rgba(255, 255, 255, 0.1)",
-    borderRadius: 20,
+    borderRadius: 16,
     overflow: "hidden",
   },
   searchInner: {
     flexDirection: "row",
     alignItems: "center",
-    paddingHorizontal: 20,
-    height: 54,
-    gap: 14,
+    paddingHorizontal: 16,
+    height: 48,
+    gap: 12,
   },
   input: {
     flex: 1,
-    color: "#fff",
+    color: Colors.light.text,
     fontSize: 16,
     fontWeight: "500",
     height: "100%",
@@ -118,6 +154,6 @@ const styles = StyleSheet.create({
     }),
   },
   inputFocused: {
-    color: "#fff",
+    color: Colors.light.text,
   },
 });
