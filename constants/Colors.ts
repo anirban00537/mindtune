@@ -49,7 +49,7 @@ const Colors = {
     divider: "rgba(255, 255, 255, 0.06)",
   },
   gradients: {
-    background: ["#070a14", "#080c1a", "#091021"] as const,
+    background: ["#070a14", "#091021", "#080c1a"] as const,
     button: ["#7C3AED", "#6366F1"] as const,
     primary: ["#7C3AED", "#6366F1"] as const,
     accent: ["#FFC107", "#FF9800"] as const,
