@@ -3,10 +3,12 @@ import {
   View,
   Text,
   Image,
+  ImageBackground,
   TouchableOpacity,
   ScrollView,
   Dimensions,
   ActivityIndicator,
+  Platform,
 } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { BlurView } from "expo-blur";
@@ -66,7 +68,7 @@ export default function PlaylistDetailScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const [isSaved, setIsSaved] = useState(false);
-  const [imageLoading, setImageLoading] = useState(true);
+  const [imageLoading, setImageLoading] = useState(false); // Changed from true to false
   const [imageError, setImageError] = useState(false);
 
   const playlist = playlists[id as string];
@@ -134,93 +136,73 @@ export default function PlaylistDetailScreen() {
       >
         <View style={styles.section}>
           <View style={styles.coverContainer}>
-            <CardBase intensity={15}>
-              <Image
-                source={{ uri: playlist.image }}
-                style={styles.coverImage}
-                resizeMode="cover"
-                onLoadStart={() => setImageLoading(true)}
-                onLoadEnd={() => setImageLoading(false)}
-                onError={() => {
-                  setImageLoading(false);
-                  setImageError(true);
-                }}
-              />
-              {imageLoading && (
-                <View style={styles.loadingContainer}>
-                  <ActivityIndicator
-                    size="large"
-                    color={Colors.light.primary}
-                  />
-                </View>
-              )}
-              {!imageLoading && !imageError && (
-                <>
-                  <View style={styles.imageOverlay} />
-                  <LinearGradient
-                    colors={["transparent", "rgba(0,0,0,0.6)"]}
-                    style={styles.gradientOverlay}
-                    start={{ x: 0.5, y: 0 }}
-                    end={{ x: 0.5, y: 1 }}
-                  />
-                </>
-              )}
-              {imageError && (
-                <View style={styles.errorContainer}>
-                  <IconSymbol
-                    name="photo"
-                    size={48}
-                    color={Colors.light.textSecondary}
-                  />
-                  <Text style={styles.errorText}>Failed to load image</Text>
-                </View>
-              )}
-              <TouchableOpacity style={styles.playButton}>
-                <BlurView
-                  intensity={25}
-                  tint="dark"
-                  style={StyleSheet.absoluteFill}
-                />
+            <Image
+              source={{ uri: playlist.image }}
+              style={StyleSheet.absoluteFill}
+              resizeMode="cover"
+              onLoadStart={() => setImageLoading(true)}
+              onLoadEnd={() => setImageLoading(false)}
+              onError={() => setImageError(true)}
+            />
+            {imageLoading && (
+              <View style={styles.loadingContainer}>
+                <ActivityIndicator size="large" color={Colors.light.primary} />
+              </View>
+            )}
+            {!imageLoading && !imageError && (
+              <>
+                <View style={styles.imageOverlay} />
                 <LinearGradient
-                  colors={Colors.gradients.primary}
-                  style={StyleSheet.absoluteFill}
-                  start={{ x: 0.2, y: 0 }}
-                  end={{ x: 0.8, y: 1 }}
-                >
-                  <View style={styles.playButtonContent}>
-                    <IconSymbol name="play.fill" size={32} color="#FFFFFF" />
+                  colors={["transparent", "rgba(0,0,0,0.7)", "rgba(0,0,0,0.9)"]}
+                  style={styles.gradientOverlay}
+                  start={{ x: 0.5, y: 0.2 }}
+                  end={{ x: 0.5, y: 1 }}
+                />
+                <View style={styles.coverContent}>
+                  <Text style={styles.coverTitle}>{playlist.title}</Text>
+                  <Text style={styles.coverAuthor}>{playlist.author}</Text>
+                  <Text style={styles.coverDescription}>
+                    {playlist.description}
+                  </Text>
+                  <View style={styles.coverStats}>
+                    <View style={styles.stat}>
+                      <Ionicons
+                        name="time-outline"
+                        size={16}
+                        color={Colors.light.textSecondary}
+                      />
+                      <Text style={styles.statText}>{playlist.duration}</Text>
+                    </View>
+                    <View style={styles.stat}>
+                      <Ionicons
+                        name="chatbubble-outline"
+                        size={16}
+                        color={Colors.light.textSecondary}
+                      />
+                      <Text style={styles.statText}>
+                        {playlist.affirmations.length} affirmations
+                      </Text>
+                    </View>
                   </View>
-                </LinearGradient>
-              </TouchableOpacity>
-            </CardBase>
+                </View>
+              </>
+            )}
           </View>
-        </View>
 
-        <View style={styles.section}>
-          <Text style={styles.title}>{playlist.title}</Text>
-          <Text style={styles.author}>{playlist.author}</Text>
-          <Text style={styles.description}>{playlist.description}</Text>
-
-          <View style={styles.statsContainer}>
-            <View style={styles.stat}>
-              <IconSymbol
-                name="clock"
-                size={16}
-                color={Colors.light.textSecondary}
-              />
-              <Text style={styles.statText}>{playlist.duration}</Text>
-            </View>
-            <View style={styles.stat}>
-              <IconSymbol
-                name="text.bubble"
-                size={16}
-                color={Colors.light.textSecondary}
-              />
-              <Text style={styles.statText}>
-                {playlist.affirmations.length} affirmations
-              </Text>
-            </View>
-          </View>
+          <TouchableOpacity style={styles.floatingPlayButton}>
+            <BlurView
+              intensity={25}
+              tint="dark"
+              style={StyleSheet.absoluteFill}
+            />
+            <LinearGradient
+              colors={Colors.gradients.primary}
+              style={[StyleSheet.absoluteFill, styles.playButtonGradient]}
+              start={{ x: 0.2, y: 0 }}
+              end={{ x: 0.8, y: 1 }}
+            />
+            <Ionicons name="play" size={32} color="#FFFFFF" />
+          </TouchableOpacity>
         </View>
 
         <View style={styles.section}>
@@ -249,6 +231,24 @@ export default function PlaylistDetailScreen() {
 }
 
 const styles = StyleSheet.create({
+  cardBaseReplacement: {
+    borderRadius: 20,
+    overflow: "hidden",
+    backgroundColor: "rgba(0, 0, 0, 0.2)",
+    borderWidth: 1,
+    borderColor: Colors.light.cardBorder,
+    ...Platform.select({
+      ios: {
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.15,
+        shadowRadius: 3.84,
+      },
+      android: {
+        elevation: 3,
+      },
+    }),
+  },
   container: {
     flex: 1,
     backgroundColor: Colors.light.background,
@@ -262,32 +262,34 @@ const styles = StyleSheet.create({
   },
   section: {
     marginBottom: 32,
+    paddingTop: 24,
     paddingHorizontal: 16,
   },
   sectionHeader: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    marginBottom: 16,
+    marginBottom: 20,
   },
   sectionTitle: {
-    fontSize: 20,
+    fontSize: 22,
     fontWeight: "700",
     color: Colors.light.text,
-    marginBottom: 16,
     letterSpacing: 0.3,
   },
   coverContainer: {
-    width: COVER_IMAGE_SIZE,
+    width: SCREEN_WIDTH,
     height: COVER_IMAGE_SIZE,
+    marginHorizontal: -16,
+    position: "relative",
     borderRadius: 24,
     overflow: "hidden",
-    alignSelf: "center",
-    position: "relative",
+    marginBottom: 48,
   },
   coverImage: {
     width: "100%",
     height: "100%",
+    borderRadius: 0,
   },
   imageOverlay: {
     ...StyleSheet.absoluteFillObject,
@@ -296,23 +298,44 @@ const styles = StyleSheet.create({
   gradientOverlay: {
     ...StyleSheet.absoluteFillObject,
     backgroundColor: "transparent",
+    height: "100%",
   },
   playButton: {
     position: "absolute",
-    bottom: 24,
-    right: 24,
-    width: 64,
-    height: 64,
-    borderRadius: 32,
+    bottom: 32,
+    right: 32,
+    width: 72,
+    height: 72,
+    borderRadius: 36,
     overflow: "hidden",
     shadowColor: "#000",
     shadowOffset: {
       width: 0,
       height: 4,
     },
-    shadowOpacity: 0.3,
-    shadowRadius: 4.65,
-    elevation: 8,
+    shadowOpacity: 0.4,
+    shadowRadius: 6,
+    elevation: 10,
+  },
+  floatingPlayButton: {
+    position: "absolute",
+    bottom: -36,
+    right: 24,
+    width: 72,
+    height: 72,
+    borderRadius: 36,
+    overflow: "hidden",
+    alignItems: "center",
+    justifyContent: "center",
+    shadowColor: Colors.light.primary,
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.4,
+    shadowRadius: 8,
+    elevation: 12,
+    zIndex: 2,
   },
   playButtonGradient: {
     flex: 1,
@@ -334,6 +357,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     overflow: "hidden",
+    backgroundColor: "rgba(255,255,255,0.1)",
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.2)",
   },
   saveButton: {
     position: "absolute",
@@ -345,6 +371,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     overflow: "hidden",
+    backgroundColor: "rgba(255,255,255,0.1)",
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.2)",
   },
   title: {
     fontSize: 28,
@@ -371,14 +400,19 @@ const styles = StyleSheet.create({
   stat: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 6,
+    gap: 8,
+    backgroundColor: "rgba(255,255,255,0.15)",
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 20,
   },
   statText: {
     fontSize: 14,
-    color: Colors.light.textSecondary,
+    color: Colors.light.text,
+    fontWeight: "600",
   },
   affirmationCard: {
-    marginBottom: 8,
+    marginBottom: 12,
   },
   seeAllButton: {
     flexDirection: "row",
@@ -406,5 +440,36 @@ const styles = StyleSheet.create({
   errorText: {
     fontSize: 15,
     color: Colors.light.textSecondary,
+  },
+  coverContent: {
+    position: "absolute",
+    bottom: 24,
+    left: 24,
+    right: 24,
+  },
+  coverTitle: {
+    fontSize: 28,
+    fontWeight: "800",
+    color: Colors.light.text,
+    marginBottom: 8,
+    letterSpacing: 0.4,
+  },
+  coverAuthor: {
+    fontSize: 17,
+    color: Colors.light.textSecondary,
+    marginBottom: 12,
+    opacity: 0.9,
+  },
+  coverDescription: {
+    fontSize: 15,
+    color: Colors.light.textSecondary,
+    marginBottom: 20,
+    lineHeight: 22,
+    opacity: 0.8,
+  },
+  coverStats: {
+    flexDirection: "row",
+    gap: 20,
+    marginBottom: 16,
   },
 });
