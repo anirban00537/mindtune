@@ -226,7 +226,6 @@ const styles = StyleSheet.create({
     letterSpacing: 0.3,
   },
   horizontalScroll: {
-    paddingHorizontal: 16,
     paddingBottom: 12,
   },
   gridContainer: {
