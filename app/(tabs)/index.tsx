@@ -109,6 +109,13 @@ export default function HomeScreen() {
   const insets = useSafeAreaInsets();
   const { width } = Dimensions.get("window");
 
+  // Calculate card width for the grid
+  const paddingHorizontal = 16;
+  const gap = 12;
+  const numColumns = 2;
+  const availableWidth = width - paddingHorizontal * 2 - gap * (numColumns - 1);
+  const cardWidth = availableWidth / numColumns;
+
   return (
     <View style={styles.container}>
       <LinearGradient
@@ -131,15 +138,15 @@ export default function HomeScreen() {
         {/* Last Sessions */}
         <View style={[styles.section, styles.sectionSpacing]}>
           <Text style={styles.sectionTitle}>Last sessions</Text>
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={styles.horizontalScroll}
-          >
+          <View style={styles.gridContainer}>
             {lastSessions.map((session) => (
-              <LastSessionCard key={session.id} {...session} />
+              <LastSessionCard
+                key={session.id}
+                {...session}
+                style={{ width: cardWidth }} // Pass calculated width
+              />
             ))}
-          </ScrollView>
+          </View>
         </View>
 
         {/* Contribution Banner */}
@@ -219,7 +226,15 @@ const styles = StyleSheet.create({
     letterSpacing: 0.3,
   },
   horizontalScroll: {
-    paddingRight: 16,
+    paddingHorizontal: 16,
+    paddingBottom: 12,
+  },
+  gridContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+    // Remove paddingHorizontal here as it's handled by the section
+    gap: 12,
   },
   categoryCard: {
     width: 280,

@@ -4,13 +4,14 @@ import {
   Text,
   TouchableOpacity,
   ViewStyle,
-  Image,
+  ImageBackground,
   Animated,
+  Platform
 } from "react-native";
-import { CardBase } from "./CardBase";
+import { LinearGradient } from "expo-linear-gradient";
+import { BlurView } from "expo-blur";
 import Colors from "@/constants/Colors";
 import { useRef, useCallback } from "react";
-import { LinearGradient } from "expo-linear-gradient";
 
 interface LastSessionCardProps {
   id: string;
@@ -31,7 +32,7 @@ export function LastSessionCard({
 
   const handlePressIn = useCallback(() => {
     Animated.spring(scale, {
-      toValue: 0.95,
+      toValue: 0.97,
       useNativeDriver: true,
     }).start();
   }, []);
@@ -44,7 +45,7 @@ export function LastSessionCard({
   }, []);
 
   return (
-    <Animated.View style={{ transform: [{ scale }] }}>
+    <Animated.View style={{ transform: [{ scale }], ...Platform.select({ ios: { shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.12, shadowRadius: 3.84 }, android: { elevation: 2 } }) }}>
       <TouchableOpacity
         style={[styles.container, style]}
         onPress={onPress}
@@ -52,30 +53,23 @@ export function LastSessionCard({
         onPressOut={handlePressOut}
         activeOpacity={1}
       >
-        <CardBase intensity={30}>
-          <View style={styles.card}>
-            <LinearGradient
-              colors={Colors.gradients.glass}
-              style={StyleSheet.absoluteFill}
-              start={{ x: 0.2, y: 0 }}
-              end={{ x: 0.8, y: 1 }}
-            />
-            <Image 
-              source={{ uri: image }} 
-              style={styles.image}
-              resizeMode="cover" 
-            />
-            <View style={styles.content}>
-              <LinearGradient
-                colors={["rgba(0, 0, 0, 0)", "rgba(0, 0, 0, 0.7)"]}
-                style={StyleSheet.absoluteFill}
-              />
-              <Text numberOfLines={1} style={styles.title}>
-                {title}
-              </Text>
-            </View>
+        <ImageBackground
+          source={{ uri: image }}
+          style={styles.imageBackground}
+          imageStyle={styles.imageStyle}
+        >
+          <LinearGradient
+            colors={["rgba(0,0,0,0.55)", "rgba(0,0,0,0.15)"]}
+            style={styles.gradientOverlay}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+          />
+          <View style={styles.textContainer}>
+            <Text numberOfLines={1} style={styles.title}>
+              {title}
+            </Text>
           </View>
-        </CardBase>
+        </ImageBackground>
       </TouchableOpacity>
     </Animated.View>
   );
@@ -83,32 +77,68 @@ export function LastSessionCard({
 
 const styles = StyleSheet.create({
   container: {
-    width: 140,
-    marginRight: 12,
-  },
-  card: {
-    borderRadius: 16,
+    height: 60,
+    marginBottom: 10,
+    borderRadius: 14,
     overflow: "hidden",
+    backgroundColor: "rgba(0,0,0,0.15)",
   },
-  image: {
-    width: "100%",
-    aspectRatio: 1,
-    borderRadius: 16,
+  imageBackground: {
+    flex: 1,
+    flexDirection: "column",
+    justifyContent: "flex-end",
   },
-  content: {
-    position: "absolute",
-    bottom: 0,
-    left: 0,
-    right: 0,
-    padding: 12,
-    backgroundColor: "rgba(0, 0, 0, 0.4)",
-    borderBottomLeftRadius: 16,
-    borderBottomRightRadius: 16,
+  imageStyle: {
+    borderRadius: 14,
+  },
+  gradientOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    borderRadius: 14,
+  },
+  topContent: {
+    display: "none"
+  },
+  bottomContent: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 12,
+    paddingBottom: 8,
+    justifyContent: "flex-start",
+  },
+  playButton: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    overflow: "hidden",
+    alignItems: "center",
+    justifyContent: "center",
+    marginRight: 10,
+    backgroundColor: "rgba(0,0,0,0.25)",
+  },
+  playGradient: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  playText: {
+    color: Colors.light.text,
+    fontSize: 15,
+    fontWeight: "bold",
+  },
+  textContainer: {
+    flex: 1,
+    justifyContent: "flex-end",
+    alignItems: "flex-start",
+    paddingHorizontal: 12,
+    paddingBottom: 8,
   },
   title: {
-    fontSize: 14,
+    fontSize: 13,
     fontWeight: "600",
     color: Colors.light.text,
     letterSpacing: 0.2,
+    textShadowColor: "rgba(0,0,0,0.5)",
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 2,
   },
 });
