@@ -5,71 +5,130 @@ import {
   ScrollView,
   TouchableOpacity,
   Dimensions,
+  ViewStyle,
+  Image,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-import { useRouter } from "expo-router";
 import Colors from "@/constants/Colors";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { SessionCard } from "@/components/ui/cards/SessionCard";
+import Header from "@/components/ui/Header";
+import ContributionBanner from "@/components/ui/ContributionBanner";
+import MediaPlayer from "@/components/ui/MediaPlayer";
+import { IconSymbol } from "@/components/ui/IconSymbol";
+import { PlaylistCard } from "@/components/ui/cards/PlaylistCard";
 import { FeaturedCard } from "@/components/ui/cards/FeaturedCard";
+import { CardBase } from "@/components/ui/cards/CardBase";
 
-const playlists = [
+interface LastSession {
+  id: string;
+  title: string;
+  image: string;
+}
+
+const lastSessions: LastSession[] = [
   {
     id: "1",
-    title: "Morning Empowerment",
-    description: "Start your day with positivity",
-    duration: "10 min",
+    title: "Awaken Your Money Power",
     image:
-      "https://images.unsplash.com/photo-1506126613408-eca07ce68773?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
+      "https://images.unsplash.com/photo-1565514020179-026b92b84bb6?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
   },
   {
     id: "2",
-    title: "Wealth & Abundance",
-    description: "Attract prosperity",
-    duration: "15 min",
-    image:
-      "https://images.unsplash.com/photo-1532629345422-7515f3d16bb6?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
-  },
-  {
-    id: "3",
-    title: "Self-Love Journey",
-    description: "Nurture your inner self",
-    duration: "12 min",
-    image:
-      "https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
-  },
-];
-
-const recentSessions = [
-  {
-    id: "1",
     title: "Deep Sleep",
-    description: "Fall asleep faster",
-    duration: "15 min",
     image:
       "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
   },
   {
-    id: "2",
-    title: "Anxiety Relief",
-    description: "Calm your mind",
-    duration: "8 min",
+    id: "3",
+    title: "Billionaire Mind",
     image:
       "https://images.unsplash.com/photo-1515894203077-2cd25148ae14?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
   },
   {
-    id: "3",
-    title: "Focus Mode",
-    description: "Enhance concentration",
-    duration: "10 min",
+    id: "4",
+    title: "Control Stress",
     image:
       "https://images.unsplash.com/photo-1508672019048-805c876b67e2?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
   },
 ];
 
+const categories = [
+  {
+    id: "money",
+    title: "Money Mastery",
+    sessions: [
+      {
+        id: "1",
+        title: "Billionaire Mind",
+        description: "Develop abundance mindset",
+        duration: "15 min",
+        image:
+          "https://images.unsplash.com/photo-1515894203077-2cd25148ae14?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
+      },
+      {
+        id: "2",
+        title: "Wealth Attraction",
+        description: "Manifest prosperity",
+        duration: "10 min",
+        image:
+          "https://images.unsplash.com/photo-1565514020179-026b92b84bb6?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
+      },
+    ],
+  },
+  {
+    id: "sleep",
+    title: "Sleep & Relaxation",
+    sessions: [
+      {
+        id: "1",
+        title: "Deep Sleep",
+        description: "Fall asleep faster",
+        duration: "20 min",
+        image:
+          "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
+      },
+      {
+        id: "2",
+        title: "Stress Relief",
+        description: "Let go of tension",
+        duration: "15 min",
+        image:
+          "https://images.unsplash.com/photo-1508672019048-805c876b67e2?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
+      },
+    ],
+  },
+];
+
+const justForYou = {
+  title: "Find Your Happiness",
+  description: "Start your journey to inner peace",
+  duration: "10 min",
+  image:
+    "https://images.unsplash.com/photo-1533910534207-90f31029a78e?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
+};
+
 export default function HomeScreen() {
-  const router = useRouter();
   const insets = useSafeAreaInsets();
+  const { width } = Dimensions.get("window");
+
+  const renderLastSessionCard = ({ id, title, image }: LastSession) => (
+    <TouchableOpacity
+      key={id}
+      style={styles.lastSessionCard}
+      activeOpacity={0.9}
+    >
+      <CardBase>
+        <View style={styles.sessionCard}>
+          <Image source={{ uri: image }} style={styles.sessionImage} />
+          <View style={styles.sessionContent}>
+            <Text numberOfLines={1} style={styles.sessionTitle}>
+              {title}
+            </Text>
+          </View>
+        </View>
+      </CardBase>
+    </TouchableOpacity>
+  );
 
   return (
     <View style={styles.container}>
@@ -84,75 +143,75 @@ export default function HomeScreen() {
         style={styles.scrollView}
         contentContainerStyle={[
           styles.contentContainer,
-          { paddingBottom: insets.bottom + 20, paddingTop: insets.top + 16 },
+          { paddingTop: insets.top },
         ]}
         showsVerticalScrollIndicator={false}
       >
-        {/* Recent Sessions */}
-        <View style={styles.section}>
-          <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>Recent Sessions</Text>
-            <TouchableOpacity>
-              <Text style={styles.seeAllButton}>See all</Text>
-            </TouchableOpacity>
-          </View>
+        <Header />
+
+        {/* Last Sessions */}
+        <View style={[styles.section, styles.sectionSpacing]}>
+          <Text style={styles.sectionTitle}>Last sessions</Text>
           <ScrollView
             horizontal
             showsHorizontalScrollIndicator={false}
             contentContainerStyle={styles.horizontalScroll}
           >
-            {recentSessions.map((session) => (
-              <SessionCard
-                key={session.id}
-                {...session}
-                style={styles.recentCard}
-                imageHeight={CARD_WIDTH * 0.4}
-              />
-            ))}
+            {lastSessions.map(renderLastSessionCard)}
           </ScrollView>
         </View>
 
-        {/* Premium Card - Compact */}
-        <View style={[styles.section, styles.premiumSection]}>
+        {/* Contribution Banner */}
+        <View style={[styles.section, styles.sectionSpacing]}>
+          <ContributionBanner />
+        </View>
+
+        {/* Just for You */}
+        <View style={[styles.section, styles.sectionSpacing]}>
+          <Text style={styles.sectionTitle}>Just for You</Text>
           <FeaturedCard
-            title="Unlock Premium"
-            description="Access all meditations and exclusive content"
-            actionText="Upgrade Now"
-            style={styles.premiumCard}
-            isPremium={true}
+            title={justForYou.title}
+            description={justForYou.description}
+            meta={{ duration: justForYou.duration }}
+            style={styles.featuredCard}
           />
         </View>
 
-        {/* Recommended Playlists */}
-        <View style={styles.section}>
-          <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>Recommended</Text>
-            <TouchableOpacity>
-              <Text style={styles.seeAllButton}>See all</Text>
-            </TouchableOpacity>
+        {/* Categories */}
+        {categories.map((category) => (
+          <View key={category.id} style={styles.section}>
+            <View style={styles.sectionHeader}>
+              <Text style={styles.sectionTitle}>{category.title}</Text>
+              <TouchableOpacity style={styles.seeAllButton}>
+                <Text style={styles.seeAllText}>See all</Text>
+                <IconSymbol
+                  name="chevron.right"
+                  size={16}
+                  color={Colors.light.primary}
+                />
+              </TouchableOpacity>
+            </View>
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={styles.horizontalScroll}
+            >
+              {category.sessions.map((session) => (
+                <PlaylistCard
+                  key={session.id}
+                  {...session}
+                  style={styles.categoryCard}
+                />
+              ))}
+            </ScrollView>
           </View>
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={styles.horizontalScroll}
-          >
-            {playlists.map((playlist) => (
-              <SessionCard
-                key={playlist.id}
-                {...playlist}
-                style={styles.playlistCard}
-                imageHeight={CARD_WIDTH * 0.6}
-              />
-            ))}
-          </ScrollView>
-        </View>
+        ))}
       </ScrollView>
+
+      <MediaPlayer />
     </View>
   );
 }
-
-const { width: SCREEN_WIDTH } = Dimensions.get("window");
-const CARD_WIDTH = SCREEN_WIDTH * 0.7;
 
 const styles = StyleSheet.create({
   container: {
@@ -164,49 +223,85 @@ const styles = StyleSheet.create({
   },
   contentContainer: {
     flexGrow: 1,
+    paddingBottom: 120,
+  },
+  lastSessionCard: {
+    width: 140,
+    marginRight: 12,
+  },
+  sessionCard: {
+    borderRadius: 16,
+    overflow: "hidden",
+  },
+  sessionImage: {
+    width: "100%",
+    aspectRatio: 1,
+    borderRadius: 16,
+  },
+  sessionContent: {
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
+    padding: 12,
+    backgroundColor: "rgba(0, 0, 0, 0.4)",
+    borderBottomLeftRadius: 16,
+    borderBottomRightRadius: 16,
+  },
+  sessionTitle: {
+    fontSize: 14,
+    fontWeight: "600",
+    color: Colors.light.text,
+    letterSpacing: 0.2,
   },
   section: {
-    marginTop: 40,
-    paddingHorizontal: 20,
+    marginTop: 24,
+    marginBottom: 16,
+    paddingHorizontal: 16,
+  },
+  sectionSpacing: {
+    marginTop: 32,
   },
   sectionHeader: {
     flexDirection: "row",
-    justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: 24,
+    justifyContent: "space-between",
+    marginBottom: 16,
   },
   sectionTitle: {
-    fontSize: 24,
-    color: Colors.light.text,
+    fontSize: 20,
     fontWeight: "700",
-    letterSpacing: 0.5,
+    color: Colors.light.text,
+    marginBottom: 16,
+    letterSpacing: 0.3,
   },
-  seeAllButton: {
-    fontSize: 16,
-    color: Colors.light.primary,
-    fontWeight: "600",
-    paddingVertical: 8,
-    paddingHorizontal: 4,
+  gridContainer: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    marginHorizontal: -4,
   },
+  gridCard: {
+    width: "33.33%",
+    marginBottom: 8,
+  } as ViewStyle,
   horizontalScroll: {
-    paddingRight: 20,
-    paddingBottom: 8,
+    paddingRight: 16,
   },
-  recentCard: {
-    width: CARD_WIDTH * 0.8,
-    marginLeft: 3,
-    marginBottom: 4,
-  },
-  playlistCard: {
-    width: CARD_WIDTH,
-    marginBottom: 4,
+  categoryCard: {
+    width: 280,
     marginRight: 16,
   },
-  premiumSection: {
-    marginTop: 32,
-    marginBottom: 32,
+  featuredCard: {
+    marginHorizontal: 0,
   },
-  premiumCard: {
-    marginHorizontal: 4,
+  seeAllButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+  },
+  seeAllText: {
+    fontSize: 15,
+    fontWeight: "600",
+    color: Colors.light.primary,
   },
 });
