@@ -34,44 +34,43 @@ export default function Header() {
     <View style={styles.container}>
       {/* Search Bar */}
       <TouchableOpacity
-        style={styles.searchContainer} // Apply shadow/elevation here
+        style={styles.searchContainer}
         onPress={handleSearchPress}
         activeOpacity={0.8}
       >
         <BlurView 
-          intensity={60} // Match standard intensity
-          tint="dark" 
-          style={StyleSheet.absoluteFill} // Blur covers the whole container
+          intensity={8}
+          tint="light"
+          style={styles.blurViewStyle}
         >
           <LinearGradient
-            colors={['rgba(255, 255, 255, 0.15)', 'rgba(255, 255, 255, 0.05)']} // Match standard gradient
+            colors={['rgba(255, 255, 255, 0.15)', 'rgba(255, 255, 255, 0.05)']}
             style={StyleSheet.absoluteFill}
-            start={{ x: 0, y: 0 }} // Adjust gradient direction if needed
+            start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
           />
         </BlurView>
         <IconSymbol
           name="magnifyingglass"
           size={20}
-          color={Colors.light.textSecondary} // Correct color
+          color={Colors.light.textSecondary}
         />
-        <View style={styles.searchInputView}> {/* Use View instead of TextInput for placeholder */} 
+        <View style={styles.searchInputView}>
           <Text style={styles.searchPlaceholder}>Search sessions...</Text>
         </View>
       </TouchableOpacity>
       
       {/* Timer Button */}
       <TouchableOpacity 
-        style={styles.timerButtonContainer} // Apply shadow/elevation here
+        style={styles.timerButtonContainer}
         onPress={handleTimerPress}
         activeOpacity={0.8}
       >
         <BlurView 
-          intensity={60} // Match standard intensity
-          tint="dark" 
-          style={StyleSheet.absoluteFill} // Blur covers the button
-          >
-             {/* Optional subtle gradient for button */}
+          intensity={8}
+          tint="light"
+          style={styles.blurViewStyle}
+        >
              <LinearGradient
                 colors={['rgba(255, 255, 255, 0.15)', 'rgba(255, 255, 255, 0.05)']}
                 style={StyleSheet.absoluteFill}
@@ -82,7 +81,7 @@ export default function Header() {
          <Ionicons
           name="timer-outline"
           size={22}
-          color={Colors.light.textSecondary} // Use secondary color for icon
+          color={Colors.light.textSecondary}
         />
       </TouchableOpacity>
     </View>
@@ -95,22 +94,21 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingHorizontal: 16,
     gap: 12,
-    marginTop: 16, // Keep margin or adjust as needed
-    marginBottom: 8, // Add margin below header
+    marginTop: 16,
+    marginBottom: 8,
   },
   searchContainer: {
     flex: 1,
     height: 44,
-    borderRadius: 22, // Circular ends
+    borderRadius: 22,
     flexDirection: "row",
     alignItems: "center",
-    paddingHorizontal: 16, // Adjust padding
-    borderWidth: 1, // Match standard border
-    borderColor: 'rgba(255, 255, 255, 0.2)', // Match standard border color
-    backgroundColor: 'rgba(255, 255, 255, 0.1)', // Match standard background
-    gap: 10, // Adjust gap
-    overflow: "hidden", // Important for BlurView/borderRadius
-    ...Platform.select({ // Apply standard shadow/elevation
+    paddingHorizontal: 16,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.2)',
+    gap: 10,
+    overflow: "hidden",
+    ...Platform.select({
       ios: {
         shadowColor: "#000",
         shadowOffset: { width: 0, height: 2 },
@@ -122,26 +120,25 @@ const styles = StyleSheet.create({
       },
     }),
   },
-  searchInputView: { // Changed from searchInput
+  searchInputView: {
     flex: 1,
     height: "100%",
     justifyContent: "center",
   },
   searchPlaceholder: {
-    color: Colors.light.textSecondary, // Correct color
+    color: Colors.light.textSecondary,
     fontSize: 16,
   },
-  timerButtonContainer: { // Changed from timerButton for clarity
-    width: 44, // Make button same height as search bar
+  timerButtonContainer: {
+    width: 44,
     height: 44,
-    borderRadius: 22, // Make it circular
+    borderRadius: 22,
     justifyContent: "center",
     alignItems: "center",
-    // backgroundColor: Colors.light.pill, // Removed solid background
-    borderWidth: 1, // Match standard border
-    borderColor: 'rgba(255, 255, 255, 0.2)', // Match standard border color
-    overflow: "hidden", // Important for BlurView/borderRadius
-     ...Platform.select({ // Apply standard shadow/elevation
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.2)',
+    overflow: "hidden",
+     ...Platform.select({
       ios: {
         shadowColor: "#000",
         shadowOffset: { width: 0, height: 2 },
@@ -152,5 +149,10 @@ const styles = StyleSheet.create({
         elevation: 5,
       },
     }),
+  },
+  blurViewStyle: {
+     ...StyleSheet.absoluteFillObject,
+     borderRadius: 22,
+     overflow: 'hidden',
   },
 });
