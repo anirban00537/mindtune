@@ -19,5 +19,10 @@ export interface PlaylistItem {
   affirmations: Affirmation[];
 }
 
-// Optionally, add the playlists array back if needed by other parts of the app
-// export const playlists: PlaylistItem[] = []; 
+// Export the playlists array
+export const playlists: PlaylistItem[] = [
+  {
+    id: 'dummy',
+    // ... rest of dummy data ...
+  }
+]; 

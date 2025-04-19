@@ -249,7 +249,7 @@ export default function PlaylistDetailScreen() {
           <Animated.View style={{ transform: [{ scale: buttonScale }] }}>
             <TouchableOpacity
               style={styles.playButton}
-              onPress={() => router.push('/player')}
+              onPress={() => router.push(`/player/${playlist.id}`)}
               onPressIn={handlePressIn}
               onPressOut={handlePressOut}
               activeOpacity={0.9}

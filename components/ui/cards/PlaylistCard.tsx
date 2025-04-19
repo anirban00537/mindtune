@@ -70,7 +70,7 @@ export function PlaylistCard({
       >
         <BlurView
           intensity={8}
-          tint="light"
+          tint="dark"
           style={{
             borderRadius: 16,
             overflow: 'hidden',

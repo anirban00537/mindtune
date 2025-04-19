@@ -10,12 +10,22 @@ import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useRouter } from "expo-router";
 
 export default function MediaPlayer() {
   const insets = useSafeAreaInsets();
+  const router = useRouter();
+
+  const handlePress = () => {
+    router.push('/player/dummy');
+  };
 
   return (
-    <View style={[styles.container, { paddingBottom: insets.bottom }]}>
+    <TouchableOpacity 
+      style={[styles.container, { paddingBottom: insets.bottom }]}
+      onPress={handlePress} 
+      activeOpacity={0.8}
+    >
       <BlurView intensity={30} tint="dark" style={StyleSheet.absoluteFill}>
         <LinearGradient
           colors={['rgba(255, 255, 255, 0.15)', 'rgba(255, 255, 255, 0.05)']}
@@ -60,7 +70,7 @@ export default function MediaPlayer() {
           </LinearGradient>
         </TouchableOpacity>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 }
 
