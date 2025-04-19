@@ -45,26 +45,81 @@ interface PlaylistDetail {
 
 // Mock data following the same pattern as home screen
 const playlists: Record<string, PlaylistDetail> = {
-  "1": {
-    id: "1",
-    title: "Daily Money Affirmations",
+  "ls1": {
+    id: "ls1",
+    title: "Be A Better Friend",
     author: "MindTune",
-    description:
-      "Transform your relationship with wealth through powerful daily affirmations",
-    image:
-      "https://images.unsplash.com/photo-1508672019048-805c876b67e2?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
-    duration: "15 min",
+    description: "Improve your relationships through daily affirmations",
+    image: "https://images.unsplash.com/photo-1508672115270-a8f55e83f9b0?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
+    duration: "10 min",
     affirmations: [
-      {
-        id: "1",
-        text: "I am a money magnet, and prosperity flows to me easily",
-      },
-      { id: "2", text: "I deserve abundance and welcome wealth into my life" },
-      { id: "3", text: "Money comes to me in expected and unexpected ways" },
-      { id: "4", text: "I am worthy of all the abundance the universe offers" },
-      { id: "5", text: "My actions create constant prosperity" },
+      { id: "1", text: "I am a caring and supportive friend" },
+      { id: "2", text: "I listen with empathy and understanding" },
+      { id: "3", text: "I bring joy and positivity to my friendships" },
+      { id: "4", text: "I respect and value my friends" },
+      { id: "5", text: "I attract meaningful friendships" },
     ],
   },
+  "ls2": {
+    id: "ls2",
+    title: "Be Happy",
+    author: "MindTune",
+    description: "Cultivate happiness and joy in your daily life",
+    image: "https://images.unsplash.com/photo-1494783367193-149034c05e8f?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
+    duration: "12 min",
+    affirmations: [
+      { id: "1", text: "I choose happiness in every moment" },
+      { id: "2", text: "I am worthy of joy and happiness" },
+      { id: "3", text: "I radiate positive energy" },
+      { id: "4", text: "I find joy in the simple things" },
+      { id: "5", text: "My happiness comes from within" },
+    ],
+  },
+  "exp1": {
+    id: "exp1",
+    title: "Money Manifestation",
+    author: "Wealth Vibes",
+    description: "Manifest abundance and prosperity in your life",
+    image: "https://images.unsplash.com/photo-1553729459-efe14ef6055d?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
+    duration: "15 min",
+    affirmations: [
+      { id: "1", text: "I am a money magnet" },
+      { id: "2", text: "Wealth flows to me easily" },
+      { id: "3", text: "I deserve financial abundance" },
+      { id: "4", text: "Money comes to me in expected and unexpected ways" },
+      { id: "5", text: "I am worthy of all the abundance the universe offers" },
+    ],
+  },
+  "bp1": {
+    id: "bp1",
+    title: "Focus Enhancement",
+    author: "Cognitive Boost",
+    description: "Enhance your focus and mental clarity",
+    image: "https://images.unsplash.com/photo-1517486808906-6ca8b3f04846?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
+    duration: "10 min",
+    affirmations: [
+      { id: "1", text: "My mind is clear and focused" },
+      { id: "2", text: "I concentrate easily on any task" },
+      { id: "3", text: "I am present and mindful" },
+      { id: "4", text: "My attention is sharp and precise" },
+      { id: "5", text: "I accomplish tasks with ease and focus" },
+    ],
+  },
+  "ea1": {
+    id: "ea1",
+    title: "Confident Test Taking",
+    author: "Study Success",
+    description: "Build confidence for exams and assessments",
+    image: "https://images.unsplash.com/photo-1453928582365-b6ad33cb1289?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
+    duration: "12 min",
+    affirmations: [
+      { id: "1", text: "I am well-prepared and confident" },
+      { id: "2", text: "I recall information easily" },
+      { id: "3", text: "I remain calm during tests" },
+      { id: "4", text: "I trust in my knowledge and abilities" },
+      { id: "5", text: "I perform excellently under pressure" },
+    ],
+  }
 };
 
 export default function PlaylistDetailScreen() {

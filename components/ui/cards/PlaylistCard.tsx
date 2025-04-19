@@ -14,6 +14,7 @@ import { useRef, useCallback } from "react";
 import { useRouter } from "expo-router";
 import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
+import * as Haptics from 'expo-haptics';
 
 interface PlaylistCardProps {
   id: string;
@@ -51,9 +52,13 @@ export function PlaylistCard({
     }).start();
   }, [scale]);
 
-  const handlePress = () => {
-    router.push(`/playlist/${id}`);
-  };
+  const handlePress = useCallback(() => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    router.push({
+      pathname: "/playlist/[id]",
+      params: { id }
+    });
+  }, [id, router]);
 
   return (
     <Animated.View style={[{ transform: [{ scale }] }, style]}>

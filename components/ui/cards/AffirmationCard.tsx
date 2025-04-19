@@ -27,9 +27,12 @@ export function AffirmationCard({
 }: AffirmationCardProps) {
   return (
     <BlurView
-      intensity={60}
-      tint="dark"
-      style={[styles.cardBase, style]}
+      intensity={8}
+      tint="light"
+      style={[{
+        borderRadius: 16,
+        overflow: 'hidden',
+      }, style]}
     >
       <LinearGradient
         colors={['rgba(255, 255, 255, 0.15)', 'rgba(255, 255, 255, 0.05)']}
@@ -46,9 +49,9 @@ export function AffirmationCard({
             hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
           >
             <BlurView
-                intensity={20}
-                tint="dark"
-                style={StyleSheet.absoluteFill}
+              intensity={20}
+              tint="dark"
+              style={StyleSheet.absoluteFill}
             />
             <IconSymbol
               name={isSaved ? "heart.fill" : "heart"}
@@ -64,24 +67,6 @@ export function AffirmationCard({
 }
 
 const styles = StyleSheet.create({
-  cardBase: {
-    borderRadius: 16,
-    overflow: "hidden",
-    borderWidth: 1,
-    borderColor: "rgba(255, 255, 255, 0.2)",
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
-    ...Platform.select({
-      ios: {
-        shadowColor: "#000",
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.15,
-        shadowRadius: 8,
-      },
-      android: {
-        elevation: 5,
-      },
-    }),
-  },
   content: {
     flexDirection: "row",
     alignItems: "center",
