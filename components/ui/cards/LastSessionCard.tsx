@@ -7,7 +7,6 @@ import {
   ViewStyle,
   Animated
 } from "react-native";
-import { LinearGradient } from "expo-linear-gradient";
 import Colors from "@/constants/Colors";
 import { CardBase } from "./CardBase";
 import { useRef, useCallback } from "react";
@@ -120,22 +119,5 @@ const styles = StyleSheet.create({
     color: Colors.light.text,
     opacity: 0.5,
     letterSpacing: 0.1,
-  },
-  playButton: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    overflow: "hidden",
-  },
-  playGradient: {
-    width: "100%",
-    height: "100%",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  playIcon: {
-    color: "rgba(255,255,255,0.6)",
-    fontSize: 20,
-    fontWeight: "bold",
   },
 });

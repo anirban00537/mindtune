@@ -8,7 +8,6 @@ import {
 import { IconSymbol } from "../IconSymbol";
 import Colors from "@/constants/Colors";
 import { CardBase } from "./CardBase";
-import { LinearGradient } from "expo-linear-gradient";
 
 interface AffirmationCardProps {
   text: string;
@@ -24,25 +23,18 @@ export function AffirmationCard({
   style,
 }: AffirmationCardProps) {
   return (
-    <CardBase style={style} gradient={true} intensity={25}>
+    <CardBase style={style} intensity={25}>
       <View style={styles.content}>
         <Text style={styles.text}>{text}</Text>
         {onSavePress && (
           <TouchableOpacity onPress={onSavePress} style={styles.saveButton}>
-            <LinearGradient
-              colors={
-                isSaved ? Colors.gradients.primary : Colors.gradients.button
-              }
-              style={styles.saveGradient}
-              start={{ x: 0.2, y: 0 }}
-              end={{ x: 0.8, y: 1 }}
-            >
+            <View style={styles.saveGlass}>
               <IconSymbol
                 name={isSaved ? "heart.fill" : "heart"}
                 size={20}
-                color={isSaved ? Colors.light.text : "rgba(255, 255, 255, 0.6)"}
+                color={isSaved ? Colors.light.primary : "rgba(255, 255, 255, 0.6)"}
               />
-            </LinearGradient>
+            </View>
           </TouchableOpacity>
         )}
       </View>
@@ -69,10 +61,12 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     overflow: "hidden",
   },
-  saveGradient: {
+  saveGlass: {
     width: "100%",
     height: "100%",
     alignItems: "center",
     justifyContent: "center",
+    borderRadius: 20,
+    borderWidth: 0.5,
   },
 });

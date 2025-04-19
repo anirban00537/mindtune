@@ -11,7 +11,6 @@ import { Ionicons } from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
 import { CardBase } from "./CardBase";
 import { useRef, useCallback } from "react";
-import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 
 interface PlaylistCardProps {
@@ -86,18 +85,13 @@ export function PlaylistCard({
               onPress={handlePress}
               hitSlop={8}
             >
-              <LinearGradient
-                colors={Colors.gradients.button}
-                style={styles.playGradient}
-                start={{ x: 0.2, y: 0 }}
-                end={{ x: 0.8, y: 1 }}
-              >
+              <View style={styles.playGlass}>
                 <Ionicons
                   name="play"
                   size={20}
                   color="rgba(255, 255, 255, 0.6)"
                 />
-              </LinearGradient>
+              </View>
             </TouchableOpacity>
           </View>
         </CardBase>
@@ -152,10 +146,14 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     overflow: "hidden",
   },
-  playGradient: {
+  playGlass: {
     width: "100%",
     height: "100%",
     alignItems: "center",
     justifyContent: "center",
+    backgroundColor: "rgba(255,255,255,0.08)",
+    borderRadius: 16,
+    borderWidth: 0.5,
+    borderColor: "rgba(255,255,255,0.12)",
   },
 });

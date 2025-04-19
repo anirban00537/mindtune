@@ -8,7 +8,6 @@ import {
   Platform,
   Animated,
 } from "react-native";
-import { LinearGradient } from "expo-linear-gradient";
 import { BlurView } from "expo-blur";
 import Colors from "@/constants/Colors";
 import { CardBase } from "./CardBase";
@@ -71,7 +70,7 @@ export function SearchResultCard({
         onPressOut={handlePressOut}
         activeOpacity={1}
       >
-        <CardBase gradient={false} intensity={20}>
+        <CardBase intensity={20}>
           <View style={styles.contentContainer}>
             <Image
               source={{ uri: image }}
@@ -94,19 +93,9 @@ export function SearchResultCard({
                 style={styles.playButton}
                 onPress={handlePlayPress}
               >
-                <BlurView
-                  intensity={20}
-                  tint="dark"
-                  style={StyleSheet.absoluteFill}
-                />
-                <LinearGradient
-                  colors={Colors.gradients.button}
-                  style={styles.playGradient}
-                  start={{ x: 0.2, y: 0 }}
-                  end={{ x: 0.8, y: 1 }}
-                >
+                <View style={styles.playGlass}>
                   <Text style={styles.playText}>▶</Text>
-                </LinearGradient>
+                </View>
               </TouchableOpacity>
             </Animated.View>
           </View>
@@ -181,10 +170,14 @@ const styles = StyleSheet.create({
     overflow: "hidden",
     marginRight: 12,
   },
-  playGradient: {
+  playGlass: {
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
+    backgroundColor: "rgba(255,255,255,0.08)",
+    borderRadius: 17,
+    borderWidth: 0.5,
+    borderColor: "rgba(255,255,255,0.12)",
   },
   playText: {
     color: Colors.light.text,
