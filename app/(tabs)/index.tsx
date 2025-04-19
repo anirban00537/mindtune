@@ -33,7 +33,7 @@ const lastSessionsData: LastSession[] = [
   {
     id: "ls1",
     title: "Be A Better Friend",
-    image: "https://images.unsplash.com/photo-1508672115270-a8f55e83f9b0?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60", 
+    image: "https://images.unsplash.com/photo-1508672019048-805c876b67e2?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60", // Replace with actual image URL
   },
   {
     id: "ls2",
@@ -76,8 +76,8 @@ const miniPlayerData = {
     id: "player1",
     title: "Be A Better Friend",
     author: "Innertune",
-    image: "https://via.placeholder.com/150/771796" // Replace with actual image URL
-}
+    image: "https://images.unsplash.com/photo-1508672019048-805c876b67e2?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60", // Replace with actual image URL
+  }
 
 // Mock data for "Money Manifestation" (formerly Explore Playlists)
 const moneyManifestationData = [
@@ -190,15 +190,10 @@ export default function HomeScreen() {
     <View style={styles.container}>
       <StatusBar barStyle="light-content" />
       <LinearGradient
-        colors={[
-          "#101830", // Darker start color
-          "#1A304A", 
-          "#2A4060", // Mid-blue
-          "#3A305A", // Mid-purple
-          "#182038"  // Darker end color
-        ]}
+        colors={["#050812", "#101830", "#1A304A", "#2A1840", "#03040A"]}
         style={StyleSheet.absoluteFill}
         start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
       />
  
       <ScrollView
