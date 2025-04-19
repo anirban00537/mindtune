@@ -10,6 +10,7 @@ import {
   Animated,
   StatusBar,
   ViewStyle,
+  ImageBackground,
 } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { BlurView } from "expo-blur";
@@ -23,10 +24,6 @@ import { useState, useRef, useCallback, useEffect } from "react";
 import * as Haptics from 'expo-haptics';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
-const HEADER_HEIGHT = SCREEN_WIDTH;
-const HEADER_MIN_HEIGHT = 300; // Fixed minimum height
-const HEADER_SCROLL_DISTANCE = HEADER_HEIGHT - HEADER_MIN_HEIGHT;
-const HEADER_STICKY_THRESHOLD = HEADER_SCROLL_DISTANCE * 0.6;
 
 interface Affirmation {
   id: string;
@@ -131,10 +128,8 @@ export default function PlaylistDetailScreen() {
   const [imageLoading, setImageLoading] = useState(true);
   const [imageError, setImageError] = useState(false);
   
-  const scrollY = useRef(new Animated.Value(0)).current;
-  const buttonScale = useRef(new Animated.Value(1)).current;
-  const saveButtonRotation = useRef(new Animated.Value(0)).current;
   const fadeAnim = useRef(new Animated.Value(0)).current;
+  const buttonScale = useRef(new Animated.Value(1)).current;
 
   const playlist = playlists[id as string];
 
@@ -168,55 +163,12 @@ export default function PlaylistDetailScreen() {
   const toggleSave = useCallback(() => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     setIsSaved((prev) => !prev);
-    Animated.sequence([
-      Animated.timing(saveButtonRotation, {
-        toValue: isSaved ? 0 : 1,
-        duration: 300,
-        useNativeDriver: true,
-      }),
-    ]).start();
-  }, [isSaved]);
+  }, []);
 
   const togglePlay = useCallback(() => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     setIsPlaying((prev) => !prev);
   }, []);
-
-  // Enhanced Header Animations
-  const headerHeight = scrollY.interpolate({
-    inputRange: [0, HEADER_SCROLL_DISTANCE],
-    outputRange: [HEADER_HEIGHT, HEADER_MIN_HEIGHT],
-    extrapolate: "clamp",
-  });
-
-  const headerTranslateY = scrollY.interpolate({
-    inputRange: [0, HEADER_SCROLL_DISTANCE],
-    outputRange: [0, -HEADER_SCROLL_DISTANCE],
-    extrapolate: "clamp",
-  });
-
-  const imageScale = scrollY.interpolate({
-    inputRange: [-100, 0],
-    outputRange: [1.2, 1],
-    extrapolateRight: "clamp",
-  });
-
-  const imageBlur = scrollY.interpolate({
-    inputRange: [0, HEADER_SCROLL_DISTANCE],
-    outputRange: [0, 10],
-    extrapolate: "clamp",
-  });
-
-  const headerContentOpacity = scrollY.interpolate({
-    inputRange: [0, HEADER_SCROLL_DISTANCE * 0.8],
-    outputRange: [1, 0],
-    extrapolate: "clamp",
-  });
-
-  const saveButtonRotateInterpolate = saveButtonRotation.interpolate({
-    inputRange: [0, 1],
-    outputRange: ["0deg", "360deg"],
-  });
 
   if (!playlist) {
     return (
@@ -229,38 +181,113 @@ export default function PlaylistDetailScreen() {
   return (
     <View style={styles.container}>
       <StatusBar barStyle="light-content" />
-      <LinearGradient
-        colors={["#050812", "#101830", "#1A304A", "#2A1840", "#03040A"]}
-        style={StyleSheet.absoluteFill}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-      />
+      <ImageBackground
+        source={{ uri: playlist.image }}
+        style={[StyleSheet.absoluteFill]}
+        imageStyle={{ opacity: 0.7 }}
+        resizeMode="cover"
+      >
+        <BlurView intensity={90} tint="dark" style={StyleSheet.absoluteFill}>
+          <LinearGradient
+            colors={[
+              'rgba(5, 8, 18, 0.3)',
+              'rgba(5, 8, 18, 0.7)',
+              'rgba(5, 8, 18, 0.95)',
+            ]}
+            style={StyleSheet.absoluteFill}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 0, y: 1 }}
+          />
+        </BlurView>
+      </ImageBackground>
 
       <Animated.ScrollView
         style={[styles.scrollView, { opacity: fadeAnim }]}
         contentContainerStyle={[
           styles.contentContainer,
-          { paddingTop: HEADER_HEIGHT + 32 },
+          { paddingTop: insets.top },
         ]}
         showsVerticalScrollIndicator={false}
-        scrollEventThrottle={16}
-        onScroll={Animated.event(
-          [{ nativeEvent: { contentOffset: { y: scrollY } } }],
-          { useNativeDriver: true }
-        )}
-        bounces={true}
-        overScrollMode="always"
       >
+        {/* Header Section */}
+        <View style={styles.header}>
+          <TouchableOpacity
+            style={styles.iconButton}
+            onPress={() => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+              router.back();
+            }}
+          >
+            <BlurView intensity={30} tint="dark" style={StyleSheet.absoluteFill} />
+            <Ionicons name="chevron-back" size={24} color={Colors.light.text} />
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.iconButton}
+            onPress={toggleSave}
+          >
+            <BlurView intensity={30} tint="dark" style={StyleSheet.absoluteFill} />
+            <Ionicons
+              name={isSaved ? "heart" : "heart-outline"}
+              size={24}
+              color={isSaved ? Colors.light.primary : Colors.light.text}
+            />
+          </TouchableOpacity>
+        </View>
+
+        {/* Cover Art Section */}
+        <View style={styles.coverArtSection}>
+          <BlurView intensity={30} tint="dark" style={styles.coverArtContainer}>
+            <Image
+              source={{ uri: playlist.image }}
+              style={styles.coverArt}
+              resizeMode="cover"
+            />
+          </BlurView>
+        </View>
+
+        {/* Title Section */}
+        <View style={styles.titleSection}>
+          <Text style={styles.title}>{playlist.title}</Text>
+          <Text style={styles.author}>{playlist.author}</Text>
+          <Text style={styles.description}>{playlist.description}</Text>
+          
+          <TouchableOpacity
+            style={[styles.playButton, isPlaying && styles.playButtonActive]}
+            onPress={togglePlay}
+            onPressIn={handlePressIn}
+            onPressOut={handlePressOut}
+          >
+            <BlurView intensity={30} tint="dark" style={StyleSheet.absoluteFill} />
+            <LinearGradient
+              colors={Colors.gradients.primary}
+              style={StyleSheet.absoluteFill}
+              start={{ x: 0.2, y: 0 }}
+              end={{ x: 0.8, y: 1 }}
+            />
+            <Ionicons 
+              name={isPlaying ? "pause" : "play"} 
+              size={24} 
+              color="#FFFFFF" 
+            />
+            <Text style={styles.playButtonText}>
+              {isPlaying ? "Pause" : "Play"}
+            </Text>
+          </TouchableOpacity>
+        </View>
+
+        {/* Affirmations Section */}
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>Affirmations</Text>
             <TouchableOpacity 
-              style={styles.seeAllButton}
+              style={styles.shuffleButton}
               onPress={() => {
                 Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
               }}
             >
-              <Text style={styles.seeAllText}>Shuffle</Text>
+              <BlurView intensity={30} tint="dark" style={StyleSheet.absoluteFill} />
+              <Text style={styles.shuffleText}>Shuffle</Text>
               <IconSymbol
                 name="shuffle"
                 size={16}
@@ -268,148 +295,15 @@ export default function PlaylistDetailScreen() {
               />
             </TouchableOpacity>
           </View>
-          {playlist.affirmations.map((affirmation, index) => (
-            <Animated.View
+          {playlist.affirmations.map((affirmation) => (
+            <AffirmationCard
               key={affirmation.id}
-              style={{
-                opacity: fadeAnim,
-                transform: [{
-                  translateY: fadeAnim.interpolate({
-                    inputRange: [0, 1],
-                    outputRange: [50, 0],
-                  }),
-                }],
-              }}
-            >
-              <AffirmationCard
-                text={affirmation.text}
-                style={styles.affirmationCard}
-              />
-            </Animated.View>
+              text={affirmation.text}
+              style={styles.affirmationCard}
+            />
           ))}
         </View>
       </Animated.ScrollView>
-
-      <Animated.View
-        style={[
-          styles.header,
-          {
-            height: headerHeight,
-            transform: [{ translateY: headerTranslateY }],
-          },
-        ]}
-      >
-        {imageLoading && (
-          <View style={styles.imageLoadingContainer}>
-            <ActivityIndicator size="large" color={Colors.light.primary} />
-          </View>
-        )}
-        
-        <Animated.Image
-          source={{ uri: playlist.image }}
-          style={[
-            StyleSheet.absoluteFill,
-            {
-              transform: [{ scale: imageScale }],
-              opacity: headerContentOpacity,
-            },
-          ]}
-          onLoadStart={() => setImageLoading(true)}
-          onLoadEnd={() => setImageLoading(false)}
-          onError={() => setImageError(true)}
-          resizeMode="cover"
-        />
-
-        <LinearGradient
-          colors={["transparent", "rgba(0,0,0,0.7)", "rgba(0,0,0,0.9)"]}
-          style={[StyleSheet.absoluteFill, styles.headerGradient]}
-          start={{ x: 0.5, y: 0.4 }}
-          end={{ x: 0.5, y: 1 }}
-        />
-
-        <Animated.View
-          style={[
-            styles.headerContent,
-            { opacity: headerContentOpacity },
-          ]}
-        >
-          <Text style={styles.headerTitle} numberOfLines={2}>
-            {playlist.title}
-          </Text>
-          <Text style={styles.headerAuthor} numberOfLines={1}>
-            {playlist.author}
-          </Text>
-          <Text style={styles.headerDescription} numberOfLines={2}>
-            {playlist.description}
-          </Text>
-        </Animated.View>
-
-        <View style={styles.floatingButtonsContainer}>
-          <Animated.View style={{ transform: [{ scale: buttonScale }] }}>
-            <TouchableOpacity
-              style={[styles.floatingPlayButton, isPlaying && styles.floatingPlayButtonActive]}
-              onPressIn={handlePressIn}
-              onPressOut={handlePressOut}
-              onPress={togglePlay}
-            >
-              <BlurView
-                intensity={25}
-                tint="dark"
-                style={StyleSheet.absoluteFill}
-              />
-              <LinearGradient
-                colors={Colors.gradients.primary}
-                style={StyleSheet.absoluteFill}
-                start={{ x: 0.2, y: 0 }}
-                end={{ x: 0.8, y: 1 }}
-              />
-              <Ionicons 
-                name={isPlaying ? "pause" : "play"} 
-                size={32} 
-                color="#FFFFFF" 
-              />
-            </TouchableOpacity>
-          </Animated.View>
-
-          <Animated.View
-            style={{
-              transform: [
-                { scale: buttonScale },
-                { rotate: saveButtonRotateInterpolate },
-              ],
-            }}
-          >
-            <TouchableOpacity
-              style={[styles.floatingSaveButton, isSaved && styles.floatingSaveButtonActive]}
-              onPressIn={handlePressIn}
-              onPressOut={handlePressOut}
-              onPress={toggleSave}
-            >
-              <BlurView
-                intensity={25}
-                tint="dark"
-                style={StyleSheet.absoluteFill}
-              />
-              <Ionicons
-                name={isSaved ? "heart" : "heart-outline"}
-                size={24}
-                color={isSaved ? Colors.light.primary : "#FFFFFF"}
-              />
-            </TouchableOpacity>
-          </Animated.View>
-        </View>
-      </Animated.View>
-
-      <TouchableOpacity
-        style={[styles.backButton, { marginTop: insets.top }]}
-        onPress={() => {
-          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-          router.back();
-        }}
-      >
-        <BlurView intensity={20} tint="dark" style={StyleSheet.absoluteFill} />
-        <IconSymbol name="chevron.left" size={24} color={Colors.light.text} />
-      </TouchableOpacity>
     </View>
   );
 }
@@ -417,146 +311,134 @@ export default function PlaylistDetailScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: Colors.dark.background,
   },
   scrollView: {
     flex: 1,
   },
   contentContainer: {
-    paddingHorizontal: 16,
-    paddingBottom: 120,
+    paddingHorizontal: 20,
+    paddingBottom: 100,
   },
   header: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 32,
+  },
+  iconButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    alignItems: "center",
+    justifyContent: "center",
     overflow: "hidden",
-    zIndex: 1,
+    backgroundColor: "rgba(255, 255, 255, 0.1)",
   },
-  headerGradient: {
-    opacity: 0.9,
+  coverArtSection: {
+    alignItems: 'center',
+    marginBottom: 32,
   },
-  headerContent: {
-    position: "absolute",
-    bottom: 20,
-    left: 16,
-    right: 88,
+  coverArtContainer: {
+    width: SCREEN_WIDTH * 0.6,
+    height: SCREEN_WIDTH * 0.6,
+    borderRadius: 24,
+    overflow: 'hidden',
+    ...Platform.select({
+      ios: {
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 20 },
+        shadowOpacity: 0.4,
+        shadowRadius: 16,
+      },
+      android: {
+        elevation: 8,
+      },
+    }),
   },
-  headerTitle: {
-    fontSize: 28,
-    fontWeight: "800",
+  coverArt: {
+    width: '100%',
+    height: '100%',
+  },
+  titleSection: {
+    marginBottom: 40,
+    alignItems: 'center',
+  },
+  title: {
+    fontSize: 34,
+    fontWeight: "700",
     color: Colors.light.text,
+    textAlign: 'center',
     marginBottom: 8,
-    letterSpacing: 0.5,
+    letterSpacing: 0.4,
   },
-  headerAuthor: {
-    fontSize: 16,
+  author: {
+    fontSize: 20,
     fontWeight: "600",
     color: Colors.light.textSecondary,
+    marginBottom: 16,
+    textAlign: 'center',
     opacity: 0.9,
-    marginBottom: 8,
   },
-  headerDescription: {
-    fontSize: 14,
+  description: {
+    fontSize: 17,
     color: Colors.light.textSecondary,
+    textAlign: 'center',
+    marginBottom: 32,
+    lineHeight: 24,
     opacity: 0.8,
-    lineHeight: 20,
+    maxWidth: '90%',
   },
-  imageLoadingContainer: {
-    ...StyleSheet.absoluteFillObject,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  floatingButtonsContainer: {
-    position: "absolute",
-    right: 16,
-    bottom: 20,
-    flexDirection: "row",
-    gap: 12,
-    zIndex: 2,
-  },
-  floatingPlayButton: {
-    width: 56,
+  playButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: 180,
     height: 56,
     borderRadius: 28,
     overflow: "hidden",
-    alignItems: "center",
-    justifyContent: "center",
-    shadowColor: Colors.light.primary,
-    shadowOffset: {
-      width: 0,
-      height: 4,
-    },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 8,
-  } as ViewStyle,
-  floatingPlayButtonActive: {
-    transform: [{ scale: 1.05 }],
-  } as ViewStyle,
-  floatingSaveButton: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    overflow: "hidden",
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "rgba(255, 255, 255, 0.1)",
-    borderWidth: 1,
-    borderColor: "rgba(255, 255, 255, 0.2)",
-  } as ViewStyle,
-  floatingSaveButtonActive: {
-    backgroundColor: "rgba(255, 255, 255, 0.2)",
-    borderColor: Colors.light.primary,
-  } as ViewStyle,
-  backButton: {
-    position: "absolute",
-    top: 0,
-    left: 16,
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    alignItems: "center",
-    justifyContent: "center",
-    zIndex: 2,
-    overflow: "hidden",
+    gap: 8,
+  },
+  playButtonActive: {
+    transform: [{ scale: 0.98 }],
+  },
+  playButtonText: {
+    fontSize: 18,
+    fontWeight: "600",
+    color: Colors.light.text,
+    letterSpacing: 0.3,
   },
   section: {
-    marginBottom: 32,
+    marginBottom: 24,
   },
   sectionHeader: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     marginBottom: 20,
   },
   sectionTitle: {
-    fontSize: 22,
+    fontSize: 24,
     fontWeight: "700",
     color: Colors.light.text,
     letterSpacing: 0.3,
   },
-  affirmationCard: {
-    marginBottom: 12,
-  } as ViewStyle,
-  seeAllButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 4,
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 16,
+  shuffleButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 18,
     backgroundColor: "rgba(255, 255, 255, 0.1)",
+    overflow: 'hidden',
   },
-  seeAllText: {
-    fontSize: 15,
+  shuffleText: {
+    fontSize: 16,
     fontWeight: "600",
     color: Colors.light.primary,
   },
-  title: {
-    fontSize: 20,
-    fontWeight: "600",
-    color: Colors.light.text,
-    textAlign: "center",
+  affirmationCard: {
+    marginBottom: 16,
   },
 });
