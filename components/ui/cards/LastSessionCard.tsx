@@ -5,11 +5,13 @@ import {
   Image,
   TouchableOpacity,
   ViewStyle,
-  Animated
+  Animated,
+  Platform
 } from "react-native";
 import Colors from "@/constants/Colors";
-import { CardBase } from "./CardBase";
 import { useRef, useCallback } from "react";
+import { BlurView } from "expo-blur";
+import { LinearGradient } from "expo-linear-gradient";
 
 interface LastSessionCardProps {
   id: string;
@@ -49,13 +51,22 @@ export function LastSessionCard({
   return (
     <Animated.View style={{ transform: [{ scale }] }}>
       <TouchableOpacity
-        style={[styles.container, style]}
         onPress={onPress}
         onPressIn={handlePressIn}
         onPressOut={handlePressOut}
         activeOpacity={1}
       >
-        <CardBase intensity={20}>
+        <BlurView
+          intensity={60}
+          tint="dark"
+          style={[styles.cardBase, style]}
+        >
+          <LinearGradient
+            colors={['rgba(255, 255, 255, 0.15)', 'rgba(255, 255, 255, 0.05)']}
+            style={StyleSheet.absoluteFill}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+          />
           <View style={styles.content}>
             <Image
               source={{ uri: image }}
@@ -74,16 +85,31 @@ export function LastSessionCard({
               )}
             </View>
           </View>
-        </CardBase>
+        </BlurView>
       </TouchableOpacity>
     </Animated.View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  cardBase: {
     width: "100%",
     marginBottom: 12,
+    borderRadius: 20,
+    overflow: "hidden",
+    borderWidth: 0.5,
+    borderColor: "rgba(255, 255, 255, 0.2)",
+    ...Platform.select({
+      ios: {
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: -2 },
+        shadowOpacity: 0.15,
+        shadowRadius: 8,
+      },
+      android: {
+        elevation: 5,
+      },
+    }),
   },
   content: {
     flexDirection: "row",
