@@ -1,3 +1,4 @@
+import React from 'react';
 import {
   StyleSheet,
   View,
@@ -7,6 +8,7 @@ import {
   StatusBar,
   Dimensions,
   ViewStyle,
+  Platform,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import Colors from "@/constants/Colors";
@@ -16,6 +18,9 @@ import ContributionBanner from "@/components/ui/ContributionBanner";
 import MediaPlayer from "@/components/ui/MediaPlayer";
 import { IconSymbol } from "@/components/ui/IconSymbol";
 import { PlaylistCard } from "@/components/ui/cards/PlaylistCard";
+import { Ionicons } from '@expo/vector-icons';
+import { BlurView } from 'expo-blur';
+import { useRouter } from 'expo-router';
 
 interface LastSession {
   id: string;
@@ -142,66 +147,92 @@ const examAffirmationsData = [
 ];
 
 const { width } = Dimensions.get("window");
-const EXPLORE_CARD_WIDTH = width * 0.7;
-// const LAST_SESSION_CARD_WIDTH = width * 0.4; // Removed unused constant
+const HORIZONTAL_CARD_WIDTH = width * 0.75;
+const HORIZONTAL_CARD_SPACING = 16;
 
 export default function HomeScreen() {
   const insets = useSafeAreaInsets();
+  const router = useRouter();
+
+  // Function to navigate to search screen
+  const goToSearch = () => {
+    router.push('/search');
+  };
+
+  // Helper function to render playlist sections
+  const renderPlaylistSection = (title: string, data: any[]) => (
+    <View style={styles.section}>
+      <Text style={styles.sectionTitle}>{title}</Text>
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={styles.horizontalScrollContainer}
+        decelerationRate="fast"
+        snapToInterval={HORIZONTAL_CARD_WIDTH + HORIZONTAL_CARD_SPACING}
+        snapToAlignment="start"
+        style={styles.horizontalScrollView}
+      >
+        {data.map((item) => (
+          <PlaylistCard
+            key={item.id}
+            id={item.id}
+            title={item.title}
+            image={item.image}
+            author={item.author}
+            style={StyleSheet.flatten([styles.horizontalCard, { width: HORIZONTAL_CARD_WIDTH }])}
+          />
+        ))}
+      </ScrollView>
+    </View>
+  );
 
   return (
     <View style={styles.container}>
       <StatusBar barStyle="light-content" />
       <LinearGradient
-        colors={["#050812", "#101830", "#1A304A", "#2A1840", "#03040A"]} // Example gradient, adjust as needed
+        colors={[
+          "#101830", // Darker start color
+          "#1A304A", 
+          "#2A4060", // Mid-blue
+          "#3A305A", // Mid-purple
+          "#182038"  // Darker end color
+        ]}
         style={StyleSheet.absoluteFill}
         start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
       />
-      <View style={{ paddingTop: insets.top }}>
-          <Header /> 
-      </View>
+ 
       <ScrollView
         style={styles.scrollView}
         contentContainerStyle={[
           styles.contentContainer,
-          { paddingBottom: insets.bottom + 80 }, // Add padding for MediaPlayer + tabs
+          { paddingTop: insets.top + 20, paddingBottom: insets.bottom + 100 },
         ]}
         showsVerticalScrollIndicator={false}
       >
-        {/* Last Sessions Section - Updated width and images */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Last sessions</Text>
-          <ScrollView 
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={styles.horizontalScrollContainer}
-            // Optional: Add snapping consistent with Explore section
-            decelerationRate="fast"
-            snapToInterval={EXPLORE_CARD_WIDTH + styles.horizontalCardMargin.marginRight}
-            snapToAlignment="start"
+        {/* Large Header Title */}
+        <View style={styles.headerContainer}>
+          <Text style={styles.headerTitle}>Discover</Text>
+          <TouchableOpacity 
+            style={styles.iconButton}
+            onPress={goToSearch}
           >
-            {lastSessionsData.map((session) => (
-              <PlaylistCard 
-                key={session.id}
-                id={session.id} 
-                title={session.title}
-                image={session.image}
-                style={StyleSheet.flatten([styles.horizontalCard, { width: EXPLORE_CARD_WIDTH }])} // Use EXPLORE_CARD_WIDTH
-              />
-            ))}
-          </ScrollView>
+            <BlurView intensity={30} tint="light" style={StyleSheet.absoluteFill} />
+            <Ionicons name="search" size={24} color={Colors.light.text} />
+          </TouchableOpacity>
         </View>
+        
+        {/* Last Sessions Section */}
+        {renderPlaylistSection("Last Sessions", lastSessionsData)}
 
         {/* Contribution Banner Section */}
-        <ContributionBanner />
+        <View style={styles.bannerContainer}>
+          <ContributionBanner />
+        </View>
 
         {/* Just for You Section */}
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>Just for You</Text>
-            <TouchableOpacity style={styles.arrowButton}>
-              <IconSymbol name="arrow.right" size={20} color={Colors.light.textSecondary} />
-            </TouchableOpacity>
           </View>
           <PlaylistCard
             id={justForYouData.id}
@@ -212,83 +243,13 @@ export default function HomeScreen() {
           />
         </View>
 
-        {/* Money Manifestation Section (Renamed) */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Money Manifestation</Text>
-          <ScrollView 
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={styles.horizontalScrollContainer}
-            decelerationRate="fast"
-            snapToInterval={EXPLORE_CARD_WIDTH + styles.horizontalCardMargin.marginRight}
-            snapToAlignment="start"
-          >
-            {moneyManifestationData.map((playlist) => (
-              <PlaylistCard 
-                key={playlist.id}
-                id={playlist.id}
-                title={playlist.title}
-                image={playlist.image}
-                author={playlist.author}
-                style={StyleSheet.flatten([styles.horizontalCard, { width: EXPLORE_CARD_WIDTH }])}
-              />
-            ))}
-          </ScrollView>
-        </View>
-
-        {/* Brain Power Section */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Brain Power</Text>
-          <ScrollView 
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={styles.horizontalScrollContainer}
-            decelerationRate="fast"
-            snapToInterval={EXPLORE_CARD_WIDTH + styles.horizontalCardMargin.marginRight}
-            snapToAlignment="start"
-          >
-            {brainPowerData.map((playlist) => (
-              <PlaylistCard 
-                key={playlist.id}
-                id={playlist.id}
-                title={playlist.title}
-                image={playlist.image}
-                author={playlist.author}
-                style={StyleSheet.flatten([styles.horizontalCard, { width: EXPLORE_CARD_WIDTH }])}
-              />
-            ))}
-          </ScrollView>
-        </View>
-
-        {/* Exam Affirmations Section */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Exam Affirmations</Text>
-          <ScrollView 
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={styles.horizontalScrollContainer}
-            decelerationRate="fast"
-            snapToInterval={EXPLORE_CARD_WIDTH + styles.horizontalCardMargin.marginRight}
-            snapToAlignment="start"
-          >
-            {examAffirmationsData.map((playlist) => (
-              <PlaylistCard 
-                key={playlist.id}
-                id={playlist.id}
-                title={playlist.title}
-                image={playlist.image}
-                author={playlist.author}
-                style={StyleSheet.flatten([styles.horizontalCard, { width: EXPLORE_CARD_WIDTH }])}
-              />
-            ))}
-          </ScrollView>
-        </View>
+        {/* Other Sections */}
+        {renderPlaylistSection("Money Manifestation", moneyManifestationData)}
+        {renderPlaylistSection("Brain Power", brainPowerData)}
+        {renderPlaylistSection("Exam Affirmations", examAffirmationsData)}
 
       </ScrollView>
-      <MediaPlayer 
-            // title and image props removed as they are likely derived from state
-            // Add other necessary props like isPlaying, onPressPlay, etc., if required by the component
-          />
+      <MediaPlayer /> 
     </View>
   );
 }
@@ -296,51 +257,68 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.dark.background, // Fallback background
+    backgroundColor: Colors.dark.background,
   },
   scrollView: {
     flex: 1,
   },
   contentContainer: {
-    paddingHorizontal: 16,
-    paddingTop: 16, // Add some padding below the header
+    paddingHorizontal: 0,
+  },
+  headerContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    marginBottom: 24,
+  },
+  headerTitle: {
+    fontSize: 34,
+    fontWeight: "800",
+    color: Colors.light.text,
+    letterSpacing: 0.4,
+  },
+  iconButton: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    alignItems: "center",
+    justifyContent: "center",
+    overflow: "hidden",
+    backgroundColor: "rgba(255, 255, 255, 0.1)",
   },
   section: {
-    marginBottom: 24,
+    marginBottom: 32,
   },
   sectionHeader: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: 16, // Keep marginBottom for spacing
+    paddingHorizontal: 20,
+    marginBottom: 16,
   },
   sectionTitle: {
-    fontSize: 20,
+    fontSize: 24,
     fontWeight: "700",
     color: Colors.light.text,
     letterSpacing: 0.3,
-    marginBottom: 16, // Keep space below title
-    marginTop: 16,
+    paddingHorizontal: 20,
+    marginBottom: 20,
   },
-  arrowButton: {
-    padding: 4,
-  },
-  justForYouCard: {
-    // Keep this style if specific adjustments needed for the large card
+  horizontalScrollView: {
+    paddingLeft: 20,
   },
   horizontalScrollContainer: {
-    paddingRight: 16, // Add padding to the right for the last card
+    paddingRight: 20,
   },
   horizontalCard: {
-    marginRight: 12, // Consistent spacing between horizontal cards
+    marginRight: HORIZONTAL_CARD_SPACING,
   },
-  horizontalCardMargin: { // Helper style for snapToInterval calculation
-    marginRight: 12,
+  justForYouCard: {
+    marginHorizontal: 20,
   },
-  mediaPlayerContainer: {
-    position: "absolute",
-    left: 8,
-    right: 8,
-    zIndex: 10,
-  } as ViewStyle,
+  bannerContainer: {
+    marginHorizontal: 20,
+    marginBottom: 32,
+  },
 });

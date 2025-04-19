@@ -1,3 +1,4 @@
+import React from 'react';
 import {
   StyleSheet,
   View,
@@ -119,6 +120,8 @@ const playlists: Record<string, PlaylistDetail> = {
   }
 };
 
+const COVER_IMAGE_SIZE = Dimensions.get('window').width * 0.5;
+
 export default function PlaylistDetailScreen() {
   const { id } = useLocalSearchParams();
   const router = useRouter();
@@ -130,23 +133,32 @@ export default function PlaylistDetailScreen() {
   
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const buttonScale = useRef(new Animated.Value(1)).current;
+  const imageScale = useRef(new Animated.Value(0)).current; // For image animation
 
   const playlist = playlists[id as string];
 
   useEffect(() => {
-    Animated.timing(fadeAnim, {
-      toValue: 1,
-      duration: 300,
-      useNativeDriver: true,
-    }).start();
+    Animated.parallel([
+      Animated.timing(fadeAnim, {
+        toValue: 1,
+        duration: 300,
+        useNativeDriver: true,
+      }),
+      Animated.spring(imageScale, { // Animate image scale in
+        toValue: 1,
+        tension: 40,
+        friction: 7,
+        useNativeDriver: true,
+      })
+    ]).start();
   }, []);
 
   const handlePressIn = useCallback(() => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     Animated.spring(buttonScale, {
-      toValue: 0.92,
-      tension: 40,
-      friction: 7,
+      toValue: 0.95,
+      tension: 50,
+      friction: 8,
       useNativeDriver: true,
     }).start();
   }, []);
@@ -154,8 +166,8 @@ export default function PlaylistDetailScreen() {
   const handlePressOut = useCallback(() => {
     Animated.spring(buttonScale, {
       toValue: 1,
-      tension: 40,
-      friction: 7,
+      tension: 50,
+      friction: 8,
       useNativeDriver: true,
     }).start();
   }, []);
@@ -173,7 +185,7 @@ export default function PlaylistDetailScreen() {
   if (!playlist) {
     return (
       <View style={[styles.container, { paddingTop: insets.top + 16 }]}>
-        <Text style={styles.title}>Playlist not found</Text>
+        <Text style={styles.notFoundTitle}>Playlist not found</Text>
       </View>
     );
   }
@@ -184,19 +196,19 @@ export default function PlaylistDetailScreen() {
       <ImageBackground
         source={{ uri: playlist.image }}
         style={[StyleSheet.absoluteFill]}
-        imageStyle={{ opacity: 0.7 }}
+        imageStyle={styles.backgroundImage}
         resizeMode="cover"
       >
-        <BlurView intensity={90} tint="dark" style={StyleSheet.absoluteFill}>
+        <BlurView intensity={80} tint="light" style={StyleSheet.absoluteFill}>
           <LinearGradient
             colors={[
-              'rgba(5, 8, 18, 0.3)',
-              'rgba(5, 8, 18, 0.7)',
-              'rgba(5, 8, 18, 0.95)',
+              'rgba(255, 255, 255, 0.1)',
+              'rgba(50, 50, 90, 0.6)',
+              'rgba(5, 8, 18, 0.9)',
             ]}
             style={StyleSheet.absoluteFill}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 0, y: 1 }}
+            start={{ x: 0, y: 0.1 }}
+            end={{ x: 0, y: 0.9 }}
           />
         </BlurView>
       </ImageBackground>
@@ -205,11 +217,10 @@ export default function PlaylistDetailScreen() {
         style={[styles.scrollView, { opacity: fadeAnim }]}
         contentContainerStyle={[
           styles.contentContainer,
-          { paddingTop: insets.top },
+          { paddingTop: insets.top + 16, paddingBottom: insets.bottom + 100 },
         ]}
         showsVerticalScrollIndicator={false}
       >
-        {/* Header Section */}
         <View style={styles.header}>
           <TouchableOpacity
             style={styles.iconButton}
@@ -218,7 +229,7 @@ export default function PlaylistDetailScreen() {
               router.back();
             }}
           >
-            <BlurView intensity={30} tint="dark" style={StyleSheet.absoluteFill} />
+            <BlurView intensity={30} tint="light" style={StyleSheet.absoluteFill} />
             <Ionicons name="chevron-back" size={24} color={Colors.light.text} />
           </TouchableOpacity>
 
@@ -226,7 +237,7 @@ export default function PlaylistDetailScreen() {
             style={styles.iconButton}
             onPress={toggleSave}
           >
-            <BlurView intensity={30} tint="dark" style={StyleSheet.absoluteFill} />
+            <BlurView intensity={30} tint="light" style={StyleSheet.absoluteFill} />
             <Ionicons
               name={isSaved ? "heart" : "heart-outline"}
               size={24}
@@ -235,48 +246,47 @@ export default function PlaylistDetailScreen() {
           </TouchableOpacity>
         </View>
 
-        {/* Cover Art Section */}
-        <View style={styles.coverArtSection}>
-          <BlurView intensity={30} tint="dark" style={styles.coverArtContainer}>
-            <Image
-              source={{ uri: playlist.image }}
-              style={styles.coverArt}
-              resizeMode="cover"
-            />
-          </BlurView>
-        </View>
+        <Animated.View style={[styles.coverImageContainer, { transform: [{ scale: imageScale }] }]}>
+          <Image 
+            source={{ uri: playlist.image }}
+            style={styles.coverImage}
+          />
+        </Animated.View>
 
-        {/* Title Section */}
         <View style={styles.titleSection}>
           <Text style={styles.title}>{playlist.title}</Text>
-          <Text style={styles.author}>{playlist.author}</Text>
+          <Text style={styles.author}>by {playlist.author}</Text>
           <Text style={styles.description}>{playlist.description}</Text>
-          
-          <TouchableOpacity
-            style={[styles.playButton, isPlaying && styles.playButtonActive]}
-            onPress={togglePlay}
-            onPressIn={handlePressIn}
-            onPressOut={handlePressOut}
-          >
-            <BlurView intensity={30} tint="dark" style={StyleSheet.absoluteFill} />
-            <LinearGradient
-              colors={Colors.gradients.primary}
-              style={StyleSheet.absoluteFill}
-              start={{ x: 0.2, y: 0 }}
-              end={{ x: 0.8, y: 1 }}
-            />
-            <Ionicons 
-              name={isPlaying ? "pause" : "play"} 
-              size={24} 
-              color="#FFFFFF" 
-            />
-            <Text style={styles.playButtonText}>
-              {isPlaying ? "Pause" : "Play"}
-            </Text>
-          </TouchableOpacity>
+        </View>
+        
+        <View style={styles.playButtonContainer}>
+          <Animated.View style={{ transform: [{ scale: buttonScale }] }}>
+            <TouchableOpacity
+              style={styles.playButton}
+              onPress={togglePlay}
+              onPressIn={handlePressIn}
+              onPressOut={handlePressOut}
+              activeOpacity={0.9}
+            >
+              <BlurView intensity={25} tint="dark" style={StyleSheet.absoluteFill} />
+              <LinearGradient
+                colors={Colors.gradients.primary}
+                style={StyleSheet.absoluteFill}
+                start={{ x: 0.2, y: 0 }}
+                end={{ x: 0.8, y: 1 }}
+              />
+              <Ionicons 
+                name={isPlaying ? "pause" : "play"} 
+                size={32} 
+                color="#FFFFFF" 
+              />
+              <Text style={styles.playButtonText}>
+                {isPlaying ? "Pause" : "Play"}
+              </Text>
+            </TouchableOpacity>
+          </Animated.View>
         </View>
 
-        {/* Affirmations Section */}
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>Affirmations</Text>
@@ -286,12 +296,10 @@ export default function PlaylistDetailScreen() {
                 Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
               }}
             >
-              <BlurView intensity={30} tint="dark" style={StyleSheet.absoluteFill} />
-              <Text style={styles.shuffleText}>Shuffle</Text>
-              <IconSymbol
+              <Ionicons
                 name="shuffle"
-                size={16}
-                color={Colors.light.primary}
+                size={20}
+                color={Colors.light.text}
               />
             </TouchableOpacity>
           </View>
@@ -313,81 +321,75 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: Colors.dark.background,
   },
+  backgroundImage: {
+    opacity: 0.5,
+  },
   scrollView: {
     flex: 1,
   },
   contentContainer: {
     paddingHorizontal: 20,
-    paddingBottom: 100,
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 32,
+    marginBottom: 24,
   },
   iconButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+    width: 48,
+    height: 48,
+    borderRadius: 24,
     alignItems: "center",
     justifyContent: "center",
     overflow: "hidden",
     backgroundColor: "rgba(255, 255, 255, 0.1)",
   },
-  coverArtSection: {
+  coverImageContainer: {
     alignItems: 'center',
-    marginBottom: 32,
+    marginBottom: 24,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.4,
+    shadowRadius: 12,
+    elevation: 16, // for Android shadow
   },
-  coverArtContainer: {
-    width: SCREEN_WIDTH * 0.6,
-    height: SCREEN_WIDTH * 0.6,
-    borderRadius: 24,
-    overflow: 'hidden',
-    ...Platform.select({
-      ios: {
-        shadowColor: "#000",
-        shadowOffset: { width: 0, height: 20 },
-        shadowOpacity: 0.4,
-        shadowRadius: 16,
-      },
-      android: {
-        elevation: 8,
-      },
-    }),
-  },
-  coverArt: {
-    width: '100%',
-    height: '100%',
+  coverImage: {
+    width: COVER_IMAGE_SIZE,
+    height: COVER_IMAGE_SIZE,
+    borderRadius: 16,
+    backgroundColor: 'rgba(255, 255, 255, 0.1)', // Placeholder bg
   },
   titleSection: {
-    marginBottom: 40,
+    marginBottom: 24,
     alignItems: 'center',
   },
   title: {
     fontSize: 34,
-    fontWeight: "700",
+    fontWeight: "800",
     color: Colors.light.text,
     textAlign: 'center',
-    marginBottom: 8,
+    marginBottom: 12,
     letterSpacing: 0.4,
   },
   author: {
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: "600",
     color: Colors.light.textSecondary,
-    marginBottom: 16,
+    marginBottom: 12,
     textAlign: 'center',
-    opacity: 0.9,
   },
   description: {
-    fontSize: 17,
+    fontSize: 16,
     color: Colors.light.textSecondary,
     textAlign: 'center',
-    marginBottom: 32,
+    marginBottom: 24,
     lineHeight: 24,
-    opacity: 0.8,
-    maxWidth: '90%',
+    paddingHorizontal: 16,
+  },
+  playButtonContainer: {
+    alignItems: 'center',
+    marginBottom: 40,
   },
   playButton: {
     flexDirection: 'row',
@@ -397,19 +399,20 @@ const styles = StyleSheet.create({
     height: 56,
     borderRadius: 28,
     overflow: "hidden",
-    gap: 8,
-  },
-  playButtonActive: {
-    transform: [{ scale: 0.98 }],
+    gap: 10,
+    shadowColor: Colors.light.primary,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 8,
   },
   playButtonText: {
     fontSize: 18,
-    fontWeight: "600",
+    fontWeight: "700",
     color: Colors.light.text,
-    letterSpacing: 0.3,
   },
   section: {
-    marginBottom: 24,
+    marginBottom: 32,
   },
   sectionHeader: {
     flexDirection: 'row',
@@ -424,21 +427,17 @@ const styles = StyleSheet.create({
     letterSpacing: 0.3,
   },
   shuffleButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 18,
+    padding: 8,
+    borderRadius: 20,
     backgroundColor: "rgba(255, 255, 255, 0.1)",
-    overflow: 'hidden',
-  },
-  shuffleText: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: Colors.light.primary,
   },
   affirmationCard: {
     marginBottom: 16,
+  },
+  notFoundTitle: {
+    fontSize: 24,
+    fontWeight: '600',
+    color: Colors.light.text,
+    textAlign: 'center',
   },
 });
