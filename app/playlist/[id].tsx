@@ -6,19 +6,16 @@ import {
   Image,
   TouchableOpacity,
   Dimensions,
-  ActivityIndicator,
   Platform,
   Animated,
   StatusBar,
   ViewStyle,
-  ImageBackground,
+  ScrollView,
 } from "react-native";
-import { useLocalSearchParams, useRouter } from "expo-router";
-import { BlurView } from "expo-blur";
+import { useLocalSearchParams, useRouter, Stack } from "expo-router";
 import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
-import { IconSymbol } from "@/components/ui/IconSymbol";
 import { AffirmationCard } from "@/components/ui/cards/AffirmationCard";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useState, useRef, useCallback, useEffect } from "react";
@@ -128,12 +125,10 @@ export default function PlaylistDetailScreen() {
   const insets = useSafeAreaInsets();
   const [isSaved, setIsSaved] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [imageLoading, setImageLoading] = useState(true);
-  const [imageError, setImageError] = useState(false);
   
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const buttonScale = useRef(new Animated.Value(1)).current;
-  const imageScale = useRef(new Animated.Value(0)).current; // For image animation
+  const imageScale = useRef(new Animated.Value(0)).current;
 
   const playlist = playlists[id as string];
 
@@ -144,7 +139,7 @@ export default function PlaylistDetailScreen() {
         duration: 300,
         useNativeDriver: true,
       }),
-      Animated.spring(imageScale, { // Animate image scale in
+      Animated.spring(imageScale, {
         toValue: 1,
         tension: 40,
         friction: 7,
@@ -185,6 +180,12 @@ export default function PlaylistDetailScreen() {
   if (!playlist) {
     return (
       <View style={[styles.container, { paddingTop: insets.top + 16 }]}>
+        <LinearGradient
+            colors={["#050812", "#101830", "#1A304A", "#2A1840", "#03040A"]}
+            style={StyleSheet.absoluteFill}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+        />
         <Text style={styles.notFoundTitle}>Playlist not found</Text>
       </View>
     );
@@ -193,25 +194,12 @@ export default function PlaylistDetailScreen() {
   return (
     <View style={styles.container}>
       <StatusBar barStyle="light-content" />
-      <ImageBackground
-        source={{ uri: playlist.image }}
-        style={[StyleSheet.absoluteFill]}
-        imageStyle={styles.backgroundImage}
-        resizeMode="cover"
-      >
-        <BlurView intensity={80} tint="light" style={StyleSheet.absoluteFill}>
-          <LinearGradient
-            colors={[
-              'rgba(255, 255, 255, 0.1)',
-              'rgba(50, 50, 90, 0.6)',
-              'rgba(5, 8, 18, 0.9)',
-            ]}
-            style={StyleSheet.absoluteFill}
-            start={{ x: 0, y: 0.1 }}
-            end={{ x: 0, y: 0.9 }}
-          />
-        </BlurView>
-      </ImageBackground>
+      <LinearGradient
+        colors={["#050812", "#101830", "#1A304A", "#2A1840", "#03040A"]}
+        style={StyleSheet.absoluteFill}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+      />
 
       <Animated.ScrollView
         style={[styles.scrollView, { opacity: fadeAnim }]}
@@ -229,7 +217,6 @@ export default function PlaylistDetailScreen() {
               router.back();
             }}
           >
-            <BlurView intensity={30} tint="light" style={StyleSheet.absoluteFill} />
             <Ionicons name="chevron-back" size={24} color={Colors.light.text} />
           </TouchableOpacity>
 
@@ -237,7 +224,6 @@ export default function PlaylistDetailScreen() {
             style={styles.iconButton}
             onPress={toggleSave}
           >
-            <BlurView intensity={30} tint="light" style={StyleSheet.absoluteFill} />
             <Ionicons
               name={isSaved ? "heart" : "heart-outline"}
               size={24}
@@ -263,12 +249,11 @@ export default function PlaylistDetailScreen() {
           <Animated.View style={{ transform: [{ scale: buttonScale }] }}>
             <TouchableOpacity
               style={styles.playButton}
-              onPress={togglePlay}
+              onPress={() => router.push('/player')}
               onPressIn={handlePressIn}
               onPressOut={handlePressOut}
               activeOpacity={0.9}
             >
-              <BlurView intensity={25} tint="dark" style={StyleSheet.absoluteFill} />
               <LinearGradient
                 colors={Colors.gradients.primary}
                 style={StyleSheet.absoluteFill}
@@ -321,9 +306,6 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: Colors.dark.background,
   },
-  backgroundImage: {
-    opacity: 0.5,
-  },
   scrollView: {
     flex: 1,
   },
@@ -342,7 +324,6 @@ const styles = StyleSheet.create({
     borderRadius: 24,
     alignItems: "center",
     justifyContent: "center",
-    overflow: "hidden",
     backgroundColor: "rgba(255, 255, 255, 0.1)",
   },
   coverImageContainer: {
@@ -352,13 +333,13 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.4,
     shadowRadius: 12,
-    elevation: 16, // for Android shadow
+    elevation: 16,
   },
   coverImage: {
     width: COVER_IMAGE_SIZE,
     height: COVER_IMAGE_SIZE,
     borderRadius: 16,
-    backgroundColor: 'rgba(255, 255, 255, 0.1)', // Placeholder bg
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
   },
   titleSection: {
     marginBottom: 24,
