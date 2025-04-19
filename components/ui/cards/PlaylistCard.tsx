@@ -64,9 +64,12 @@ export function PlaylistCard({
         activeOpacity={0.9}
       >
         <BlurView
-          intensity={60}
-          tint="dark"
-          style={styles.cardBase}
+          intensity={8}
+          tint="light"
+          style={{
+            borderRadius: 16,
+            overflow: 'hidden',
+          }}
         >
           <LinearGradient
             colors={['rgba(255, 255, 255, 0.15)', 'rgba(255, 255, 255, 0.05)']}
@@ -124,7 +127,6 @@ const styles = StyleSheet.create({
     overflow: "hidden",
     borderWidth: 1,
     borderColor: "rgba(255, 255, 255, 0.2)",
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
     ...Platform.select({
       ios: {
         shadowColor: "#000",

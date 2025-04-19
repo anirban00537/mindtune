@@ -17,44 +17,73 @@ import { IconSymbol } from "./IconSymbol";
 import { useRouter } from "expo-router";
 
 export default function Header() {
-  const [isFocused, setIsFocused] = useState(false);
-  const animatedScale = useRef(new Animated.Value(1)).current;
+  // const [isFocused, setIsFocused] = useState(false); // Keep if needed for actual input
+  // const animatedScale = useRef(new Animated.Value(1)).current; // Keep if animations are added
   const router = useRouter();
 
   const handleSearchPress = () => {
-    router.push("/search");
+    router.push("/search"); // Assuming /search route exists
+  };
+
+  const handleTimerPress = () => {
+    // Add navigation or action for timer button
+    console.log("Timer pressed");
   };
 
   return (
     <View style={styles.container}>
+      {/* Search Bar */}
       <TouchableOpacity
-        style={[styles.searchContainer]}
+        style={styles.searchContainer} // Apply shadow/elevation here
         onPress={handleSearchPress}
         activeOpacity={0.8}
       >
-        <BlurView intensity={8} tint="dark" style={StyleSheet.absoluteFill}>
+        <BlurView 
+          intensity={60} // Match standard intensity
+          tint="dark" 
+          style={StyleSheet.absoluteFill} // Blur covers the whole container
+        >
           <LinearGradient
-            colors={Colors.gradients.card}
+            colors={['rgba(255, 255, 255, 0.15)', 'rgba(255, 255, 255, 0.05)']} // Match standard gradient
             style={StyleSheet.absoluteFill}
-            start={{ x: 0.2, y: 0 }}
-            end={{ x: 0.8, y: 1 }}
+            start={{ x: 0, y: 0 }} // Adjust gradient direction if needed
+            end={{ x: 1, y: 1 }}
           />
         </BlurView>
         <IconSymbol
           name="magnifyingglass"
           size={20}
-          color={Colors.light.textSecondary}
+          color={Colors.light.textSecondary} // Correct color
         />
-        <View style={styles.searchInput}>
+        <View style={styles.searchInputView}> {/* Use View instead of TextInput for placeholder */} 
           <Text style={styles.searchPlaceholder}>Search sessions...</Text>
         </View>
-        <TouchableOpacity style={styles.timerButton}>
-          <Ionicons
-            name="timer-outline"
-            size={22}
-            color={Colors.light.textSecondary}
-          />
-        </TouchableOpacity>
+      </TouchableOpacity>
+      
+      {/* Timer Button */}
+      <TouchableOpacity 
+        style={styles.timerButtonContainer} // Apply shadow/elevation here
+        onPress={handleTimerPress}
+        activeOpacity={0.8}
+      >
+        <BlurView 
+          intensity={60} // Match standard intensity
+          tint="dark" 
+          style={StyleSheet.absoluteFill} // Blur covers the button
+          >
+             {/* Optional subtle gradient for button */}
+             <LinearGradient
+                colors={['rgba(255, 255, 255, 0.15)', 'rgba(255, 255, 255, 0.05)']}
+                style={StyleSheet.absoluteFill}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+             />
+        </BlurView>
+         <Ionicons
+          name="timer-outline"
+          size={22}
+          color={Colors.light.textSecondary} // Use secondary color for icon
+        />
       </TouchableOpacity>
     </View>
   );
@@ -66,35 +95,62 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingHorizontal: 16,
     gap: 12,
-    marginTop: 16,
+    marginTop: 16, // Keep margin or adjust as needed
+    marginBottom: 8, // Add margin below header
   },
   searchContainer: {
     flex: 1,
     height: 44,
-    borderRadius: 22,
+    borderRadius: 22, // Circular ends
     flexDirection: "row",
     alignItems: "center",
-    paddingHorizontal: 12,
-    borderWidth: 1,
-    borderColor: Colors.light.cardBorder,
-    gap: 8,
-    overflow: "hidden",
+    paddingHorizontal: 16, // Adjust padding
+    borderWidth: 1, // Match standard border
+    borderColor: 'rgba(255, 255, 255, 0.2)', // Match standard border color
+    backgroundColor: 'rgba(255, 255, 255, 0.1)', // Match standard background
+    gap: 10, // Adjust gap
+    overflow: "hidden", // Important for BlurView/borderRadius
+    ...Platform.select({ // Apply standard shadow/elevation
+      ios: {
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.15,
+        shadowRadius: 8,
+      },
+      android: {
+        elevation: 5,
+      },
+    }),
   },
-  searchInput: {
+  searchInputView: { // Changed from searchInput
     flex: 1,
     height: "100%",
     justifyContent: "center",
   },
   searchPlaceholder: {
-    color: Colors.light.textSecondary,
+    color: Colors.light.textSecondary, // Correct color
     fontSize: 16,
   },
-  timerButton: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
+  timerButtonContainer: { // Changed from timerButton for clarity
+    width: 44, // Make button same height as search bar
+    height: 44,
+    borderRadius: 22, // Make it circular
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: Colors.light.pill,
+    // backgroundColor: Colors.light.pill, // Removed solid background
+    borderWidth: 1, // Match standard border
+    borderColor: 'rgba(255, 255, 255, 0.2)', // Match standard border color
+    overflow: "hidden", // Important for BlurView/borderRadius
+     ...Platform.select({ // Apply standard shadow/elevation
+      ios: {
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.15,
+        shadowRadius: 8,
+      },
+      android: {
+        elevation: 5,
+      },
+    }),
   },
 });
