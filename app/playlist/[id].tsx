@@ -175,10 +175,10 @@ export default function PlaylistDetailScreen() {
     <View style={styles.container}>
       <StatusBar barStyle="light-content" />
       <LinearGradient
-        colors={Colors.gradients.background}
+        colors={["#050812", "#101830", "#1A304A", "#2A1840", "#03040A"]}
         style={StyleSheet.absoluteFill}
         start={{ x: 0, y: 0 }}
-        end={{ x: 0, y: 1 }}
+        end={{ x: 1, y: 1 }}
       />
 
       <Animated.ScrollView
@@ -362,7 +362,6 @@ export default function PlaylistDetailScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.light.background,
   },
   scrollView: {
     flex: 1,
@@ -377,7 +376,6 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     overflow: "hidden",
-    backgroundColor: Colors.light.background,
     zIndex: 1,
   },
   headerGradient: {
@@ -413,7 +411,6 @@ const styles = StyleSheet.create({
     ...StyleSheet.absoluteFillObject,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: Colors.light.background,
   },
   floatingButtonsContainer: {
     position: "absolute",

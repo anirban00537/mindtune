@@ -12,6 +12,7 @@ import { BlurView } from "expo-blur";
 import Colors from "@/constants/Colors";
 import { useRef, useCallback } from "react";
 import { LinearGradient } from "expo-linear-gradient";
+import { Ionicons } from "@expo/vector-icons";
 
 interface SearchResultCardProps {
   title: string;
@@ -35,44 +36,44 @@ export function SearchResultCard({
 
   const handlePressIn = useCallback(() => {
     Animated.spring(scale, {
-      toValue: 0.98,
-      useNativeDriver: true,
+      toValue: 0.96,
+      useNativeDriver: Platform.OS !== 'web',
     }).start();
-  }, []);
+  }, [scale]);
 
   const handlePressOut = useCallback(() => {
     Animated.spring(scale, {
       toValue: 1,
-      useNativeDriver: true,
+      useNativeDriver: Platform.OS !== 'web',
     }).start();
-  }, []);
+  }, [scale]);
 
-  const handlePlayPress = useCallback(() => {
+  const handleCombinedPress = () => {
     Animated.sequence([
       Animated.timing(playScale, {
         toValue: 0.8,
         duration: 100,
-        useNativeDriver: true,
+        useNativeDriver: Platform.OS !== 'web',
       }),
       Animated.spring(playScale, {
         toValue: 1,
-        useNativeDriver: true,
+        useNativeDriver: Platform.OS !== 'web',
       }),
-    ]).start();
-  }, []);
+    ]).start(onPress ? onPress : undefined);
+  };
 
   return (
-    <Animated.View style={{ transform: [{ scale }] }}>
+    <Animated.View style={[{ transform: [{ scale }] }, style]}>
       <TouchableOpacity
-        onPress={onPress}
+        onPress={handleCombinedPress}
         onPressIn={handlePressIn}
         onPressOut={handlePressOut}
-        activeOpacity={1}
+        activeOpacity={0.9}
       >
         <BlurView
           intensity={60}
           tint="dark"
-          style={[styles.cardBase, style]}
+          style={styles.cardBase}
         >
           <LinearGradient
             colors={['rgba(255, 255, 255, 0.15)', 'rgba(255, 255, 255, 0.05)']}
@@ -97,14 +98,25 @@ export function SearchResultCard({
                 <Text style={styles.duration}>◷ {duration}</Text>
               </View>
             </View>
-            <Animated.View style={{ transform: [{ scale: playScale }] }}>
+            <Animated.View style={[styles.playButtonContainer, { transform: [{ scale: playScale }] }]}>
               <TouchableOpacity
                 style={styles.playButton}
-                onPress={handlePlayPress}
+                onPress={handleCombinedPress}
+                hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
               >
-                <View style={styles.playGlass}>
-                  <Text style={styles.playText}>▶</Text>
-                </View>
+                <BlurView
+                  intensity={20}
+                  tint="dark"
+                  style={StyleSheet.absoluteFill}
+                />
+                <LinearGradient
+                  colors={Colors.gradients.primary}
+                  style={styles.playButtonGradient}
+                  start={{ x: 0.2, y: 0 }}
+                  end={{ x: 0.8, y: 1 }}
+                >
+                  <Ionicons name="play" size={20} color="#FFFFFF" />
+                </LinearGradient>
               </TouchableOpacity>
             </Animated.View>
           </View>
@@ -117,16 +129,15 @@ export function SearchResultCard({
 const styles = StyleSheet.create({
   cardBase: {
     width: "100%",
-    height: 100,
-    marginBottom: 12,
-    borderRadius: 20,
+    borderRadius: 16,
     overflow: "hidden",
-    borderWidth: 0.5,
+    borderWidth: 1,
     borderColor: "rgba(255, 255, 255, 0.2)",
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
     ...Platform.select({
       ios: {
         shadowColor: "#000",
-        shadowOffset: { width: 0, height: -2 },
+        shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.15,
         shadowRadius: 8,
       },
@@ -136,19 +147,20 @@ const styles = StyleSheet.create({
     }),
   },
   contentContainer: {
-    flex: 1,
     flexDirection: "row",
     alignItems: "center",
+    paddingRight: 12,
   },
   image: {
     width: 80,
-    height: "100%",
-    borderTopLeftRadius: 16,
-    borderBottomLeftRadius: 16,
+    height: 80,
+    borderRadius: 12,
+    margin: 8,
   },
   textContainer: {
     flex: 1,
-    padding: 12,
+    paddingVertical: 12,
+    paddingLeft: 4,
     justifyContent: "center",
   },
   title: {
@@ -159,41 +171,35 @@ const styles = StyleSheet.create({
     letterSpacing: 0.2,
   },
   description: {
-    fontSize: 13,
-    color: Colors.light.text,
-    opacity: 0.8,
+    fontSize: 14,
+    color: Colors.light.textSecondary,
     marginBottom: 6,
     letterSpacing: 0.1,
-    lineHeight: 18,
+    lineHeight: 20,
   },
   durationContainer: {
     flexDirection: "row",
     alignItems: "center",
+    marginTop: 4,
   },
   duration: {
-    fontSize: 12,
-    color: Colors.light.text,
-    opacity: 0.6,
-    letterSpacing: 0.2,
+    fontSize: 13,
+    color: Colors.light.textSecondary,
+    opacity: 0.8,
+    letterSpacing: 0.1,
+  },
+  playButtonContainer: {
+    marginLeft: 8,
   },
   playButton: {
-    width: 34,
-    height: 34,
-    borderRadius: 17,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
     overflow: "hidden",
-    marginRight: 12,
   },
-  playGlass: {
+  playButtonGradient: {
     flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "rgba(255,255,255,0.08)",
-    borderRadius: 17,
-    borderWidth: 0.5,
-    borderColor: "rgba(255,255,255,0.12)",
-  },
-  playText: {
-    color: Colors.light.text,
-    fontSize: 15,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });

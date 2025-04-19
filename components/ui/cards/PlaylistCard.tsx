@@ -39,34 +39,34 @@ export function PlaylistCard({
 
   const handlePressIn = useCallback(() => {
     Animated.spring(scale, {
-      toValue: 0.95,
-      useNativeDriver: true,
+      toValue: 0.96,
+      useNativeDriver: Platform.OS !== 'web',
     }).start();
-  }, []);
+  }, [scale]);
 
   const handlePressOut = useCallback(() => {
     Animated.spring(scale, {
       toValue: 1,
-      useNativeDriver: true,
+      useNativeDriver: Platform.OS !== 'web',
     }).start();
-  }, []);
+  }, [scale]);
 
   const handlePress = () => {
     router.push(`/playlist/${id}`);
   };
 
   return (
-    <Animated.View style={{ transform: [{ scale }] }}>
+    <Animated.View style={[{ transform: [{ scale }] }, style]}>
       <TouchableOpacity
         onPress={handlePress}
         onPressIn={handlePressIn}
         onPressOut={handlePressOut}
-        activeOpacity={1}
+        activeOpacity={0.9}
       >
         <BlurView
           intensity={60}
           tint="dark"
-          style={[styles.cardBase, style]}
+          style={styles.cardBase}
         >
           <LinearGradient
             colors={['rgba(255, 255, 255, 0.15)', 'rgba(255, 255, 255, 0.05)']}
@@ -84,7 +84,7 @@ export function PlaylistCard({
               <Text numberOfLines={1} style={styles.title}>
                 {title}
               </Text>
-              <Text style={styles.author}>{author}</Text>
+              <Text numberOfLines={1} style={styles.author}>{author}</Text>
               {duration && (
                 <View style={styles.durationContainer}>
                   <Text style={styles.duration}>◷ {duration}</Text>
@@ -94,15 +94,21 @@ export function PlaylistCard({
             <TouchableOpacity
               style={styles.playButton}
               onPress={handlePress}
-              hitSlop={8}
+              hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
             >
-              <View style={styles.playGlass}>
-                <Ionicons
-                  name="play"
-                  size={20}
-                  color="rgba(255, 255, 255, 0.6)"
+                <BlurView
+                  intensity={20}
+                  tint="dark"
+                  style={StyleSheet.absoluteFill}
                 />
-              </View>
+                <LinearGradient
+                  colors={Colors.gradients.primary}
+                  style={styles.playButtonGradient}
+                  start={{ x: 0.2, y: 0 }}
+                  end={{ x: 0.8, y: 1 }}
+                >
+                    <Ionicons name="play" size={20} color="#FFFFFF" />
+                </LinearGradient>
             </TouchableOpacity>
           </View>
         </BlurView>
@@ -114,15 +120,15 @@ export function PlaylistCard({
 const styles = StyleSheet.create({
   cardBase: {
     width: "100%",
-    marginBottom: 12,
-    borderRadius: 20,
+    borderRadius: 16,
     overflow: "hidden",
-    borderWidth: 0.5,
+    borderWidth: 1,
     borderColor: "rgba(255, 255, 255, 0.2)",
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
     ...Platform.select({
       ios: {
         shadowColor: "#000",
-        shadowOffset: { width: 0, height: -2 },
+        shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.15,
         shadowRadius: 8,
       },
@@ -154,32 +160,27 @@ const styles = StyleSheet.create({
   },
   author: {
     fontSize: 14,
-    color: Colors.light.text,
-    opacity: 0.6,
+    color: Colors.light.textSecondary,
+    letterSpacing: 0.1,
   },
   durationContainer: {
-    marginTop: 2,
+    marginTop: 4,
   },
   duration: {
     fontSize: 13,
-    color: Colors.light.text,
-    opacity: 0.5,
+    color: Colors.light.textSecondary,
+    opacity: 0.8,
     letterSpacing: 0.1,
   },
   playButton: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
     overflow: "hidden",
   },
-  playGlass: {
-    width: "100%",
-    height: "100%",
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "rgba(255,255,255,0.08)",
-    borderRadius: 16,
-    borderWidth: 0.5,
-    borderColor: "rgba(255,255,255,0.12)",
+  playButtonGradient: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });

@@ -4,6 +4,7 @@ import {
   Text,
   ScrollView,
   TouchableOpacity,
+  StatusBar,
   Dimensions,
   ViewStyle,
 } from "react-native";
@@ -15,7 +16,6 @@ import ContributionBanner from "@/components/ui/ContributionBanner";
 import MediaPlayer from "@/components/ui/MediaPlayer";
 import { IconSymbol } from "@/components/ui/IconSymbol";
 import { PlaylistCard } from "@/components/ui/cards/PlaylistCard";
-import { LastSessionCard } from "@/components/ui/cards/LastSessionCard";
 
 interface LastSession {
   id: string;
@@ -23,171 +23,272 @@ interface LastSession {
   image: string;
 }
 
-const lastSessions: LastSession[] = [
+// Mock data for last sessions - Updated with Unsplash images
+const lastSessionsData: LastSession[] = [
   {
-    id: "1",
-    title: "Awaken Your Money Power",
-    image:
-      "https://images.unsplash.com/photo-1565514020179-026b92b84bb6?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
+    id: "ls1",
+    title: "Be A Better Friend",
+    image: "https://images.unsplash.com/photo-1508672115270-a8f55e83f9b0?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60", 
   },
   {
-    id: "2",
-    title: "Deep Sleep",
-    image:
-      "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
+    id: "ls2",
+    title: "Be Happy",
+    image: "https://images.unsplash.com/photo-1494783367193-149034c05e8f?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
   },
   {
-    id: "3",
-    title: "Billionaire Mind",
-    image:
-      "https://images.unsplash.com/photo-1515894203077-2cd25148ae14?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
+    id: "ls3",
+    title: "Enjoy Reading",
+    image: "https://images.unsplash.com/photo-1507842217343-583bb7270b66?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
   },
   {
-    id: "4",
-    title: "Control Stress",
-    image:
-      "https://images.unsplash.com/photo-1508672019048-805c876b67e2?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
-  },
-];
-
-const categories = [
-  {
-    id: "money",
-    title: "Money Mastery",
-    sessions: [
-      {
-        id: "1",
-        title: "Billionaire Mind",
-        description: "Develop abundance mindset",
-        duration: "15 min",
-        image:
-          "https://images.unsplash.com/photo-1515894203077-2cd25148ae14?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
-      },
-      {
-        id: "2",
-        title: "Wealth Attraction",
-        description: "Manifest prosperity",
-        duration: "10 min",
-        image:
-          "https://images.unsplash.com/photo-1565514020179-026b92b84bb6?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
-      },
-    ],
+    id: "ls4",
+    title: "Feeling Bold", // Reuse image from explore data or find a new one
+    image: "https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60", 
   },
   {
-    id: "sleep",
-    title: "Sleep & Relaxation",
-    sessions: [
-      {
-        id: "1",
-        title: "Deep Sleep",
-        description: "Fall asleep faster",
-        duration: "20 min",
-        image:
-          "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
-      },
-      {
-        id: "2",
-        title: "Stress Relief",
-        description: "Let go of tension",
-        duration: "15 min",
-        image:
-          "https://images.unsplash.com/photo-1508672019048-805c876b67e2?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
-      },
-    ],
+    id: "ls5",
+    title: "Save Money",
+    image: "https://images.unsplash.com/photo-1579621970795-87facc2f976d?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
+  },
+  {
+    id: "ls6",
+    title: "Get Out Of Debt",
+    image: "https://images.unsplash.com/photo-1611995901659-a75a6c10f735?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
   },
 ];
 
-const justForYou = {
+// Mock data for "Just for You"
+const justForYouData = {
+  id: "jfy1",
   title: "Find Your Happiness",
-  description: "Start your journey to inner peace",
-  duration: "10 min",
-  image:
-    "https://images.unsplash.com/photo-1533910534207-90f31029a78e?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
+  image: "https://images.unsplash.com/photo-1508672019048-805c876b67e2?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60", // Replace with actual image URL
+  author: "MindTune", // Example author
+  description: "Discover the path to true happiness within yourself.", // Example description
 };
+
+// Mock data for Mini Player
+const miniPlayerData = {
+    id: "player1",
+    title: "Be A Better Friend",
+    author: "Innertune",
+    image: "https://via.placeholder.com/150/771796" // Replace with actual image URL
+}
+
+// Mock data for "Money Manifestation" (formerly Explore Playlists)
+const moneyManifestationData = [
+  {
+    id: "exp1", // Keeping IDs for simplicity, rename if needed
+    title: "Money Manifestation",
+    image: "https://images.unsplash.com/photo-1553729459-efe14ef6055d?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
+    author: "Wealth Vibes",
+  },
+  {
+    id: "exp2",
+    title: "Abundance Mindset",
+    image: "https://images.unsplash.com/photo-1639762681485-074b7f938ba0?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
+    author: "Prosperity Now",
+  },
+  {
+    id: "exp3",
+    title: "Attract Wealth Hypnosis",
+    image: "https://images.unsplash.com/photo-1579621970795-87facc2f976d?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60", 
+    author: "MindTune Finance",
+  },
+  // Add more if desired
+];
+
+// Mock data for "Brain Power"
+const brainPowerData = [
+  {
+    id: "bp1",
+    title: "Focus Enhancement",
+    image: "https://images.unsplash.com/photo-1517486808906-6ca8b3f04846?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
+    author: "Cognitive Boost",
+  },
+  {
+    id: "bp2",
+    title: "Memory Improvement",
+    image: "https://images.unsplash.com/photo-1580894908361-967195033215?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
+    author: "Mind Sharpener",
+  },
+  {
+    id: "bp3",
+    title: "Creative Thinking Flow",
+    image: "https://images.unsplash.com/photo-1509966756634-9c23dd6e6815?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
+    author: "Idea Spark",
+  },
+];
+
+// Mock data for "Exam Affirmations"
+const examAffirmationsData = [
+  {
+    id: "ea1",
+    title: "Confident Test Taking",
+    image: "https://images.unsplash.com/photo-1453928582365-b6ad33cb1289?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
+    author: "Study Success",
+  },
+  {
+    id: "ea2",
+    title: "Calm Exam Nerves",
+    image: "https://images.unsplash.com/photo-1543269865-cbf427effbad?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
+    author: "Academic Peace",
+  },
+  {
+    id: "ea3",
+    title: "Recall Information Easily",
+    image: "https://images.unsplash.com/photo-1516321497487-e288fb19713f?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
+    author: "Test Ace",
+  },
+];
+
+const { width } = Dimensions.get("window");
+const EXPLORE_CARD_WIDTH = width * 0.7;
+// const LAST_SESSION_CARD_WIDTH = width * 0.4; // Removed unused constant
 
 export default function HomeScreen() {
   const insets = useSafeAreaInsets();
-  const { width } = Dimensions.get("window");
-
-  // Calculate card width for the grid
-  const paddingHorizontal = 16;
-  const gap = 12;
-  const numColumns = 2;
-  const availableWidth = width - paddingHorizontal * 2 - gap * (numColumns - 1);
-  const cardWidth = availableWidth / numColumns;
 
   return (
     <View style={styles.container}>
+      <StatusBar barStyle="light-content" />
       <LinearGradient
-        colors={Colors.gradients.background}
+        colors={["#050812", "#101830", "#1A304A", "#2A1840", "#03040A"]} // Example gradient, adjust as needed
         style={StyleSheet.absoluteFill}
         start={{ x: 0, y: 0 }}
-        end={{ x: 0, y: 1 }}
+        end={{ x: 1, y: 1 }}
       />
-
+      <View style={{ paddingTop: insets.top }}>
+          <Header /> 
+      </View>
       <ScrollView
         style={styles.scrollView}
         contentContainerStyle={[
           styles.contentContainer,
-          { paddingTop: insets.top },
+          { paddingBottom: insets.bottom + 80 }, // Add padding for MediaPlayer + tabs
         ]}
         showsVerticalScrollIndicator={false}
       >
-        <Header />
-
-        {/* Last Sessions */}
-        <View style={[styles.section, styles.sectionSpacing]}>
+        {/* Last Sessions Section - Updated width and images */}
+        <View style={styles.section}>
           <Text style={styles.sectionTitle}>Last sessions</Text>
-          <View style={styles.gridContainer}>
-            {lastSessions.map((session) => (
-              <LastSessionCard
+          <ScrollView 
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.horizontalScrollContainer}
+            // Optional: Add snapping consistent with Explore section
+            decelerationRate="fast"
+            snapToInterval={EXPLORE_CARD_WIDTH + styles.horizontalCardMargin.marginRight}
+            snapToAlignment="start"
+          >
+            {lastSessionsData.map((session) => (
+              <PlaylistCard 
                 key={session.id}
-                {...session}
-                style={{ width: cardWidth }} // Pass calculated width
+                id={session.id} 
+                title={session.title}
+                image={session.image}
+                style={StyleSheet.flatten([styles.horizontalCard, { width: EXPLORE_CARD_WIDTH }])} // Use EXPLORE_CARD_WIDTH
               />
             ))}
-          </View>
+          </ScrollView>
         </View>
 
-        {/* Contribution Banner */}
-        <View style={[styles.section, styles.sectionSpacing]}>
-          <ContributionBanner />
+        {/* Contribution Banner Section */}
+        <ContributionBanner />
+
+        {/* Just for You Section */}
+        <View style={styles.section}>
+          <View style={styles.sectionHeader}>
+            <Text style={styles.sectionTitle}>Just for You</Text>
+            <TouchableOpacity style={styles.arrowButton}>
+              <IconSymbol name="arrow.right" size={20} color={Colors.light.textSecondary} />
+            </TouchableOpacity>
+          </View>
+          <PlaylistCard
+            id={justForYouData.id}
+            title={justForYouData.title}
+            image={justForYouData.image}
+            author={justForYouData.author}
+            style={styles.justForYouCard}
+          />
         </View>
 
-      
+        {/* Money Manifestation Section (Renamed) */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Money Manifestation</Text>
+          <ScrollView 
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.horizontalScrollContainer}
+            decelerationRate="fast"
+            snapToInterval={EXPLORE_CARD_WIDTH + styles.horizontalCardMargin.marginRight}
+            snapToAlignment="start"
+          >
+            {moneyManifestationData.map((playlist) => (
+              <PlaylistCard 
+                key={playlist.id}
+                id={playlist.id}
+                title={playlist.title}
+                image={playlist.image}
+                author={playlist.author}
+                style={StyleSheet.flatten([styles.horizontalCard, { width: EXPLORE_CARD_WIDTH }])}
+              />
+            ))}
+          </ScrollView>
+        </View>
 
-        {/* Categories */}
-        {categories.map((category) => (
-          <View key={category.id} style={styles.section}>
-            <View style={styles.sectionHeader}>
-              <Text style={styles.sectionTitle}>{category.title}</Text>
-              <TouchableOpacity style={styles.seeAllButton}>
-                <Text style={styles.seeAllText}>See all</Text>
-                <IconSymbol
-                  name="chevron.right"
-                  size={16}
-                  color={Colors.light.primary}
-                />
-              </TouchableOpacity>
-            </View>
-            <ScrollView
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              contentContainerStyle={styles.horizontalScroll}
-            >
-              {category.sessions.map((session) => (
-                <PlaylistCard
-                  key={session.id}
-                  {...session}
-                  style={styles.categoryCard}
-                />
-              ))}
-            </ScrollView>
-          </View>
-        ))}
+        {/* Brain Power Section */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Brain Power</Text>
+          <ScrollView 
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.horizontalScrollContainer}
+            decelerationRate="fast"
+            snapToInterval={EXPLORE_CARD_WIDTH + styles.horizontalCardMargin.marginRight}
+            snapToAlignment="start"
+          >
+            {brainPowerData.map((playlist) => (
+              <PlaylistCard 
+                key={playlist.id}
+                id={playlist.id}
+                title={playlist.title}
+                image={playlist.image}
+                author={playlist.author}
+                style={StyleSheet.flatten([styles.horizontalCard, { width: EXPLORE_CARD_WIDTH }])}
+              />
+            ))}
+          </ScrollView>
+        </View>
+
+        {/* Exam Affirmations Section */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Exam Affirmations</Text>
+          <ScrollView 
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.horizontalScrollContainer}
+            decelerationRate="fast"
+            snapToInterval={EXPLORE_CARD_WIDTH + styles.horizontalCardMargin.marginRight}
+            snapToAlignment="start"
+          >
+            {examAffirmationsData.map((playlist) => (
+              <PlaylistCard 
+                key={playlist.id}
+                id={playlist.id}
+                title={playlist.title}
+                image={playlist.image}
+                author={playlist.author}
+                style={StyleSheet.flatten([styles.horizontalCard, { width: EXPLORE_CARD_WIDTH }])}
+              />
+            ))}
+          </ScrollView>
+        </View>
+
       </ScrollView>
-
-      <MediaPlayer />
+      <MediaPlayer 
+            // title and image props removed as they are likely derived from state
+            // Add other necessary props like isPlaying, onPressPlay, etc., if required by the component
+          />
     </View>
   );
 }
@@ -195,61 +296,51 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.light.background,
+    backgroundColor: Colors.dark.background, // Fallback background
   },
   scrollView: {
     flex: 1,
   },
   contentContainer: {
-    flexGrow: 1,
-    paddingBottom: 120,
+    paddingHorizontal: 16,
+    paddingTop: 16, // Add some padding below the header
   },
   section: {
-    marginTop: 24,
-    marginBottom: 16,
-    paddingHorizontal: 16,
-  },
-  sectionSpacing: {
-    marginTop: 32,
+    marginBottom: 24,
   },
   sectionHeader: {
     flexDirection: "row",
-    alignItems: "center",
     justifyContent: "space-between",
-    marginBottom: 16,
+    alignItems: "center",
+    marginBottom: 16, // Keep marginBottom for spacing
   },
   sectionTitle: {
     fontSize: 20,
     fontWeight: "700",
     color: Colors.light.text,
-    marginBottom: 16,
     letterSpacing: 0.3,
+    marginBottom: 16, // Keep space below title
+    marginTop: 16,
   },
-  horizontalScroll: {
-    paddingBottom: 12,
+  arrowButton: {
+    padding: 4,
   },
-  gridContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
-    // Remove paddingHorizontal here as it's handled by the section
-    gap: 12,
+  justForYouCard: {
+    // Keep this style if specific adjustments needed for the large card
   },
-  categoryCard: {
-    width: 280,
-    marginRight: 16,
+  horizontalScrollContainer: {
+    paddingRight: 16, // Add padding to the right for the last card
   },
-  featuredCard: {
-    marginHorizontal: 0,
+  horizontalCard: {
+    marginRight: 12, // Consistent spacing between horizontal cards
   },
-  seeAllButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 4,
+  horizontalCardMargin: { // Helper style for snapToInterval calculation
+    marginRight: 12,
   },
-  seeAllText: {
-    fontSize: 15,
-    fontWeight: "600",
-    color: Colors.light.primary,
-  },
+  mediaPlayerContainer: {
+    position: "absolute",
+    left: 8,
+    right: 8,
+    zIndex: 10,
+  } as ViewStyle,
 });
