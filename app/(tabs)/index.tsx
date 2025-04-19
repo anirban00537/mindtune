@@ -159,10 +159,25 @@ export default function HomeScreen() {
     router.push('/search');
   };
 
+  // Handler for "See All" press (takes section title as identifier)
+  const handleSeeAll = (sectionTitle: string) => {
+    console.log(`See All pressed for: ${sectionTitle}`);
+    // Add navigation logic here, e.g., router.push(`/section/${sectionTitle}`);
+  };
+
   // Helper function to render playlist sections
   const renderPlaylistSection = (title: string, data: any[]) => (
     <View style={styles.section}>
-      <Text style={styles.sectionTitle}>{title}</Text>
+      <View style={styles.sectionHeader}>
+        <Text style={styles.sectionTitle}>{title}</Text>
+        <TouchableOpacity 
+          style={styles.seeAllButton} 
+          onPress={() => handleSeeAll(title)}
+        >
+          <Text style={styles.seeAllText}>See All</Text>
+          <Ionicons name="chevron-forward-outline" size={18} color={Colors.light.textSecondary} />
+        </TouchableOpacity>
+      </View>
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
@@ -283,20 +298,29 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(255, 255, 255, 0.1)",
   },
   section: {
-    marginBottom: 32,
+    marginBottom: 20,
   },
   sectionHeader: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
+    paddingHorizontal: 20,
+    marginBottom: 10,
   },
   sectionTitle: {
-    fontSize: 24,
-    fontWeight: "700",
+    fontSize: 17,
+    fontWeight: "500",
     color: Colors.light.text,
-    letterSpacing: 0.3,
-    paddingHorizontal: 20,
-    marginBottom: 20,
+  },
+  seeAllButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+  },
+  seeAllText: {
+    fontSize: 14,
+    fontWeight: '500',
+    color: Colors.light.textSecondary,
   },
   horizontalScrollView: {
     paddingLeft: 20,
@@ -312,6 +336,6 @@ const styles = StyleSheet.create({
   },
   bannerContainer: {
     marginHorizontal: 20,
-    marginBottom: 32,
+    marginBottom: 12,
   },
 });

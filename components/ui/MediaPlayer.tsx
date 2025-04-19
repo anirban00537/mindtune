@@ -16,7 +16,7 @@ export default function MediaPlayer() {
 
   return (
     <View style={[styles.container, { paddingBottom: insets.bottom }]}>
-      <BlurView intensity={60} tint="dark" style={StyleSheet.absoluteFill}>
+      <BlurView intensity={30} tint="dark" style={StyleSheet.absoluteFill}>
         <LinearGradient
           colors={['rgba(255, 255, 255, 0.15)', 'rgba(255, 255, 255, 0.05)']}
           style={StyleSheet.absoluteFill}
