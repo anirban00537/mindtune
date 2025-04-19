@@ -205,7 +205,7 @@ export default function HomeScreen() {
     <View style={styles.container}>
       <StatusBar barStyle="light-content" />
       <LinearGradient
-        colors={["#050812", "#101830", "#1A304A", "#2A1840", "#03040A"]}
+        colors={["#2A1840", "#050812", "#050812", "#050812", "#050812"]}
         style={StyleSheet.absoluteFill}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}

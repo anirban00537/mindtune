@@ -23,16 +23,11 @@ export default function SettingsScreen() {
 
   return (
     <View style={styles.container}>
-      <LinearGradient
-        colors={[
-          "#101830", // Standardized lighter start color
-          "#1A304A", 
-          "#2A4060", // Standardized lighter mid-blue
-          "#3A305A", // Standardized adjusted mid-purple
-          "#182038"  // Standardized lighter end color
-        ]}
+       <LinearGradient
+        colors={["#2A1840", "#050812", "#050812", "#050812", "#050812"]}
         style={StyleSheet.absoluteFill}
         start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
       />
       <ScrollView
         style={styles.scrollView}
