@@ -11,7 +11,8 @@ export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme].tint,
+        tabBarActiveTintColor: Colors[colorScheme].primary,
+        tabBarInactiveTintColor: "rgba(255, 255, 255, 0.5)",
         headerShown: false,
         tabBarStyle: {
           ...Platform.select({
@@ -27,6 +28,10 @@ export default function TabLayout() {
         tabBarLabelStyle: {
           fontWeight: "600",
           fontSize: 11,
+          marginBottom: Platform.OS === "ios" ? 0 : 4,
+        },
+        tabBarIconStyle: {
+          marginTop: 4,
         },
       }}
     >
@@ -34,8 +39,12 @@ export default function TabLayout() {
         name="index"
         options={{
           title: "Home",
-          tabBarIcon: ({ color }) => (
-            <Ionicons name="home" size={24} color={color} />
+          tabBarIcon: ({ color, focused }) => (
+            <Ionicons
+              name={focused ? "home" : "home-outline"}
+              size={24}
+              color={color}
+            />
           ),
         }}
       />
@@ -43,8 +52,12 @@ export default function TabLayout() {
         name="favorites"
         options={{
           title: "Favorites",
-          tabBarIcon: ({ color }) => (
-            <Ionicons name="heart" size={24} color={color} />
+          tabBarIcon: ({ color, focused }) => (
+            <Ionicons
+              name={focused ? "heart" : "heart-outline"}
+              size={24}
+              color={color}
+            />
           ),
         }}
       />
