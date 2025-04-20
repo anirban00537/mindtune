@@ -1,6 +1,6 @@
 import { Tabs } from "expo-router";
 import { Platform, StyleSheet } from "react-native";
-import { IconSymbol } from "@/components/ui/IconSymbol";
+import { Ionicons } from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import TabBarBackground from "@/components/ui/TabBarBackground";
@@ -35,25 +35,16 @@ export default function TabLayout() {
         options={{
           title: "Home",
           tabBarIcon: ({ color }) => (
-            <IconSymbol size={28} name="house.fill" color={color} />
+            <Ionicons name="home" size={24} color={color} />
           ),
         }}
       />
       <Tabs.Screen
-        name="library"
+        name="favorites"
         options={{
-          title: "My Library",
+          title: "Favorites",
           tabBarIcon: ({ color }) => (
-            <IconSymbol size={28} name="books.vertical.fill" color={color} />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="settings"
-        options={{
-          title: "Settings",
-          tabBarIcon: ({ color }) => (
-            <IconSymbol size={28} name="gearshape.fill" color={color} />
+            <Ionicons name="heart" size={24} color={color} />
           ),
         }}
       />
