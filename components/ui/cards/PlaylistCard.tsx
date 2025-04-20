@@ -19,7 +19,7 @@ import * as Haptics from "expo-haptics";
 
 const { width } = Dimensions.get("window");
 const CARD_WIDTH = width * 0.42;
-const CARD_ASPECT_RATIO = 1.5;
+const CARD_ASPECT_RATIO = 1;
 const CARD_HEIGHT = CARD_WIDTH * CARD_ASPECT_RATIO;
 
 interface PlaylistCardProps {
@@ -178,7 +178,7 @@ export function PlaylistCard({
 
 const styles = StyleSheet.create({
   touchableWrapper: {
-    borderRadius: 20,
+    borderRadius: 14,
     shadowColor: "#000000",
     shadowOffset: {
       width: 0,
@@ -191,7 +191,7 @@ const styles = StyleSheet.create({
   },
   cardInnerContainer: {
     flex: 1,
-    borderRadius: 20,
+    borderRadius: 14,
     overflow: "hidden",
     backgroundColor: Colors.dark.card,
     borderWidth: 1,

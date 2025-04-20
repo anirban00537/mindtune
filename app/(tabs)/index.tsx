@@ -217,7 +217,8 @@ export default function HomeScreen() {
   const handleSeeAll = (sectionTitle: string) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     console.log(`See All pressed for: ${sectionTitle}`);
-    // Add navigation logic here, e.g., router.push(`/section/${sectionTitle}`);
+    // Navigate to the category page, passing the title as the ID
+    router.push(`/category/${encodeURIComponent(sectionTitle)}`);
   };
 
   // Helper function to render playlist sections with animations
