@@ -9,20 +9,21 @@ import {
   Animated,
   Dimensions,
   FlatList,
+  ImageBackground,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Colors from "@/constants/Colors";
-import { PlaylistCard } from "@/components/ui/cards/PlaylistCard";
 import { useRouter, useLocalSearchParams } from "expo-router";
 import * as Haptics from "expo-haptics";
 import { Ionicons } from "@expo/vector-icons";
 import { BlurView } from "expo-blur";
+import { CategoryCard } from "@/components/ui/cards/CategoryCard";
 
 const { width } = Dimensions.get("window");
-const GRID_SPACING = 12;
-const NUM_COLUMNS = 2;
-const CARD_WIDTH = (width - GRID_SPACING * 3) / NUM_COLUMNS;
+const SPACING = 16;
+const CARD_WIDTH = width - SPACING * 2;
+const CARD_HEIGHT = 90; // Reduced from 120 for more compact cards
 
 interface Playlist {
   id: string;
@@ -201,44 +202,27 @@ export default function CategoryPlaylistScreen() {
     ]).start();
   }, []);
 
-  const renderGridItem = ({
-    item,
-    index,
-  }: {
-    item: Playlist;
-    index: number;
-  }) => {
-    return (
-      <Animated.View
-        style={{
-          width: CARD_WIDTH,
-          margin: GRID_SPACING / 2,
-          opacity: fadeAnim,
-          transform: [
-            {
-              translateY: fadeAnim.interpolate({
-                inputRange: [0, 1],
-                outputRange: [50 + index * 10, 0],
-              }),
-            },
-          ],
-        }}
-      >
-        <PlaylistCard
-          id={item.id}
-          title={item.title}
-          image={item.image}
-          author={item.author}
-          duration={item.duration}
-          style={{ width: CARD_WIDTH }}
-          isFavorited={index % 3 === 0} // Just for demo
-          onFavoritePress={() =>
-            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)
-          }
-        />
-      </Animated.View>
-    );
-  };
+  const renderItem = ({ item, index }: { item: Playlist; index: number }) => (
+    <CategoryCard
+      id={item.id}
+      title={item.title}
+      image={item.image}
+      author={item.author}
+      duration={item.duration}
+      index={index}
+      style={{
+        opacity: fadeAnim,
+        transform: [
+          {
+            translateY: fadeAnim.interpolate({
+              inputRange: [0, 1],
+              outputRange: [20 + index * 10, 0],
+            }),
+          },
+        ],
+      }}
+    />
+  );
 
   return (
     <View style={styles.container}>
@@ -282,7 +266,7 @@ export default function CategoryPlaylistScreen() {
         style={[
           styles.contentContainer,
           {
-            paddingBottom: insets.bottom + 20, // Reduced bottom padding
+            paddingBottom: insets.bottom + 20,
             opacity: fadeAnim,
             transform: [{ translateY: contentSlideUp }],
             flex: 1,
@@ -292,12 +276,10 @@ export default function CategoryPlaylistScreen() {
         {playlistsToShow.length > 0 ? (
           <FlatList
             data={playlistsToShow}
-            renderItem={renderGridItem}
+            renderItem={renderItem}
             keyExtractor={(item) => item.id}
-            numColumns={2}
             showsVerticalScrollIndicator={false}
-            contentContainerStyle={styles.gridContainer}
-            columnWrapperStyle={styles.columnWrapper}
+            contentContainerStyle={styles.listContainer}
           />
         ) : (
           <Animated.View
@@ -334,11 +316,11 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    paddingHorizontal: 16,
+    paddingHorizontal: SPACING,
     paddingBottom: 16,
   },
   headerTitle: {
-    fontSize: 20,
+    fontSize: 22,
     fontWeight: "700",
     color: Colors.light.text,
     letterSpacing: 0.3,
@@ -357,15 +339,12 @@ const styles = StyleSheet.create({
     width: 44, // Same width as back button for balance
   },
   contentContainer: {
-    paddingHorizontal: GRID_SPACING / 2, // Adjust horizontal padding
     flex: 1,
+    paddingHorizontal: SPACING,
   },
-  gridContainer: {
-    paddingHorizontal: GRID_SPACING / 2, // Inner padding for grid items
+  listContainer: {
+    paddingTop: 8,
     paddingBottom: 20,
-  },
-  columnWrapper: {
-    // No specific style needed here if margins are handled by the item
   },
   noResultsContainer: {
     flex: 1,

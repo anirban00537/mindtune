@@ -15,12 +15,12 @@ import {
 import { LinearGradient } from "expo-linear-gradient";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Colors from "@/constants/Colors";
-import { PlaylistCard } from "@/components/ui/cards/PlaylistCard";
 import { useRouter } from "expo-router";
 import * as Haptics from "expo-haptics";
 import { BlurView } from "expo-blur";
 import { useState } from "react";
 import { Ionicons } from "@expo/vector-icons";
+import { CategoryCard } from "@/components/ui/cards/CategoryCard";
 
 const { width } = Dimensions.get("window");
 const GRID_SPACING = 12;
@@ -132,42 +132,27 @@ export default function SearchScreen() {
     ]).start();
   }, []);
 
-  const renderGridItem = ({
-    item,
-    index,
-  }: {
-    item: Playlist;
-    index: number;
-  }) => {
+  const renderItem = ({ item, index }: { item: Playlist; index: number }) => {
     return (
-      <Animated.View
+      <CategoryCard
+        id={item.id}
+        title={item.title}
+        image={item.image}
+        author={item.author}
+        duration={item.duration}
+        index={index}
         style={{
-          width: CARD_WIDTH,
-          margin: GRID_SPACING / 2,
           opacity: fadeAnim,
           transform: [
             {
               translateY: fadeAnim.interpolate({
                 inputRange: [0, 1],
-                outputRange: [50 + index * 10, 0],
+                outputRange: [30 + index * 10, 0],
               }),
             },
           ],
         }}
-      >
-        <PlaylistCard
-          id={item.id}
-          title={item.title}
-          image={item.image}
-          author={item.author}
-          duration={item.duration}
-          style={{ width: CARD_WIDTH }}
-          isFavorited={index % 2 === 0}
-          onFavoritePress={() =>
-            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)
-          }
-        />
-      </Animated.View>
+      />
     );
   };
 
@@ -262,12 +247,10 @@ export default function SearchScreen() {
 
             <FlatList
               data={filteredPlaylists}
-              renderItem={renderGridItem}
+              renderItem={renderItem}
               keyExtractor={(item) => item.id}
-              numColumns={2}
               showsVerticalScrollIndicator={false}
-              contentContainerStyle={styles.gridContainer}
-              columnWrapperStyle={styles.columnWrapper}
+              contentContainerStyle={styles.listContainer}
             />
           </>
         ) : (
@@ -379,10 +362,7 @@ const styles = StyleSheet.create({
     color: Colors.light.textSecondary,
     marginTop: 8,
   },
-  gridContainer: {
+  listContainer: {
     paddingBottom: 20,
-  },
-  columnWrapper: {
-    justifyContent: "space-between",
   },
 });
