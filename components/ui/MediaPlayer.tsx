@@ -5,7 +5,6 @@ import {
   TouchableOpacity,
   Platform,
 } from "react-native";
-import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
@@ -17,28 +16,27 @@ export default function MediaPlayer() {
   const router = useRouter();
 
   const handlePress = () => {
-    router.push('/player/dummy');
+    router.push("/player/dummy");
   };
 
   return (
-    <TouchableOpacity 
+    <TouchableOpacity
       style={[styles.container, { paddingBottom: insets.bottom }]}
-      onPress={handlePress} 
+      onPress={handlePress}
       activeOpacity={0.8}
     >
-      <BlurView intensity={30} tint="dark" style={StyleSheet.absoluteFill}>
-        <LinearGradient
-          colors={['rgba(255, 255, 255, 0.15)', 'rgba(255, 255, 255, 0.05)']}
-          style={StyleSheet.absoluteFill}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 1 }}
-        />
-      </BlurView>
+      {/* Main background gradient */}
+      <LinearGradient
+        colors={["#2A1840", "#050812", "#050812"]}
+        style={StyleSheet.absoluteFill}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+      />
 
       <View style={styles.progress}>
         <LinearGradient
           colors={Colors.gradients.primary}
-          style={[styles.progressBar, { width: "45%" }]} // This would be dynamic in real app
+          style={[styles.progressBar, { width: "45%" }]}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 0 }}
         />
@@ -55,19 +53,15 @@ export default function MediaPlayer() {
         </View>
 
         <TouchableOpacity style={styles.playButton}>
-          <BlurView
-            intensity={20}
-            tint="dark"
-            style={StyleSheet.absoluteFill}
-          />
           <LinearGradient
             colors={Colors.gradients.primary}
-            style={styles.playButtonGradient}
+            style={StyleSheet.absoluteFill}
             start={{ x: 0.2, y: 0 }}
             end={{ x: 0.8, y: 1 }}
-          >
+          />
+          <View style={styles.playButtonContent}>
             <Ionicons name="play" size={24} color="#FFFFFF" />
-          </LinearGradient>
+          </View>
         </TouchableOpacity>
       </View>
     </TouchableOpacity>
@@ -80,9 +74,8 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
     borderTopWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.2)',
+    borderColor: "rgba(255, 255, 255, 0.1)",
     borderTopLeftRadius: 16,
     borderTopRightRadius: 16,
     overflow: "hidden",
@@ -101,7 +94,7 @@ const styles = StyleSheet.create({
   progress: {
     width: "100%",
     height: 2,
-    backgroundColor: Colors.light.border,
+    backgroundColor: "rgba(255, 255, 255, 0.1)",
   },
   progressBar: {
     height: "100%",
@@ -133,7 +126,7 @@ const styles = StyleSheet.create({
     borderRadius: 22,
     overflow: "hidden",
   },
-  playButtonGradient: {
+  playButtonContent: {
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
