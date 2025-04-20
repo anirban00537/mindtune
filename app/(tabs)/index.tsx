@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import {
   StyleSheet,
   View,
@@ -18,9 +18,9 @@ import ContributionBanner from "@/components/ui/ContributionBanner";
 import MediaPlayer from "@/components/ui/MediaPlayer";
 import { IconSymbol } from "@/components/ui/IconSymbol";
 import { PlaylistCard } from "@/components/ui/cards/PlaylistCard";
-import { Ionicons } from '@expo/vector-icons';
-import { BlurView } from 'expo-blur';
-import { useRouter } from 'expo-router';
+import { Ionicons } from "@expo/vector-icons";
+import { BlurView } from "expo-blur";
+import { useRouter } from "expo-router";
 
 interface LastSession {
   id: string;
@@ -33,32 +33,38 @@ const lastSessionsData: LastSession[] = [
   {
     id: "ls1",
     title: "Be A Better Friend",
-    image: "https://images.unsplash.com/photo-1508672019048-805c876b67e2?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60", // Replace with actual image URL
+    image:
+      "https://images.unsplash.com/photo-1508672019048-805c876b67e2?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60", // Replace with actual image URL
   },
   {
     id: "ls2",
     title: "Be Happy",
-    image: "https://images.unsplash.com/photo-1494783367193-149034c05e8f?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
+    image:
+      "https://images.unsplash.com/photo-1494783367193-149034c05e8f?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
   },
   {
     id: "ls3",
     title: "Enjoy Reading",
-    image: "https://images.unsplash.com/photo-1507842217343-583bb7270b66?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
+    image:
+      "https://images.unsplash.com/photo-1507842217343-583bb7270b66?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
   },
   {
     id: "ls4",
     title: "Feeling Bold", // Reuse image from explore data or find a new one
-    image: "https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60", 
+    image:
+      "https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
   },
   {
     id: "ls5",
     title: "Save Money",
-    image: "https://images.unsplash.com/photo-1579621970795-87facc2f976d?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
+    image:
+      "https://images.unsplash.com/photo-1579621970795-87facc2f976d?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
   },
   {
     id: "ls6",
     title: "Get Out Of Debt",
-    image: "https://images.unsplash.com/photo-1611995901659-a75a6c10f735?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
+    image:
+      "https://images.unsplash.com/photo-1611995901659-a75a6c10f735?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
   },
 ];
 
@@ -66,37 +72,42 @@ const lastSessionsData: LastSession[] = [
 const justForYouData = {
   id: "jfy1",
   title: "Find Your Happiness",
-  image: "https://images.unsplash.com/photo-1508672019048-805c876b67e2?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60", // Replace with actual image URL
+  image:
+    "https://images.unsplash.com/photo-1508672019048-805c876b67e2?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60", // Replace with actual image URL
   author: "MindTune", // Example author
   description: "Discover the path to true happiness within yourself.", // Example description
 };
 
 // Mock data for Mini Player
 const miniPlayerData = {
-    id: "player1",
-    title: "Be A Better Friend",
-    author: "Innertune",
-    image: "https://images.unsplash.com/photo-1508672019048-805c876b67e2?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60", // Replace with actual image URL
-  }
+  id: "player1",
+  title: "Be A Better Friend",
+  author: "Innertune",
+  image:
+    "https://images.unsplash.com/photo-1508672019048-805c876b67e2?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60", // Replace with actual image URL
+};
 
 // Mock data for "Money Manifestation" (formerly Explore Playlists)
 const moneyManifestationData = [
   {
     id: "exp1", // Keeping IDs for simplicity, rename if needed
     title: "Money Manifestation",
-    image: "https://images.unsplash.com/photo-1553729459-efe14ef6055d?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
+    image:
+      "https://images.unsplash.com/photo-1553729459-efe14ef6055d?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
     author: "Wealth Vibes",
   },
   {
     id: "exp2",
     title: "Abundance Mindset",
-    image: "https://images.unsplash.com/photo-1639762681485-074b7f938ba0?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
+    image:
+      "https://images.unsplash.com/photo-1639762681485-074b7f938ba0?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
     author: "Prosperity Now",
   },
   {
     id: "exp3",
     title: "Attract Wealth Hypnosis",
-    image: "https://images.unsplash.com/photo-1579621970795-87facc2f976d?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60", 
+    image:
+      "https://images.unsplash.com/photo-1579621970795-87facc2f976d?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
     author: "MindTune Finance",
   },
   // Add more if desired
@@ -107,19 +118,22 @@ const brainPowerData = [
   {
     id: "bp1",
     title: "Focus Enhancement",
-    image: "https://images.unsplash.com/photo-1517486808906-6ca8b3f04846?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
+    image:
+      "https://images.unsplash.com/photo-1517486808906-6ca8b3f04846?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
     author: "Cognitive Boost",
   },
   {
     id: "bp2",
     title: "Memory Improvement",
-    image: "https://images.unsplash.com/photo-1580894908361-967195033215?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
+    image:
+      "https://images.unsplash.com/photo-1580894908361-967195033215?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
     author: "Mind Sharpener",
   },
   {
     id: "bp3",
     title: "Creative Thinking Flow",
-    image: "https://images.unsplash.com/photo-1509966756634-9c23dd6e6815?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
+    image:
+      "https://images.unsplash.com/photo-1509966756634-9c23dd6e6815?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
     author: "Idea Spark",
   },
 ];
@@ -129,26 +143,30 @@ const examAffirmationsData = [
   {
     id: "ea1",
     title: "Confident Test Taking",
-    image: "https://images.unsplash.com/photo-1453928582365-b6ad33cb1289?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
+    image:
+      "https://images.unsplash.com/photo-1453928582365-b6ad33cb1289?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
     author: "Study Success",
   },
   {
     id: "ea2",
     title: "Calm Exam Nerves",
-    image: "https://images.unsplash.com/photo-1543269865-cbf427effbad?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
+    image:
+      "https://images.unsplash.com/photo-1543269865-cbf427effbad?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
     author: "Academic Peace",
   },
   {
     id: "ea3",
     title: "Recall Information Easily",
-    image: "https://images.unsplash.com/photo-1516321497487-e288fb19713f?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
+    image:
+      "https://images.unsplash.com/photo-1516321497487-e288fb19713f?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
     author: "Test Ace",
   },
 ];
 
+// Extract CARD_WIDTH calculation from PlaylistCard
 const { width } = Dimensions.get("window");
-const HORIZONTAL_CARD_WIDTH = width * 0.75;
-const HORIZONTAL_CARD_SPACING = 16;
+const CARD_WIDTH = width * 0.42;
+const HORIZONTAL_CARD_SPACING = 16; // Define spacing here
 
 export default function HomeScreen() {
   const insets = useSafeAreaInsets();
@@ -156,7 +174,7 @@ export default function HomeScreen() {
 
   // Function to navigate to search screen
   const goToSearch = () => {
-    router.push('/search');
+    router.push("/search");
   };
 
   // Handler for "See All" press (takes section title as identifier)
@@ -170,12 +188,16 @@ export default function HomeScreen() {
     <View style={styles.section}>
       <View style={styles.sectionHeader}>
         <Text style={styles.sectionTitle}>{title}</Text>
-        <TouchableOpacity 
-          style={styles.seeAllButton} 
+        <TouchableOpacity
+          style={styles.seeAllButton}
           onPress={() => handleSeeAll(title)}
         >
           <Text style={styles.seeAllText}>See All</Text>
-          <Ionicons name="chevron-forward-outline" size={18} color={Colors.light.textSecondary} />
+          <Ionicons
+            name="chevron-forward-outline"
+            size={18}
+            color={Colors.light.textSecondary}
+          />
         </TouchableOpacity>
       </View>
       <ScrollView
@@ -183,7 +205,8 @@ export default function HomeScreen() {
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={styles.horizontalScrollContainer}
         decelerationRate="fast"
-        snapToInterval={HORIZONTAL_CARD_WIDTH + HORIZONTAL_CARD_SPACING}
+        // Updated snapToInterval to use imported CARD_WIDTH and spacing
+        snapToInterval={CARD_WIDTH + HORIZONTAL_CARD_SPACING}
         snapToAlignment="start"
         style={styles.horizontalScrollView}
       >
@@ -194,7 +217,8 @@ export default function HomeScreen() {
             title={item.title}
             image={item.image}
             author={item.author}
-            style={StyleSheet.flatten([styles.horizontalCard, { width: HORIZONTAL_CARD_WIDTH }])}
+            // Removed custom style prop to use original card size
+            style={styles.horizontalCard} // Keep margin
           />
         ))}
       </ScrollView>
@@ -210,7 +234,7 @@ export default function HomeScreen() {
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
       />
- 
+
       <ScrollView
         style={styles.scrollView}
         contentContainerStyle={[
@@ -222,15 +246,16 @@ export default function HomeScreen() {
         {/* Large Header Title */}
         <View style={styles.headerContainer}>
           <Text style={styles.headerTitle}>Discover</Text>
-          <TouchableOpacity 
-            style={styles.iconButton}
-            onPress={goToSearch}
-          >
-            <BlurView intensity={30} tint="light" style={StyleSheet.absoluteFill} />
+          <TouchableOpacity style={styles.iconButton} onPress={goToSearch}>
+            <BlurView
+              intensity={30}
+              tint="light"
+              style={StyleSheet.absoluteFill}
+            />
             <Ionicons name="search" size={24} color={Colors.light.text} />
           </TouchableOpacity>
         </View>
-        
+
         {/* Last Sessions Section */}
         {renderPlaylistSection("Last Sessions", lastSessionsData)}
 
@@ -249,7 +274,8 @@ export default function HomeScreen() {
             title={justForYouData.title}
             image={justForYouData.image}
             author={justForYouData.author}
-            style={styles.justForYouCard}
+            // Removed custom style prop for the Just for You card
+            style={styles.justForYouCard} // Keep margin
           />
         </View>
 
@@ -257,9 +283,8 @@ export default function HomeScreen() {
         {renderPlaylistSection("Money Manifestation", moneyManifestationData)}
         {renderPlaylistSection("Brain Power", brainPowerData)}
         {renderPlaylistSection("Exam Affirmations", examAffirmationsData)}
-
       </ScrollView>
-      <MediaPlayer /> 
+      <MediaPlayer />
     </View>
   );
 }
@@ -276,9 +301,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 0,
   },
   headerContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     paddingHorizontal: 20,
     marginBottom: 24,
   },
@@ -313,13 +338,13 @@ const styles = StyleSheet.create({
     color: Colors.light.text,
   },
   seeAllButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 4,
   },
   seeAllText: {
     fontSize: 14,
-    fontWeight: '500',
+    fontWeight: "500",
     color: Colors.light.textSecondary,
   },
   horizontalScrollView: {
@@ -329,9 +354,11 @@ const styles = StyleSheet.create({
     paddingRight: 20,
   },
   horizontalCard: {
+    // Keep only the margin style
     marginRight: HORIZONTAL_CARD_SPACING,
   },
   justForYouCard: {
+    // Keep only the margin style
     marginHorizontal: 20,
   },
   bannerContainer: {
