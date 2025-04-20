@@ -124,7 +124,7 @@ const playlists: Record<string, PlaylistDetail> = {
   },
 };
 
-const COVER_IMAGE_SIZE = Dimensions.get("window").width * 0.5;
+const COVER_IMAGE_SIZE = Dimensions.get("window").width * 0.45;
 
 export default function PlaylistDetailScreen() {
   const { id } = useLocalSearchParams();
@@ -216,7 +216,7 @@ export default function PlaylistDetailScreen() {
         style={[styles.scrollView, { opacity: fadeAnim }]}
         contentContainerStyle={[
           styles.contentContainer,
-          { paddingTop: insets.top + 16, paddingBottom: insets.bottom + 100 },
+          { paddingTop: insets.top + 10, paddingBottom: insets.bottom + 120 },
         ]}
         showsVerticalScrollIndicator={false}
       >
@@ -291,7 +291,7 @@ export default function PlaylistDetailScreen() {
                 Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
               }}
             >
-              <Ionicons name="shuffle" size={20} color={Colors.light.text} />
+              <Ionicons name="shuffle" size={18} color={Colors.light.text} />
             </TouchableOpacity>
           </View>
           {playlist.affirmations.map((affirmation) => (
@@ -316,110 +316,111 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   contentContainer: {
-    paddingHorizontal: 20,
+    paddingHorizontal: 16,
   },
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: 24,
+    marginBottom: 16,
+    marginTop: 8,
   },
   iconButton: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "rgba(255, 255, 255, 0.1)",
+    backgroundColor: "rgba(255, 255, 255, 0.08)",
   },
   coverImageContainer: {
     alignItems: "center",
-    marginBottom: 24,
+    marginBottom: 20,
     shadowColor: "#000",
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.4,
-    shadowRadius: 12,
-    elevation: 16,
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.3,
+    shadowRadius: 10,
+    elevation: 12,
   },
   coverImage: {
     width: COVER_IMAGE_SIZE,
     height: COVER_IMAGE_SIZE,
-    borderRadius: 16,
-    backgroundColor: "rgba(255, 255, 255, 0.1)",
+    borderRadius: 20,
+    backgroundColor: "rgba(255, 255, 255, 0.05)",
   },
   titleSection: {
-    marginBottom: 24,
+    marginBottom: 20,
     alignItems: "center",
   },
   title: {
-    fontSize: 34,
-    fontWeight: "800",
+    fontSize: 30,
+    fontWeight: "700",
     color: Colors.light.text,
     textAlign: "center",
-    marginBottom: 12,
-    letterSpacing: 0.4,
+    marginBottom: 6,
+    letterSpacing: 0.3,
   },
   author: {
-    fontSize: 18,
-    fontWeight: "600",
+    fontSize: 16,
+    fontWeight: "500",
     color: Colors.light.textSecondary,
-    marginBottom: 12,
+    marginBottom: 10,
     textAlign: "center",
   },
   description: {
-    fontSize: 16,
+    fontSize: 15,
     color: Colors.light.textSecondary,
     textAlign: "center",
-    marginBottom: 24,
-    lineHeight: 24,
-    paddingHorizontal: 16,
+    marginBottom: 16,
+    lineHeight: 22,
+    paddingHorizontal: 10,
   },
   playButtonContainer: {
     alignItems: "center",
-    marginBottom: 40,
+    marginBottom: 32,
   },
   playButton: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    width: 180,
-    height: 56,
-    borderRadius: 28,
+    width: 170,
+    height: 52,
+    borderRadius: 26,
     overflow: "hidden",
-    gap: 10,
+    gap: 8,
     shadowColor: Colors.light.primary,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 8,
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.25,
+    shadowRadius: 6,
+    elevation: 6,
   },
   playButtonText: {
-    fontSize: 18,
-    fontWeight: "700",
+    fontSize: 17,
+    fontWeight: "600",
     color: Colors.light.text,
   },
   section: {
-    marginBottom: 32,
+    marginBottom: 24,
   },
   sectionHeader: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: 20,
+    marginBottom: 12,
   },
   sectionTitle: {
-    fontSize: 24,
-    fontWeight: "700",
+    fontSize: 22,
+    fontWeight: "600",
     color: Colors.light.text,
-    letterSpacing: 0.3,
+    letterSpacing: 0.2,
   },
   shuffleButton: {
-    padding: 8,
-    borderRadius: 20,
-    backgroundColor: "rgba(255, 255, 255, 0.1)",
+    padding: 6,
+    borderRadius: 18,
+    backgroundColor: "rgba(255, 255, 255, 0.08)",
   },
   affirmationCard: {
-    marginBottom: 16,
+    marginBottom: 12,
   },
   notFoundTitle: {
     fontSize: 24,
