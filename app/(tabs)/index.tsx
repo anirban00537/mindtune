@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import {
   StyleSheet,
   View,
@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
   StatusBar,
   Dimensions,
-  ViewStyle,
+  Animated,
   Platform,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
@@ -21,6 +21,7 @@ import { PlaylistCard } from "@/components/ui/cards/PlaylistCard";
 import { Ionicons } from "@expo/vector-icons";
 import { BlurView } from "expo-blur";
 import { useRouter } from "expo-router";
+import * as Haptics from "expo-haptics";
 
 interface LastSession {
   id: string;
@@ -171,59 +172,132 @@ const HORIZONTAL_CARD_SPACING = 16; // Define spacing here
 export default function HomeScreen() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
+  const scrollY = useRef(new Animated.Value(0)).current;
+
+  // Animation values
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+  const headerSlideDown = useRef(new Animated.Value(-50)).current;
+  const sectionSlideUp = useRef(new Animated.Value(50)).current;
+  const bannerSlideUp = useRef(new Animated.Value(100)).current;
+
+  // Start entrance animations when component mounts
+  useEffect(() => {
+    // Sequence of entrance animations
+    Animated.stagger(150, [
+      Animated.timing(fadeAnim, {
+        toValue: 1,
+        duration: 600,
+        useNativeDriver: true,
+      }),
+      Animated.timing(headerSlideDown, {
+        toValue: 0,
+        duration: 500,
+        useNativeDriver: true,
+      }),
+      Animated.timing(sectionSlideUp, {
+        toValue: 0,
+        duration: 400,
+        useNativeDriver: true,
+      }),
+      Animated.timing(bannerSlideUp, {
+        toValue: 0,
+        duration: 400,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  }, []);
 
   // Function to navigate to search screen
   const goToSearch = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     router.push("/search");
   };
 
   // Handler for "See All" press (takes section title as identifier)
   const handleSeeAll = (sectionTitle: string) => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     console.log(`See All pressed for: ${sectionTitle}`);
     // Add navigation logic here, e.g., router.push(`/section/${sectionTitle}`);
   };
 
-  // Helper function to render playlist sections
-  const renderPlaylistSection = (title: string, data: any[]) => (
-    <View style={styles.section}>
-      <View style={styles.sectionHeader}>
-        <Text style={styles.sectionTitle}>{title}</Text>
-        <TouchableOpacity
-          style={styles.seeAllButton}
-          onPress={() => handleSeeAll(title)}
-        >
-          <Text style={styles.seeAllText}>See All</Text>
-          <Ionicons
-            name="chevron-forward-outline"
-            size={18}
-            color={Colors.light.textSecondary}
-          />
-        </TouchableOpacity>
-      </View>
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={styles.horizontalScrollContainer}
-        decelerationRate="fast"
-        // Updated snapToInterval to use imported CARD_WIDTH and spacing
-        snapToInterval={CARD_WIDTH + HORIZONTAL_CARD_SPACING}
-        snapToAlignment="start"
-        style={styles.horizontalScrollView}
+  // Helper function to render playlist sections with animations
+  const renderPlaylistSection = (title: string, data: any[], index: number) => {
+    // Calculate staggered delay for each section
+    const delay = index * 100;
+
+    return (
+      <Animated.View
+        style={[
+          styles.section,
+          {
+            opacity: fadeAnim,
+            transform: [
+              {
+                translateY: fadeAnim.interpolate({
+                  inputRange: [0, 1],
+                  outputRange: [50, 0],
+                }),
+              },
+            ],
+          },
+        ]}
       >
-        {data.map((item) => (
-          <PlaylistCard
-            key={item.id}
-            id={item.id}
-            title={item.title}
-            image={item.image}
-            author={item.author}
-            // Removed custom style prop to use original card size
-            style={styles.horizontalCard} // Keep margin
-          />
-        ))}
-      </ScrollView>
-    </View>
-  );
+        <View style={styles.sectionHeader}>
+          <Text style={styles.sectionTitle}>{title}</Text>
+          <TouchableOpacity
+            style={styles.seeAllButton}
+            onPress={() => handleSeeAll(title)}
+          >
+            <Text style={styles.seeAllText}>See All</Text>
+            <Ionicons
+              name="chevron-forward-outline"
+              size={18}
+              color={Colors.light.textSecondary}
+            />
+          </TouchableOpacity>
+        </View>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.horizontalScrollContainer}
+          decelerationRate="fast"
+          snapToInterval={CARD_WIDTH + HORIZONTAL_CARD_SPACING}
+          snapToAlignment="start"
+          style={styles.horizontalScrollView}
+        >
+          {data.map((item, idx) => (
+            <Animated.View
+              key={item.id}
+              style={{
+                opacity: fadeAnim,
+                transform: [
+                  {
+                    translateX: fadeAnim.interpolate({
+                      inputRange: [0, 1],
+                      outputRange: [50 + idx * 20, 0],
+                    }),
+                  },
+                ],
+              }}
+            >
+              <PlaylistCard
+                key={item.id}
+                id={item.id}
+                title={item.title}
+                image={item.image}
+                author={item.author}
+                style={styles.horizontalCard}
+                isFavorited={idx % 3 === 0} // Just for demo
+                onFavoritePress={() =>
+                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)
+                }
+              />
+            </Animated.View>
+          ))}
+        </ScrollView>
+      </Animated.View>
+    );
+  };
 
   return (
     <View style={styles.container}>
@@ -235,55 +309,61 @@ export default function HomeScreen() {
         end={{ x: 1, y: 1 }}
       />
 
-      <ScrollView
+      <Animated.ScrollView
         style={styles.scrollView}
         contentContainerStyle={[
           styles.contentContainer,
           { paddingTop: insets.top + 20, paddingBottom: insets.bottom + 100 },
         ]}
         showsVerticalScrollIndicator={false}
+        scrollEventThrottle={16}
+        onScroll={Animated.event(
+          [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+          { useNativeDriver: false }
+        )}
       >
         {/* Large Header Title */}
-        <View style={styles.headerContainer}>
+        <Animated.View
+          style={[
+            styles.headerContainer,
+            {
+              opacity: fadeAnim,
+              transform: [{ translateY: headerSlideDown }],
+            },
+          ]}
+        >
           <Text style={styles.headerTitle}>Discover</Text>
           <TouchableOpacity style={styles.iconButton} onPress={goToSearch}>
-            <BlurView
-              intensity={30}
-              tint="light"
-              style={StyleSheet.absoluteFill}
-            />
+            <View style={styles.searchButtonBackground} />
             <Ionicons name="search" size={24} color={Colors.light.text} />
           </TouchableOpacity>
-        </View>
+        </Animated.View>
 
         {/* Last Sessions Section */}
-        {renderPlaylistSection("Last Sessions", lastSessionsData)}
+        {renderPlaylistSection("Last Sessions", lastSessionsData, 0)}
 
         {/* Contribution Banner Section */}
-        <View style={styles.bannerContainer}>
+        <Animated.View
+          style={[
+            styles.bannerContainer,
+            {
+              opacity: fadeAnim,
+              transform: [{ translateY: bannerSlideUp }],
+            },
+          ]}
+        >
           <ContributionBanner />
-        </View>
-
-        {/* Just for You Section */}
-        <View style={styles.section}>
-          <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>Just for You</Text>
-          </View>
-          <PlaylistCard
-            id={justForYouData.id}
-            title={justForYouData.title}
-            image={justForYouData.image}
-            author={justForYouData.author}
-            // Removed custom style prop for the Just for You card
-            style={styles.justForYouCard} // Keep margin
-          />
-        </View>
+        </Animated.View>
 
         {/* Other Sections */}
-        {renderPlaylistSection("Money Manifestation", moneyManifestationData)}
-        {renderPlaylistSection("Brain Power", brainPowerData)}
-        {renderPlaylistSection("Exam Affirmations", examAffirmationsData)}
-      </ScrollView>
+        {renderPlaylistSection(
+          "Money Manifestation",
+          moneyManifestationData,
+          1
+        )}
+        {renderPlaylistSection("Brain Power", brainPowerData, 2)}
+        {renderPlaylistSection("Exam Affirmations", examAffirmationsData, 3)}
+      </Animated.ScrollView>
       <MediaPlayer />
     </View>
   );
@@ -320,6 +400,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     overflow: "hidden",
+    backgroundColor: "rgba(255, 255, 255, 0.1)",
+  },
+  searchButtonBackground: {
+    ...StyleSheet.absoluteFillObject,
     backgroundColor: "rgba(255, 255, 255, 0.1)",
   },
   section: {
