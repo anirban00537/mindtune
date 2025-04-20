@@ -9,6 +9,8 @@ import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
 import { useEffect } from "react";
 import "react-native-reanimated";
+import { MediaPlayerProvider } from "@/context/MediaPlayerContext";
+import MediaPlayer from "@/components/ui/MediaPlayer";
 
 import { useColorScheme } from "@/hooks/useColorScheme";
 
@@ -20,8 +22,8 @@ const CustomDarkTheme = {
   ...DarkTheme,
   colors: {
     ...DarkTheme.colors,
-    background: 'transparent',
-    card: 'transparent',
+    background: "transparent",
+    card: "transparent",
   },
 };
 
@@ -42,14 +44,24 @@ export default function RootLayout() {
   }
 
   return (
-    <ThemeProvider value={colorScheme === "dark" ? CustomDarkTheme : DefaultTheme}>
-      <Stack screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="(tabs)" />
-        <Stack.Screen name="playlist/[id]" />
-        <Stack.Screen name="search" />
-        <Stack.Screen name="create" />
-      </Stack>
-      <StatusBar style="light" />
-    </ThemeProvider>
+    <MediaPlayerProvider>
+      <ThemeProvider
+        value={colorScheme === "dark" ? CustomDarkTheme : DefaultTheme}
+      >
+        <Stack
+          screenOptions={{
+            headerShown: false,
+            contentStyle: { backgroundColor: "#050812" },
+          }}
+        >
+          <Stack.Screen name="(tabs)" />
+          <Stack.Screen name="playlist/[id]" />
+          <Stack.Screen name="search" />
+          <Stack.Screen name="create" />
+        </Stack>
+        <StatusBar style="light" />
+      </ThemeProvider>
+      <MediaPlayer />
+    </MediaPlayerProvider>
   );
 }

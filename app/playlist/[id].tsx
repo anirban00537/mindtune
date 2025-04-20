@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import {
   StyleSheet,
   View,
@@ -19,7 +19,9 @@ import Colors from "@/constants/Colors";
 import { AffirmationCard } from "@/components/ui/cards/AffirmationCard";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useState, useRef, useCallback, useEffect } from "react";
-import * as Haptics from 'expo-haptics';
+import * as Haptics from "expo-haptics";
+import MediaPlayer from "@/components/ui/MediaPlayer";
+import { useMediaPlayer } from "@/context/MediaPlayerContext";
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 
@@ -40,12 +42,13 @@ interface PlaylistDetail {
 
 // Mock data following the same pattern as home screen
 const playlists: Record<string, PlaylistDetail> = {
-  "ls1": {
+  ls1: {
     id: "ls1",
     title: "Be A Better Friend",
     author: "MindTune",
     description: "Improve your relationships through daily affirmations",
-    image: "https://images.unsplash.com/photo-1508672115270-a8f55e83f9b0?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
+    image:
+      "https://images.unsplash.com/photo-1508672115270-a8f55e83f9b0?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
     duration: "10 min",
     affirmations: [
       { id: "1", text: "I am a caring and supportive friend" },
@@ -55,12 +58,13 @@ const playlists: Record<string, PlaylistDetail> = {
       { id: "5", text: "I attract meaningful friendships" },
     ],
   },
-  "ls2": {
+  ls2: {
     id: "ls2",
     title: "Be Happy",
     author: "MindTune",
     description: "Cultivate happiness and joy in your daily life",
-    image: "https://images.unsplash.com/photo-1494783367193-149034c05e8f?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
+    image:
+      "https://images.unsplash.com/photo-1494783367193-149034c05e8f?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
     duration: "12 min",
     affirmations: [
       { id: "1", text: "I choose happiness in every moment" },
@@ -70,12 +74,13 @@ const playlists: Record<string, PlaylistDetail> = {
       { id: "5", text: "My happiness comes from within" },
     ],
   },
-  "exp1": {
+  exp1: {
     id: "exp1",
     title: "Money Manifestation",
     author: "Wealth Vibes",
     description: "Manifest abundance and prosperity in your life",
-    image: "https://images.unsplash.com/photo-1553729459-efe14ef6055d?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
+    image:
+      "https://images.unsplash.com/photo-1553729459-efe14ef6055d?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
     duration: "15 min",
     affirmations: [
       { id: "1", text: "I am a money magnet" },
@@ -85,12 +90,13 @@ const playlists: Record<string, PlaylistDetail> = {
       { id: "5", text: "I am worthy of all the abundance the universe offers" },
     ],
   },
-  "bp1": {
+  bp1: {
     id: "bp1",
     title: "Focus Enhancement",
     author: "Cognitive Boost",
     description: "Enhance your focus and mental clarity",
-    image: "https://images.unsplash.com/photo-1517486808906-6ca8b3f04846?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
+    image:
+      "https://images.unsplash.com/photo-1517486808906-6ca8b3f04846?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
     duration: "10 min",
     affirmations: [
       { id: "1", text: "My mind is clear and focused" },
@@ -100,12 +106,13 @@ const playlists: Record<string, PlaylistDetail> = {
       { id: "5", text: "I accomplish tasks with ease and focus" },
     ],
   },
-  "ea1": {
+  ea1: {
     id: "ea1",
     title: "Confident Test Taking",
     author: "Study Success",
     description: "Build confidence for exams and assessments",
-    image: "https://images.unsplash.com/photo-1453928582365-b6ad33cb1289?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
+    image:
+      "https://images.unsplash.com/photo-1453928582365-b6ad33cb1289?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
     duration: "12 min",
     affirmations: [
       { id: "1", text: "I am well-prepared and confident" },
@@ -114,10 +121,10 @@ const playlists: Record<string, PlaylistDetail> = {
       { id: "4", text: "I trust in my knowledge and abilities" },
       { id: "5", text: "I perform excellently under pressure" },
     ],
-  }
+  },
 };
 
-const COVER_IMAGE_SIZE = Dimensions.get('window').width * 0.5;
+const COVER_IMAGE_SIZE = Dimensions.get("window").width * 0.5;
 
 export default function PlaylistDetailScreen() {
   const { id } = useLocalSearchParams();
@@ -125,7 +132,8 @@ export default function PlaylistDetailScreen() {
   const insets = useSafeAreaInsets();
   const [isSaved, setIsSaved] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
-  
+  const { showPlayer } = useMediaPlayer();
+
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const buttonScale = useRef(new Animated.Value(1)).current;
   const imageScale = useRef(new Animated.Value(0)).current;
@@ -144,7 +152,7 @@ export default function PlaylistDetailScreen() {
         tension: 40,
         friction: 7,
         useNativeDriver: true,
-      })
+      }),
     ]).start();
   }, []);
 
@@ -172,19 +180,22 @@ export default function PlaylistDetailScreen() {
     setIsSaved((prev) => !prev);
   }, []);
 
-  const togglePlay = useCallback(() => {
+  const handlePlayPress = useCallback(() => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-    setIsPlaying((prev) => !prev);
-  }, []);
+    if (playlist) {
+      showPlayer(playlist);
+      setIsPlaying(true);
+    }
+  }, [playlist, showPlayer]);
 
   if (!playlist) {
     return (
       <View style={[styles.container, { paddingTop: insets.top + 16 }]}>
         <LinearGradient
-            colors={["#050812", "#101830", "#1A304A", "#2A1840", "#03040A"]}
-            style={StyleSheet.absoluteFill}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
+          colors={["#050812", "#101830", "#1A304A", "#2A1840", "#03040A"]}
+          style={StyleSheet.absoluteFill}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
         />
         <Text style={styles.notFoundTitle}>Playlist not found</Text>
       </View>
@@ -220,10 +231,7 @@ export default function PlaylistDetailScreen() {
             <Ionicons name="chevron-back" size={24} color={Colors.light.text} />
           </TouchableOpacity>
 
-          <TouchableOpacity
-            style={styles.iconButton}
-            onPress={toggleSave}
-          >
+          <TouchableOpacity style={styles.iconButton} onPress={toggleSave}>
             <Ionicons
               name={isSaved ? "heart" : "heart-outline"}
               size={24}
@@ -232,11 +240,13 @@ export default function PlaylistDetailScreen() {
           </TouchableOpacity>
         </View>
 
-        <Animated.View style={[styles.coverImageContainer, { transform: [{ scale: imageScale }] }]}>
-          <Image 
-            source={{ uri: playlist.image }}
-            style={styles.coverImage}
-          />
+        <Animated.View
+          style={[
+            styles.coverImageContainer,
+            { transform: [{ scale: imageScale }] },
+          ]}
+        >
+          <Image source={{ uri: playlist.image }} style={styles.coverImage} />
         </Animated.View>
 
         <View style={styles.titleSection}>
@@ -244,12 +254,12 @@ export default function PlaylistDetailScreen() {
           <Text style={styles.author}>by {playlist.author}</Text>
           <Text style={styles.description}>{playlist.description}</Text>
         </View>
-        
+
         <View style={styles.playButtonContainer}>
           <Animated.View style={{ transform: [{ scale: buttonScale }] }}>
             <TouchableOpacity
               style={styles.playButton}
-              onPress={() => router.push(`/player/${playlist.id}`)}
+              onPress={handlePlayPress}
               onPressIn={handlePressIn}
               onPressOut={handlePressOut}
               activeOpacity={0.9}
@@ -260,10 +270,10 @@ export default function PlaylistDetailScreen() {
                 start={{ x: 0.2, y: 0 }}
                 end={{ x: 0.8, y: 1 }}
               />
-              <Ionicons 
-                name={isPlaying ? "pause" : "play"} 
-                size={32} 
-                color="#FFFFFF" 
+              <Ionicons
+                name={isPlaying ? "pause" : "play"}
+                size={32}
+                color="#FFFFFF"
               />
               <Text style={styles.playButtonText}>
                 {isPlaying ? "Pause" : "Play"}
@@ -275,17 +285,13 @@ export default function PlaylistDetailScreen() {
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>Affirmations</Text>
-            <TouchableOpacity 
+            <TouchableOpacity
               style={styles.shuffleButton}
               onPress={() => {
                 Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
               }}
             >
-              <Ionicons
-                name="shuffle"
-                size={20}
-                color={Colors.light.text}
-              />
+              <Ionicons name="shuffle" size={20} color={Colors.light.text} />
             </TouchableOpacity>
           </View>
           {playlist.affirmations.map((affirmation) => (
@@ -313,9 +319,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
   },
   header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     marginBottom: 24,
   },
   iconButton: {
@@ -327,7 +333,7 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(255, 255, 255, 0.1)",
   },
   coverImageContainer: {
-    alignItems: 'center',
+    alignItems: "center",
     marginBottom: 24,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 8 },
@@ -339,17 +345,17 @@ const styles = StyleSheet.create({
     width: COVER_IMAGE_SIZE,
     height: COVER_IMAGE_SIZE,
     borderRadius: 16,
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    backgroundColor: "rgba(255, 255, 255, 0.1)",
   },
   titleSection: {
     marginBottom: 24,
-    alignItems: 'center',
+    alignItems: "center",
   },
   title: {
     fontSize: 34,
     fontWeight: "800",
     color: Colors.light.text,
-    textAlign: 'center',
+    textAlign: "center",
     marginBottom: 12,
     letterSpacing: 0.4,
   },
@@ -358,24 +364,24 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     color: Colors.light.textSecondary,
     marginBottom: 12,
-    textAlign: 'center',
+    textAlign: "center",
   },
   description: {
     fontSize: 16,
     color: Colors.light.textSecondary,
-    textAlign: 'center',
+    textAlign: "center",
     marginBottom: 24,
     lineHeight: 24,
     paddingHorizontal: 16,
   },
   playButtonContainer: {
-    alignItems: 'center',
+    alignItems: "center",
     marginBottom: 40,
   },
   playButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
     width: 180,
     height: 56,
     borderRadius: 28,
@@ -396,9 +402,9 @@ const styles = StyleSheet.create({
     marginBottom: 32,
   },
   sectionHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     marginBottom: 20,
   },
   sectionTitle: {
@@ -417,8 +423,8 @@ const styles = StyleSheet.create({
   },
   notFoundTitle: {
     fontSize: 24,
-    fontWeight: '600',
+    fontWeight: "600",
     color: Colors.light.text,
-    textAlign: 'center',
+    textAlign: "center",
   },
 });
