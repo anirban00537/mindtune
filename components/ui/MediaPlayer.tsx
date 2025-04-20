@@ -182,7 +182,12 @@ export default function MediaPlayer() {
           style={StyleSheet.absoluteFill}
           resizeMode="cover"
         />
-        <BlurView intensity={95} tint="dark" style={StyleSheet.absoluteFill} />
+        <BlurView
+          intensity={1000}
+          style={StyleSheet.absoluteFill}
+          blurReductionFactor={0.9}
+          tint="dark"
+        />
 
         <SafeAreaView style={styles.safeAreaContainer}>
           <View style={styles.header}>
@@ -360,6 +365,12 @@ const styles = StyleSheet.create({
     textAlign: "center",
     lineHeight: 38,
     backgroundColor: "transparent",
+  },
+  glassEffect: {
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+  },
+  glassOverlay: {
+    backgroundColor: "rgba(1, 0, 0, 0.33)",
   },
   controlsContainer: {
     height: 220,
