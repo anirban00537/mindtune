@@ -10,18 +10,17 @@ import {
   Animated,
   StatusBar,
   ViewStyle,
-  ScrollView,
 } from "react-native";
-import { useLocalSearchParams, useRouter, Stack } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { LinearGradient } from "expo-linear-gradient";
-import { Ionicons } from "@expo/vector-icons";
+import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
 import { AffirmationCard } from "@/components/ui/cards/AffirmationCard";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useState, useRef, useCallback, useEffect } from "react";
 import * as Haptics from "expo-haptics";
-import MediaPlayer from "@/components/ui/MediaPlayer";
 import { useMediaPlayer } from "@/context/MediaPlayerContext";
+import { BlurView } from "expo-blur";
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 
@@ -124,8 +123,6 @@ const playlists: Record<string, PlaylistDetail> = {
   },
 };
 
-const COVER_IMAGE_SIZE = Dimensions.get("window").width * 0.45;
-
 export default function PlaylistDetailScreen() {
   const { id } = useLocalSearchParams();
   const router = useRouter();
@@ -135,45 +132,90 @@ export default function PlaylistDetailScreen() {
   const { showPlayer } = useMediaPlayer();
 
   const fadeAnim = useRef(new Animated.Value(0)).current;
-  const buttonScale = useRef(new Animated.Value(1)).current;
-  const imageScale = useRef(new Animated.Value(0)).current;
+  const scrollY = useRef(new Animated.Value(0)).current;
+  const pulseAnim = useRef(new Animated.Value(1)).current;
+
+  // Animation values for sliding up content
+  const contentSlideUp = useRef(new Animated.Value(50)).current;
+  const buttonsSlideUp = useRef(new Animated.Value(50)).current;
+  const cardsSlideUp = useRef(new Animated.Value(100)).current;
+
+  // Animation values for affirmation cards
+  const affirmationOpacities = useRef<Animated.Value[]>([]).current;
 
   const playlist = playlists[id as string];
 
+  // Populate affirmation opacity values
+  if (
+    playlist &&
+    affirmationOpacities.length !== playlist.affirmations.length
+  ) {
+    affirmationOpacities.length = 0;
+    playlist.affirmations.forEach(() => {
+      affirmationOpacities.push(new Animated.Value(0));
+    });
+  }
+
+  // Start pulse animation for play button
   useEffect(() => {
-    Animated.parallel([
+    if (!isPlaying) {
+      Animated.loop(
+        Animated.sequence([
+          Animated.timing(pulseAnim, {
+            toValue: 1.08,
+            duration: 1000,
+            useNativeDriver: true,
+          }),
+          Animated.timing(pulseAnim, {
+            toValue: 1,
+            duration: 1000,
+            useNativeDriver: true,
+          }),
+        ])
+      ).start();
+    } else {
+      // Stop the animation if playing
+      pulseAnim.setValue(1);
+    }
+  }, [isPlaying]);
+
+  // Initial entrance animations
+  useEffect(() => {
+    if (!playlist) return;
+
+    const cardAnimations = affirmationOpacities.map((opacity) =>
+      Animated.timing(opacity, {
+        toValue: 1,
+        duration: 400,
+        useNativeDriver: true,
+      })
+    );
+
+    // Sequence of entrance animations
+    Animated.stagger(100, [
       Animated.timing(fadeAnim, {
         toValue: 1,
-        duration: 300,
+        duration: 600,
         useNativeDriver: true,
       }),
-      Animated.spring(imageScale, {
-        toValue: 1,
-        tension: 40,
-        friction: 7,
+      Animated.timing(contentSlideUp, {
+        toValue: 0,
+        duration: 500,
         useNativeDriver: true,
       }),
+      Animated.timing(buttonsSlideUp, {
+        toValue: 0,
+        duration: 400,
+        useNativeDriver: true,
+      }),
+      Animated.timing(cardsSlideUp, {
+        toValue: 0,
+        duration: 500,
+        useNativeDriver: true,
+      }),
+      ...cardAnimations,
     ]).start();
-  }, []);
-
-  const handlePressIn = useCallback(() => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    Animated.spring(buttonScale, {
-      toValue: 0.95,
-      tension: 50,
-      friction: 8,
-      useNativeDriver: true,
-    }).start();
-  }, []);
-
-  const handlePressOut = useCallback(() => {
-    Animated.spring(buttonScale, {
-      toValue: 1,
-      tension: 50,
-      friction: 8,
-      useNativeDriver: true,
-    }).start();
-  }, []);
+  }, [fadeAnim, playlist]);
 
   const toggleSave = useCallback(() => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
@@ -204,104 +246,208 @@ export default function PlaylistDetailScreen() {
 
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="light-content" />
-      <LinearGradient
-        colors={["#2A1840", "#050812", "#050812", "#050812", "#050812"]}
-        style={StyleSheet.absoluteFill}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
+      <StatusBar
+        barStyle="light-content"
+        translucent
+        backgroundColor="transparent"
       />
 
-      <Animated.ScrollView
-        style={[styles.scrollView, { opacity: fadeAnim }]}
-        contentContainerStyle={[
-          styles.contentContainer,
-          { paddingTop: insets.top + 10, paddingBottom: insets.bottom + 120 },
-        ]}
-        showsVerticalScrollIndicator={false}
-      >
-        <View style={styles.header}>
-          <TouchableOpacity
-            style={styles.iconButton}
-            onPress={() => {
-              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-              router.back();
-            }}
-          >
-            <Ionicons name="chevron-back" size={24} color={Colors.light.text} />
-          </TouchableOpacity>
+      {/* Full screen background image */}
+      <Image
+        source={{ uri: playlist.image }}
+        style={styles.backgroundImage}
+        resizeMode="cover"
+      />
 
+      {/* Overlay gradients */}
+      <LinearGradient
+        colors={[
+          "rgba(0,0,0,0.7)",
+          "rgba(5,8,18,0.85)",
+          "rgba(5,8,18,0.95)",
+          "#050812",
+        ]}
+        style={styles.overlay}
+        start={{ x: 0.5, y: 0 }}
+        end={{ x: 0.5, y: 1 }}
+      />
+
+      {/* Top navigation bar */}
+      <Animated.View style={[styles.header, { paddingTop: insets.top }]}>
+        <TouchableOpacity
+          style={styles.iconButton}
+          onPress={() => {
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+            router.back();
+          }}
+        >
+          <Ionicons name="chevron-back" size={24} color="#FFFFFF" />
+        </TouchableOpacity>
+
+        <View style={styles.headerActions}>
+          <TouchableOpacity style={styles.iconButton} onPress={() => {}}>
+            <Ionicons name="share-outline" size={22} color="#FFFFFF" />
+          </TouchableOpacity>
           <TouchableOpacity style={styles.iconButton} onPress={toggleSave}>
             <Ionicons
               name={isSaved ? "heart" : "heart-outline"}
               size={24}
-              color={isSaved ? Colors.light.primary : Colors.light.text}
+              color={isSaved ? Colors.light.primary : "#FFFFFF"}
             />
           </TouchableOpacity>
         </View>
+      </Animated.View>
 
+      {/* Main content */}
+      <Animated.ScrollView
+        style={styles.scrollView}
+        contentContainerStyle={[
+          styles.contentContainer,
+          { paddingBottom: insets.bottom + 40 },
+        ]}
+        showsVerticalScrollIndicator={false}
+        scrollEventThrottle={16}
+        onScroll={Animated.event(
+          [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+          { useNativeDriver: false }
+        )}
+      >
+        {/* Top spacer to position content below the image */}
+        <View style={{ height: SCREEN_HEIGHT * 0.35 }} />
+
+        {/* Content card */}
         <Animated.View
           style={[
-            styles.coverImageContainer,
-            { transform: [{ scale: imageScale }] },
+            styles.contentCard,
+            {
+              opacity: fadeAnim,
+              transform: [{ translateY: contentSlideUp }],
+            },
           ]}
         >
-          <Image source={{ uri: playlist.image }} style={styles.coverImage} />
+          <View style={styles.titleSection}>
+            <Text style={styles.title}>{playlist.title}</Text>
+            <Text style={styles.author}>By {playlist.author}</Text>
+            <View style={styles.metaInfo}>
+              <View style={styles.durationBadge}>
+                <Ionicons name="time-outline" size={14} color="#FFFFFF" />
+                <Text style={styles.durationText}>{playlist.duration}</Text>
+              </View>
+              <Text style={styles.divider}>•</Text>
+              <Text style={styles.countText}>
+                {playlist.affirmations.length} affirmations
+              </Text>
+            </View>
+            <Text style={styles.description}>{playlist.description}</Text>
+          </View>
+
+          {/* Controls section */}
+          <Animated.View
+            style={[
+              styles.controls,
+              { transform: [{ translateY: buttonsSlideUp }] },
+            ]}
+          >
+            <View style={styles.controlButtons}>
+              <TouchableOpacity style={styles.controlButton}>
+                <Ionicons name="shuffle-outline" size={20} color="#FFFFFF" />
+                <Text style={styles.controlText}>Shuffle</Text>
+              </TouchableOpacity>
+
+              <Animated.View style={{ transform: [{ scale: pulseAnim }] }}>
+                <TouchableOpacity
+                  style={styles.playButton}
+                  onPress={handlePlayPress}
+                  activeOpacity={0.8}
+                >
+                  <LinearGradient
+                    colors={Colors.gradients.primary}
+                    style={[StyleSheet.absoluteFill, { borderRadius: 36 }]}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 1 }}
+                  />
+                  <View style={styles.playButtonInner}>
+                    <Ionicons
+                      name={isPlaying ? "pause" : "play"}
+                      size={32}
+                      color="#FFFFFF"
+                    />
+                  </View>
+                </TouchableOpacity>
+              </Animated.View>
+
+              <TouchableOpacity style={styles.controlButton}>
+                <MaterialCommunityIcons
+                  name="playlist-music-outline"
+                  size={22}
+                  color="#FFFFFF"
+                />
+                <Text style={styles.controlText}>Queue</Text>
+              </TouchableOpacity>
+            </View>
+          </Animated.View>
         </Animated.View>
 
-        <View style={styles.titleSection}>
-          <Text style={styles.title}>{playlist.title}</Text>
-          <Text style={styles.author}>by {playlist.author}</Text>
-          <Text style={styles.description}>{playlist.description}</Text>
-        </View>
-
-        <View style={styles.playButtonContainer}>
-          <Animated.View style={{ transform: [{ scale: buttonScale }] }}>
-            <TouchableOpacity
-              style={styles.playButton}
-              onPress={handlePlayPress}
-              onPressIn={handlePressIn}
-              onPressOut={handlePressOut}
-              activeOpacity={0.9}
-            >
-              <LinearGradient
-                colors={Colors.gradients.primary}
-                style={StyleSheet.absoluteFill}
-                start={{ x: 0.2, y: 0 }}
-                end={{ x: 0.8, y: 1 }}
-              />
-              <Ionicons
-                name={isPlaying ? "pause" : "play"}
-                size={32}
-                color="#FFFFFF"
-              />
-              <Text style={styles.playButtonText}>
-                {isPlaying ? "Pause" : "Play"}
-              </Text>
-            </TouchableOpacity>
-          </Animated.View>
-        </View>
-
-        <View style={styles.section}>
+        {/* Affirmations section */}
+        <Animated.View
+          style={[
+            styles.affirmationsSection,
+            {
+              opacity: fadeAnim,
+              transform: [{ translateY: cardsSlideUp }],
+            },
+          ]}
+        >
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>Affirmations</Text>
             <TouchableOpacity
-              style={styles.shuffleButton}
+              style={styles.moreButton}
               onPress={() => {
                 Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
               }}
             >
-              <Ionicons name="shuffle" size={18} color={Colors.light.text} />
+              <Text style={styles.moreButtonText}>View All</Text>
+              <Ionicons
+                name="chevron-forward"
+                size={16}
+                color={Colors.light.primary}
+              />
             </TouchableOpacity>
           </View>
-          {playlist.affirmations.map((affirmation) => (
-            <AffirmationCard
+
+          {playlist.affirmations.map((affirmation, index) => (
+            <Animated.View
               key={affirmation.id}
-              text={affirmation.text}
-              style={styles.affirmationCard}
-            />
+              style={{
+                opacity: affirmationOpacities[index],
+                transform: [
+                  {
+                    translateX: affirmationOpacities[index].interpolate({
+                      inputRange: [0, 1],
+                      outputRange: [20, 0],
+                    }),
+                  },
+                ],
+              }}
+            >
+              <View style={styles.affirmationCardWrapper}>
+                <View style={styles.affirmationNumber}>
+                  <Text style={styles.affirmationNumberText}>{index + 1}</Text>
+                </View>
+                <View style={styles.affirmationContent}>
+                  <Text style={styles.affirmationText}>{affirmation.text}</Text>
+                </View>
+                <TouchableOpacity style={styles.affirmationButton}>
+                  <Ionicons
+                    name="play-circle-outline"
+                    size={24}
+                    color="rgba(255,255,255,0.7)"
+                  />
+                </TouchableOpacity>
+              </View>
+            </Animated.View>
           ))}
-        </View>
+        </Animated.View>
       </Animated.ScrollView>
     </View>
   );
@@ -310,20 +456,35 @@ export default function PlaylistDetailScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.dark.background,
+    backgroundColor: "#050812",
   },
-  scrollView: {
-    flex: 1,
+  backgroundImage: {
+    position: "absolute",
+    width: SCREEN_WIDTH,
+    height: SCREEN_HEIGHT * 0.55,
+    top: 0,
   },
-  contentContainer: {
-    paddingHorizontal: 16,
+  overlay: {
+    position: "absolute",
+    width: SCREEN_WIDTH,
+    height: SCREEN_HEIGHT,
+    top: 0,
   },
   header: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    zIndex: 10,
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: 16,
-    marginTop: 8,
+    paddingHorizontal: 16,
+    height: 60,
+  },
+  headerActions: {
+    flexDirection: "row",
+    gap: 8,
   },
   iconButton: {
     width: 40,
@@ -331,101 +492,181 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "rgba(255, 255, 255, 0.08)",
+    backgroundColor: "rgba(0, 0, 0, 0.3)",
+    backdropFilter: "blur(10px)",
   },
-  coverImageContainer: {
-    alignItems: "center",
-    marginBottom: 20,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.3,
-    shadowRadius: 10,
-    elevation: 12,
+  scrollView: {
+    flex: 1,
   },
-  coverImage: {
-    width: COVER_IMAGE_SIZE,
-    height: COVER_IMAGE_SIZE,
-    borderRadius: 20,
-    backgroundColor: "rgba(255, 255, 255, 0.05)",
+  contentContainer: {
+    paddingHorizontal: 0,
+  },
+  contentCard: {
+    marginHorizontal: 20,
+    marginBottom: 24,
+    borderRadius: 24,
+    backgroundColor: "rgba(30, 30, 50, 0.4)",
+    backdropFilter: "blur(8px)",
+    overflow: "hidden",
+    borderWidth: 1,
+    borderColor: "rgba(255, 255, 255, 0.1)",
   },
   titleSection: {
-    marginBottom: 20,
-    alignItems: "center",
+    paddingHorizontal: 24,
+    paddingTop: 24,
+    paddingBottom: 20,
   },
   title: {
-    fontSize: 30,
+    fontSize: 28,
     fontWeight: "700",
-    color: Colors.light.text,
-    textAlign: "center",
-    marginBottom: 6,
+    color: "#FFFFFF",
+    marginBottom: 8,
     letterSpacing: 0.3,
   },
   author: {
     fontSize: 16,
     fontWeight: "500",
-    color: Colors.light.textSecondary,
-    marginBottom: 10,
-    textAlign: "center",
+    color: "rgba(255, 255, 255, 0.8)",
+    marginBottom: 12,
+  },
+  metaInfo: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 16,
+  },
+  durationBadge: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "rgba(255, 255, 255, 0.1)",
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 12,
+    gap: 4,
+  },
+  durationText: {
+    fontSize: 13,
+    fontWeight: "500",
+    color: "#FFFFFF",
+  },
+  divider: {
+    marginHorizontal: 8,
+    color: "rgba(255, 255, 255, 0.6)",
+  },
+  countText: {
+    fontSize: 14,
+    color: "rgba(255, 255, 255, 0.6)",
+    fontWeight: "500",
   },
   description: {
     fontSize: 15,
-    color: Colors.light.textSecondary,
-    textAlign: "center",
-    marginBottom: 16,
     lineHeight: 22,
-    paddingHorizontal: 10,
+    color: "rgba(255, 255, 255, 0.7)",
   },
-  playButtonContainer: {
+  controls: {
+    paddingVertical: 24,
+    backgroundColor: "rgba(0, 0, 0, 0.2)",
+    borderBottomLeftRadius: 24,
+    borderBottomRightRadius: 24,
+  },
+  controlButtons: {
+    flexDirection: "row",
+    justifyContent: "space-evenly",
     alignItems: "center",
-    marginBottom: 32,
+  },
+  controlButton: {
+    alignItems: "center",
+    gap: 8,
+  },
+  controlText: {
+    fontSize: 14,
+    fontWeight: "500",
+    color: "rgba(255, 255, 255, 0.8)",
   },
   playButton: {
-    flexDirection: "row",
-    alignItems: "center",
+    width: 72,
+    height: 72,
+    borderRadius: 36,
     justifyContent: "center",
-    width: 170,
-    height: 52,
-    borderRadius: 26,
-    overflow: "hidden",
-    gap: 8,
+    alignItems: "center",
     shadowColor: Colors.light.primary,
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.25,
-    shadowRadius: 6,
-    elevation: 6,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.4,
+    shadowRadius: 12,
+    elevation: 10,
   },
-  playButtonText: {
-    fontSize: 17,
-    fontWeight: "600",
-    color: Colors.light.text,
+  playButtonInner: {
+    width: 68,
+    height: 68,
+    borderRadius: 34,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(255, 255, 255, 0.1)",
   },
-  section: {
-    marginBottom: 24,
+  affirmationsSection: {
+    paddingHorizontal: 20,
   },
   sectionHeader: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: 12,
+    marginBottom: 16,
   },
   sectionTitle: {
-    fontSize: 22,
-    fontWeight: "600",
-    color: Colors.light.text,
-    letterSpacing: 0.2,
+    fontSize: 20,
+    fontWeight: "700",
+    color: "#FFFFFF",
+    letterSpacing: 0.3,
   },
-  shuffleButton: {
-    padding: 6,
-    borderRadius: 18,
-    backgroundColor: "rgba(255, 255, 255, 0.08)",
+  moreButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
   },
-  affirmationCard: {
+  moreButtonText: {
+    fontSize: 14,
+    fontWeight: "500",
+    color: Colors.light.primary,
+  },
+  affirmationCardWrapper: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "rgba(30, 30, 50, 0.3)",
     marginBottom: 12,
+    borderRadius: 16,
+    padding: 12,
+    borderWidth: 1,
+    borderColor: "rgba(255, 255, 255, 0.08)",
+  },
+  affirmationNumber: {
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    backgroundColor: "rgba(255, 255, 255, 0.1)",
+    justifyContent: "center",
+    alignItems: "center",
+    marginRight: 12,
+  },
+  affirmationNumberText: {
+    fontSize: 14,
+    fontWeight: "600",
+    color: "rgba(255, 255, 255, 0.8)",
+  },
+  affirmationContent: {
+    flex: 1,
+  },
+  affirmationText: {
+    fontSize: 16,
+    fontWeight: "500",
+    color: "#FFFFFF",
+    lineHeight: 22,
+  },
+  affirmationButton: {
+    padding: 8,
   },
   notFoundTitle: {
     fontSize: 24,
     fontWeight: "600",
-    color: Colors.light.text,
+    color: "#FFFFFF",
     textAlign: "center",
   },
 });
