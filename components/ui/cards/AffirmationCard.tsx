@@ -27,11 +27,13 @@ export function AffirmationCard({
 }: AffirmationCardProps) {
   return (
     <BlurView
-      intensity={8}
+      intensity={20}
       tint="light"
       style={[{
         borderRadius: 16,
         overflow: 'hidden',
+        borderWidth: 1,
+        borderColor: 'rgba(255,255,255,0.1)',
       }, style]}
     >
       <LinearGradient
@@ -75,9 +77,11 @@ const styles = StyleSheet.create({
   },
   text: {
     flex: 1,
-    fontSize: 16,
-    lineHeight: 24,
+    fontSize: 18,
+    lineHeight: 28,
     color: Colors.light.text,
+    fontWeight: '500',
+    letterSpacing: 0.2,
   },
   saveButton: {
     width: 40,

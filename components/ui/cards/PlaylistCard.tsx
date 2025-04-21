@@ -93,10 +93,11 @@ export function PlaylistCard({
         >
           {/* Simple gradient overlay for better text readability */}
           <LinearGradient
-            colors={["transparent", "rgba(0,0,0,0.6)"]}
+            colors={["rgba(0,0,0,0.2)", "rgba(0,0,0,0.8)"]}
             style={styles.overlayGradient}
-            start={{ x: 0.5, y: 0.5 }}
-            end={{ x: 0.5, y: 1 }}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 0, y: 1 }}
+            locations={[0.4, 1] as const}
           />
 
           {/* Favorite Button */}
