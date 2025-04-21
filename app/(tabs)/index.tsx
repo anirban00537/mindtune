@@ -309,6 +309,11 @@ export default function HomeScreen() {
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
       />
+      <BlurView
+        intensity={20}
+        style={StyleSheet.absoluteFill}
+        tint="dark"
+      />
 
       <Animated.ScrollView
         style={styles.scrollView}
@@ -333,9 +338,18 @@ export default function HomeScreen() {
             },
           ]}
         >
+          <BlurView
+            intensity={20}
+            tint="dark"
+            style={StyleSheet.absoluteFill}
+          />
           <Text style={styles.headerTitle}>Discover</Text>
           <TouchableOpacity style={styles.iconButton} onPress={goToSearch}>
-            <View style={styles.searchButtonBackground} />
+            <BlurView
+              intensity={20}
+              tint="dark"
+              style={StyleSheet.absoluteFill}
+            />
             <Ionicons name="search" size={24} color={Colors.light.text} />
           </TouchableOpacity>
         </Animated.View>
@@ -373,7 +387,7 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.dark.background,
+    backgroundColor: 'transparent',
   },
   scrollView: {
     flex: 1,
@@ -385,14 +399,18 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    paddingHorizontal: 20,
-    marginBottom: 24,
+    paddingHorizontal: 24,
+    marginBottom: 32,
+    paddingTop: 8,
   },
   headerTitle: {
-    fontSize: 34,
+    fontSize: 36,
     fontWeight: "800",
     color: Colors.light.text,
-    letterSpacing: 0.4,
+    letterSpacing: 0.5,
+    textShadowColor: 'rgba(0,0,0,0.2)',
+    textShadowOffset: {width: 0, height: 2},
+    textShadowRadius: 4,
   },
   iconButton: {
     width: 48,
@@ -401,53 +419,52 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     overflow: "hidden",
-    backgroundColor: "rgba(255, 255, 255, 0.1)",
+    backgroundColor: "rgba(255, 255, 255, 0.15)",
   },
   searchButtonBackground: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(255, 255, 255, 0.1)",
+    backgroundColor: "rgba(255, 255, 255, 0.15)",
   },
   section: {
-    marginBottom: 20,
+    marginBottom: 28,
   },
   sectionHeader: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    paddingHorizontal: 20,
-    marginBottom: 10,
+    paddingHorizontal: 24,
+    marginBottom: 16,
   },
   sectionTitle: {
-    fontSize: 17,
-    fontWeight: "500",
+    fontSize: 20,
+    fontWeight: "600",
     color: Colors.light.text,
+    letterSpacing: 0.3,
   },
   seeAllButton: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 4,
+    gap: 6,
   },
   seeAllText: {
-    fontSize: 14,
+    fontSize: 15,
     fontWeight: "500",
     color: Colors.light.textSecondary,
   },
   horizontalScrollView: {
-    paddingLeft: 20,
+    paddingLeft: 24,
   },
   horizontalScrollContainer: {
-    paddingRight: 20,
+    paddingRight: 24,
   },
   horizontalCard: {
-    // Keep only the margin style
     marginRight: HORIZONTAL_CARD_SPACING,
   },
   justForYouCard: {
-    // Keep only the margin style
-    marginHorizontal: 20,
+    marginHorizontal: 24,
   },
   bannerContainer: {
-    marginHorizontal: 20,
-    marginBottom: 12,
+    marginHorizontal: 24,
+    marginBottom: 24,
   },
 });
