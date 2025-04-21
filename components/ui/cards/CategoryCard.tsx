@@ -131,19 +131,14 @@ export function CategoryCard({
 
           {/* Play button */}
           <TouchableOpacity style={styles.playButton} onPress={handlePress}>
-            <LinearGradient
-              colors={Colors.gradients.primary}
-              style={styles.playButtonGradient}
-              start={{ x: 0.2, y: 0 }}
-              end={{ x: 0.8, y: 1 }}
-            >
+            <View style={styles.playButtonInner}>
               <Ionicons
                 name="play"
                 size={20}
                 color="#FFFFFF"
                 style={{ marginLeft: 2 }}
               />
-            </LinearGradient>
+            </View>
           </TouchableOpacity>
         </View>
       </TouchableOpacity>
@@ -221,11 +216,14 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  playButtonGradient: {
+  playButtonInner: {
     width: "100%",
     height: "100%",
     justifyContent: "center",
     alignItems: "center",
     borderRadius: 20,
+    backgroundColor: "rgba(255,255,255,0.25)",
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.3)",
   },
 });

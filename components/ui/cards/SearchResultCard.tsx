@@ -37,14 +37,14 @@ export function SearchResultCard({
   const handlePressIn = useCallback(() => {
     Animated.spring(scale, {
       toValue: 0.96,
-      useNativeDriver: Platform.OS !== 'web',
+      useNativeDriver: Platform.OS !== "web",
     }).start();
   }, [scale]);
 
   const handlePressOut = useCallback(() => {
     Animated.spring(scale, {
       toValue: 1,
-      useNativeDriver: Platform.OS !== 'web',
+      useNativeDriver: Platform.OS !== "web",
     }).start();
   }, [scale]);
 
@@ -53,11 +53,11 @@ export function SearchResultCard({
       Animated.timing(playScale, {
         toValue: 0.8,
         duration: 100,
-        useNativeDriver: Platform.OS !== 'web',
+        useNativeDriver: Platform.OS !== "web",
       }),
       Animated.spring(playScale, {
         toValue: 1,
-        useNativeDriver: Platform.OS !== 'web',
+        useNativeDriver: Platform.OS !== "web",
       }),
     ]).start(onPress ? onPress : undefined);
   };
@@ -70,13 +70,9 @@ export function SearchResultCard({
         onPressOut={handlePressOut}
         activeOpacity={0.9}
       >
-        <BlurView
-          intensity={60}
-          tint="dark"
-          style={styles.cardBase}
-        >
+        <BlurView intensity={60} tint="dark" style={styles.cardBase}>
           <LinearGradient
-            colors={['rgba(255, 255, 255, 0.15)', 'rgba(255, 255, 255, 0.05)']}
+            colors={["rgba(255, 255, 255, 0.15)", "rgba(255, 255, 255, 0.05)"]}
             style={StyleSheet.absoluteFill}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
@@ -98,25 +94,25 @@ export function SearchResultCard({
                 <Text style={styles.duration}>◷ {duration}</Text>
               </View>
             </View>
-            <Animated.View style={[styles.playButtonContainer, { transform: [{ scale: playScale }] }]}>
+            <Animated.View
+              style={[
+                styles.playButtonContainer,
+                { transform: [{ scale: playScale }] },
+              ]}
+            >
               <TouchableOpacity
                 style={styles.playButton}
                 onPress={handleCombinedPress}
                 hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
               >
-                <BlurView
-                  intensity={20}
-                  tint="dark"
-                  style={StyleSheet.absoluteFill}
-                />
-                <LinearGradient
-                  colors={Colors.gradients.primary}
-                  style={styles.playButtonGradient}
-                  start={{ x: 0.2, y: 0 }}
-                  end={{ x: 0.8, y: 1 }}
-                >
-                  <Ionicons name="play" size={20} color="#FFFFFF" />
-                </LinearGradient>
+                <View style={styles.playButtonBg}>
+                  <Ionicons
+                    name="play"
+                    size={18}
+                    color="#FFFFFF"
+                    style={{ marginLeft: 1 }}
+                  />
+                </View>
               </TouchableOpacity>
             </Animated.View>
           </View>
@@ -133,7 +129,7 @@ const styles = StyleSheet.create({
     overflow: "hidden",
     borderWidth: 1,
     borderColor: "rgba(255, 255, 255, 0.2)",
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    backgroundColor: "rgba(255, 255, 255, 0.1)",
     ...Platform.select({
       ios: {
         shadowColor: "#000",
@@ -192,14 +188,21 @@ const styles = StyleSheet.create({
     marginLeft: 8,
   },
   playButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+    width: 36,
+    height: 36,
+    borderRadius: 18,
     overflow: "hidden",
+    justifyContent: "center",
+    alignItems: "center",
   },
-  playButtonGradient: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+  playButtonBg: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: "rgba(255,255,255,0.25)",
+    justifyContent: "center",
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.3)"
   },
 });

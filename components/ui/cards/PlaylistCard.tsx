@@ -13,7 +13,6 @@ import { Ionicons } from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
 import { useRef, useCallback } from "react";
 import { useRouter } from "expo-router";
-import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
 import * as Haptics from "expo-haptics";
 
@@ -92,13 +91,11 @@ export function PlaylistCard({
           style={styles.imageBackground}
           resizeMode="cover"
         >
-          {/* Black Overlay */}
-          <View style={styles.blackOverlay} />
-
+          {/* Simple gradient overlay for better text readability */}
           <LinearGradient
-            colors={["transparent", "rgba(0,0,0,0.7)", "rgba(0,0,0,0.9)"]}
+            colors={["transparent", "rgba(0,0,0,0.6)"]}
             style={styles.overlayGradient}
-            start={{ x: 0.5, y: 0.3 }}
+            start={{ x: 0.5, y: 0.5 }}
             end={{ x: 0.5, y: 1 }}
           />
 
@@ -111,45 +108,14 @@ export function PlaylistCard({
             }}
             hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
           >
-            <BlurView
-              intensity={40}
-              tint="dark"
-              style={styles.favoriteButtonBlur}
-            >
-              <Ionicons
-                name={isFavorited ? "heart" : "heart-outline"}
-                size={20}
-                color={isFavorited ? Colors.dark.primary : Colors.dark.text}
-              />
-            </BlurView>
+            <Ionicons
+              name={isFavorited ? "heart" : "heart-outline"}
+              size={18}
+              color={isFavorited ? "#FF3B30" : "#FFFFFF"}
+            />
           </TouchableOpacity>
 
           <View style={styles.contentOverlay}>
-            <TouchableOpacity
-              style={styles.playButton}
-              onPress={handlePress}
-              hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-            >
-              <BlurView
-                intensity={40}
-                tint="dark"
-                style={styles.playButtonBlur}
-              />
-              <LinearGradient
-                colors={Colors.gradients.primary}
-                style={styles.playButtonGradient}
-                start={{ x: 0.2, y: 0 }}
-                end={{ x: 0.8, y: 1 }}
-              >
-                <Ionicons
-                  name="play"
-                  size={18}
-                  color="#FFFFFF"
-                  style={{ marginLeft: 2 }}
-                />
-              </LinearGradient>
-            </TouchableOpacity>
-
             <View style={styles.textContent}>
               <Text numberOfLines={2} style={styles.title}>
                 {title}
@@ -161,14 +127,30 @@ export function PlaylistCard({
                 <View style={styles.durationContainer}>
                   <Ionicons
                     name="time-outline"
-                    size={13}
-                    color={Colors.dark.textSecondary}
-                    style={{ marginRight: 4 }}
+                    size={12}
+                    color="rgba(255,255,255,0.7)"
+                    style={{ marginRight: 3 }}
                   />
                   <Text style={styles.duration}>{duration}</Text>
                 </View>
               )}
             </View>
+
+            {/* Play button */}
+            <TouchableOpacity
+              style={styles.playButton}
+              onPress={handlePress}
+              hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+            >
+              <View style={styles.playButtonBg}>
+                <Ionicons
+                  name="play"
+                  size={18}
+                  color="#FFFFFF"
+                  style={{ marginLeft: 1 }}
+                />
+              </View>
+            </TouchableOpacity>
           </View>
         </ImageBackground>
       </TouchableOpacity>
@@ -178,11 +160,11 @@ export function PlaylistCard({
 
 const styles = StyleSheet.create({
   touchableWrapper: {
-    borderRadius: 14,
+    borderRadius: 16,
     shadowColor: "#000000",
     shadowOffset: {
       width: 0,
-      height: 6,
+      height: 8,
     },
     shadowOpacity: 0.2,
     shadowRadius: 12,
@@ -191,70 +173,60 @@ const styles = StyleSheet.create({
   },
   cardInnerContainer: {
     flex: 1,
-    borderRadius: 14,
+    borderRadius: 16,
     overflow: "hidden",
     backgroundColor: Colors.dark.card,
-    borderWidth: 1,
-    borderColor: Colors.dark.cardBorder,
+    borderWidth: 0,
   },
   imageBackground: {
     flex: 1,
     justifyContent: "flex-end",
-  },
-  blackOverlay: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(0,0,0,0.3)",
   },
   overlayGradient: {
     ...StyleSheet.absoluteFillObject,
   },
   favoriteButton: {
     position: "absolute",
-    top: 12,
-    right: 12,
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    overflow: "hidden",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  favoriteButtonBlur: {
-    ...StyleSheet.absoluteFillObject,
+    top: 10,
+    right: 10,
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: "rgba(0,0,0,0.3)",
     justifyContent: "center",
     alignItems: "center",
   },
   contentOverlay: {
-    flex: 1,
-    padding: 16,
+    padding: 14,
+    flexDirection: "row",
+    alignItems: "flex-end",
     justifyContent: "space-between",
   },
   textContent: {
-    gap: 4,
+    flex: 1,
+    marginRight: 10,
   },
   title: {
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: "700",
-    color: Colors.dark.text,
-    letterSpacing: 0.1,
+    color: "#FFFFFF",
     textAlign: "left",
+    marginBottom: 4,
   },
   author: {
-    fontSize: 14,
-    color: Colors.dark.textSecondary,
+    fontSize: 13,
+    color: "rgba(255,255,255,0.8)",
     fontWeight: "500",
-    letterSpacing: 0.1,
     textAlign: "left",
+    marginBottom: 3,
   },
   durationContainer: {
     flexDirection: "row",
     alignItems: "center",
-    marginTop: 2,
   },
   duration: {
-    fontSize: 13,
-    color: Colors.dark.textSecondary,
-    letterSpacing: 0.1,
+    fontSize: 12,
+    color: "rgba(255,255,255,0.7)",
     fontWeight: "500",
   },
   playButton: {
@@ -264,15 +236,15 @@ const styles = StyleSheet.create({
     overflow: "hidden",
     justifyContent: "center",
     alignItems: "center",
-    alignSelf: "flex-start",
   },
-  playButtonBlur: {
-    ...StyleSheet.absoluteFillObject,
-  },
-  playButtonGradient: {
-    width: "100%",
-    height: "100%",
-    alignItems: "center",
+  playButtonBg: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: "rgba(255,255,255,0.25)",
     justifyContent: "center",
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.3)",
   },
 });
